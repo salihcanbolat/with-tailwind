@@ -1,0 +1,26 @@
+{
+  "name": "purecode-shopify3x-main",
+  "version": "1.0.0",
+  "description": "Bu Proje Dosyası Youtube Videosu için hazırlanmıştır. Başlangıç dosyası olarak kullanılacaktır.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salihcanbolat/with-tailwind.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/salihcanbolat/with-tailwind/issues"
+  },
+  "homepage": "https://github.com/salihcanbolat/with-tailwind#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.5.4",
+    "postcss": "^8.5.25",
+    "tailwindcss": "^3.4.19"
+  }
+}
