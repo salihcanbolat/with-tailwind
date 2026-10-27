@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation("com.damla:engine")
+    implementation("com.damla:alarms")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

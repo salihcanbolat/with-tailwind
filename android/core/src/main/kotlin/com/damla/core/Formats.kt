@@ -33,6 +33,23 @@ object Formats {
         return context.getString(res, count)
     }
 
+    /** "1 sa", "1 gün", "1 hf", "15 dk", "1 ay": the short interval labels of the lists. */
+    fun intervalShort(
+        context: Context,
+        wire: String,
+    ): String {
+        val match = INTERVAL.matchEntire(wire) ?: return wire
+        val res =
+            when (match.groupValues[2]) {
+                "m" -> R.string.interval_short_minutes
+                "h" -> R.string.interval_short_hours
+                "d" -> R.string.interval_short_days
+                "w" -> R.string.interval_short_weeks
+                else -> R.string.interval_short_months
+            }
+        return context.getString(res, match.groupValues[1].toInt())
+    }
+
     /** The signed change in Turkish style: "+%0,12", "−%1,30", "%0,00" (docs/kararlar.md: real sign, no "±"). */
     fun percent(net: Double): String {
         val digits = number(abs(net), 2)

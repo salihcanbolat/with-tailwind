@@ -3,9 +3,11 @@ package com.damla.core
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.damla.api.Alarm
 import com.damla.api.AssetSettings
 import com.damla.api.SnapshotResponse
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +18,7 @@ import java.util.UUID
 
 private val Context.damlaData: DataStore<Preferences> by preferencesDataStore(name = "damla")
 
-/** Everything the app keeps on the device: identity, watch list, widget settings and the last snapshot. */
+/** Everything the app keeps on the device: identity, watch list, alarms, settings, widget and last snapshot. */
 class DamlaStore(
     context: Context,
 ) {
@@ -37,58 +39,73 @@ class DamlaStore(
         data.edit { it[FCM_TOKEN] = token }
     }
 
-    val watchlist: Flow<List<AssetSettings>> =
-        data.data.map { prefs ->
-            prefs[WATCHLIST]?.let { json.decodeFromString<List<AssetSettings>>(it) } ?: DEFAULT_WATCHLIST
-        }
+    val watchlist: Flow<List<AssetSettings>> = data.data.map { decode(it[WATCHLIST]) ?: DEFAULT_WATCHLIST }
 
     suspend fun setWatchlist(assets: List<AssetSettings>) {
         data.edit { it[WATCHLIST] = json.encodeToString(assets) }
     }
 
-    val settings: Flow<AppSettings> =
-        data.data.map { prefs -> prefs[SETTINGS]?.let { json.decodeFromString<AppSettings>(it) } ?: AppSettings() }
+    val alarms: Flow<List<Alarm>> = data.data.map { decode(it[ALARMS]) ?: emptyList() }
+
+    suspend fun setAlarms(alarms: List<Alarm>) {
+        data.edit { it[ALARMS] = json.encodeToString(alarms) }
+    }
+
+    /** Alarms that rang, newest first, at most [HISTORY_SIZE]. */
+    val alarmHistory: Flow<List<FiredAlarm>> = data.data.map { decode(it[ALARM_HISTORY]) ?: emptyList() }
+
+    suspend fun addFiredAlarm(fired: FiredAlarm) {
+        data.edit { prefs ->
+            val current = decode<List<FiredAlarm>>(prefs[ALARM_HISTORY]) ?: emptyList()
+            prefs[ALARM_HISTORY] = json.encodeToString((listOf(fired) + current).take(HISTORY_SIZE))
+        }
+    }
+
+    val settings: Flow<AppSettings> = data.data.map { decode(it[SETTINGS]) ?: AppSettings() }
 
     suspend fun setSettings(settings: AppSettings) {
         data.edit { it[SETTINGS] = json.encodeToString(settings) }
     }
 
-    val snapshot: Flow<SnapshotResponse?> =
-        data.data.map { prefs -> prefs[SNAPSHOT]?.let { json.decodeFromString<SnapshotResponse>(it) } }
+    val snapshot: Flow<SnapshotResponse?> = data.data.map { decode(it[SNAPSHOT]) }
 
     suspend fun setSnapshot(snapshot: SnapshotResponse) {
         data.edit { it[SNAPSHOT] = json.encodeToString(snapshot) }
     }
 
-    val widgets: Flow<Map<Int, WidgetConfig>> =
-        data.data.map { prefs -> prefs[WIDGETS]?.let { json.decodeFromString<Map<Int, WidgetConfig>>(it) } ?: emptyMap() }
+    /**
+     * The home-screen widget's settings (design/KlasorIcerik.dc.html). One set for every placed widget:
+     * the app shows a single "Ana ekran widget'ı" and its draft/save flow edits it as a whole.
+     */
+    val widgetConfig: Flow<WidgetConfig> = data.data.map { decode(it[WIDGET]) ?: WidgetConfig() }
 
-    suspend fun widget(id: Int): WidgetConfig = widgets.first()[id] ?: WidgetConfig()
+    @Suppress("UNUSED_PARAMETER")
+    suspend fun widget(id: Int): WidgetConfig = widgetConfig.first()
 
-    suspend fun setWidget(
-        id: Int,
-        config: WidgetConfig,
-    ) {
-        data.edit { prefs ->
-            val current = prefs[WIDGETS]?.let { json.decodeFromString<Map<Int, WidgetConfig>>(it) } ?: emptyMap()
-            prefs[WIDGETS] = json.encodeToString(current + (id to config))
-        }
+    suspend fun setWidgetConfig(config: WidgetConfig) {
+        data.edit { it[WIDGET] = json.encodeToString(config) }
     }
 
-    suspend fun removeWidgets(ids: IntArray) {
-        data.edit { prefs ->
-            val current = prefs[WIDGETS]?.let { json.decodeFromString<Map<Int, WidgetConfig>>(it) } ?: return@edit
-            prefs[WIDGETS] = json.encodeToString(current - ids.toSet())
-        }
+    /** First launch shows the introduction (docs/07, "İlk açılış tanıtımı"). */
+    val onboarded: Flow<Boolean> = data.data.map { it[ONBOARDED] ?: false }
+
+    suspend fun setOnboarded() {
+        data.edit { it[ONBOARDED] = true }
     }
+
+    private inline fun <reified T> decode(text: String?): T? = text?.let { runCatching { json.decodeFromString<T>(it) }.getOrNull() }
 
     companion object {
         private val DEVICE_ID = stringPreferencesKey("device_id")
         private val FCM_TOKEN = stringPreferencesKey("fcm_token")
         private val WATCHLIST = stringPreferencesKey("watchlist")
+        private val ALARMS = stringPreferencesKey("alarms")
+        private val ALARM_HISTORY = stringPreferencesKey("alarm_history")
         private val SETTINGS = stringPreferencesKey("settings")
         private val SNAPSHOT = stringPreferencesKey("snapshot")
-        private val WIDGETS = stringPreferencesKey("widgets")
+        private val WIDGET = stringPreferencesKey("widget")
+        private val ONBOARDED = booleanPreferencesKey("onboarded")
+        private const val HISTORY_SIZE = 50
 
         /** New installs start with the assets of the designs; intervals and thresholds use the defaults. */
         val DEFAULT_WATCHLIST: List<AssetSettings> = WidgetConfig.DEFAULT_ORDER.map { AssetSettings(id = it) }

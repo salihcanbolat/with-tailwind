@@ -1,23 +1,21 @@
 package com.damla.core
 
+import com.damla.api.Alarm
+import com.damla.api.AssetSettings
 import com.damla.api.DeviceSettings
 import com.damla.api.SnapshotResponse
 import kotlinx.coroutines.flow.first
 
-/** Keeps the local snapshot in step with the backend and tells the backend who this device is. */
+/** Keeps the local data in step with the backend and tells the backend who this device is. */
 class DamlaRepository(
     val api: DamlaApi,
     val store: DamlaStore,
 ) {
-    /** Every target the app shows: the watch list plus whatever the widgets hold. */
+    /** Every target the app shows: the watch list plus whatever the widget holds. */
     suspend fun targets(): List<String> {
         val watched = store.watchlist.first().map { it.id }
-        val inWidgets =
-            store.widgets
-                .first()
-                .values
-                .flatMap { it.order }
-        return (watched + inWidgets + WidgetConfig.DEFAULT_ORDER).distinct()
+        val inWidget = store.widgetConfig.first().order
+        return (watched + inWidget).distinct().ifEmpty { WidgetConfig.DEFAULT_ORDER }
     }
 
     /** Fetches a fresh snapshot with this device's settings and stores it for the widgets. */
@@ -27,8 +25,26 @@ class DamlaRepository(
         return snapshot
     }
 
-    /** Sends the push token and watch list (docs/03, `PUT /v1/devices/{id}`). */
+    /** Sends the push token, watch list and alarms (docs/03, `PUT /v1/devices/{id}`). */
     suspend fun registerDevice() {
-        api.putDevice(store.deviceId(), DeviceSettings(store.fcmToken(), store.watchlist.first()))
+        api.putDevice(store.deviceId(), DeviceSettings(store.fcmToken(), store.watchlist.first(), store.alarms.first()))
     }
+
+    /** Saves the watch list locally, then tells the backend and refreshes; offline, the next sync sends it. */
+    suspend fun saveWatchlist(assets: List<AssetSettings>) {
+        store.setWatchlist(assets)
+        sync()
+    }
+
+    suspend fun saveAlarms(alarms: List<Alarm>) {
+        store.setAlarms(alarms)
+        sync()
+    }
+
+    /** Best effort: registration and a fresh snapshot. Returns false when the backend could not be reached. */
+    suspend fun sync(): Boolean =
+        runCatching {
+            registerDevice()
+            refresh()
+        }.isSuccess
 }

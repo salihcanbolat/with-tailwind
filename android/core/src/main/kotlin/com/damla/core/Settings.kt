@@ -52,6 +52,10 @@ enum class PulseMode(
     OFF(null),
 }
 
+/** "Tema" (design/Ayarlar.dc.html). Only the dark screens are designed yet (docs/07). */
+@Serializable
+enum class ThemeMode { DARK, LIGHT, SYSTEM }
+
 /** App-wide settings (docs/07, Ayarlar). */
 @Serializable
 data class AppSettings(
@@ -59,4 +63,19 @@ data class AppSettings(
     val grayWhenClosed: Boolean = true,
     val pulse: PulseMode = PulseMode.NORMAL,
     val vibration: Boolean = true,
+    val theme: ThemeMode = ThemeMode.DARK,
+    /** Intervals of drop, upper ring and lower ring for newly added assets (design: 1 sa, 1 gün, 1 hf). */
+    val newAssetIntervals: List<String> = listOf("1h", "1d", "1w"),
+)
+
+/** The interval choices of the designs ("15 dk", "1 sa", "4 sa", "1 gün", "1 hf", "1 ay"), as sent to the API. */
+val INTERVAL_CHOICES = listOf("15m", "1h", "4h", "1d", "1w", "1mo")
+
+/** An alarm that rang, kept for the "Geçmiş" tab (design/Alarmlar.dc.html). */
+@Serializable
+data class FiredAlarm(
+    val alarmId: String,
+    val assetId: String,
+    val text: String,
+    val at: String,
 )

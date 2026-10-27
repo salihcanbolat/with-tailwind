@@ -10,7 +10,10 @@ data class DeviceSettings(
     val alarms: List<Alarm> = emptyList(),
 )
 
-/** One watched target. Missing intervals and thresholds fall back to the defaults. */
+/**
+ * One watched target. Missing intervals and thresholds fall back to the defaults. [name] is the user's own
+ * name for a cross rate (design/CaprazKur.dc.html, "Ad"); only the apps use it.
+ */
 @Serializable
 data class AssetSettings(
     val id: String,
@@ -19,4 +22,5 @@ data class AssetSettings(
     val lowerRing: String? = null,
     val stable: Double? = null,
     val wave: Double? = null,
+    val name: String? = null,
 )

@@ -49,6 +49,65 @@ public class AlarmText(
         return words.template("alarm_fired").format(assetName, join(shown.map { phrase(it, unit, Tense.DONE) }, alarm.joiner))
     }
 
+    /**
+     * The short line of an alarm card (design/Alarmlar.dc.html): "Damla sabitten yükselişe dönünce",
+     * "Fiyat ₺4.300’ün üzerine çıkınca", "1 gün içinde %5’ten fazla düşerse". [states] are the parts' current
+     * states, so a state condition can say where it turns from.
+     */
+    public fun card(
+        alarm: Alarm,
+        unit: String,
+        states: Map<AlarmPart, String>,
+    ): String {
+        val phrases = alarm.conditions.map { cardPhrase(it, unit, states) }
+        val joined = phrases.mapIndexed { i, phrase -> if (i == 0) phrase else phrase.take(1).lowercase(TURKISH) + phrase.drop(1) }
+        return join(joined, alarm.joiner)
+    }
+
+    /** "Durum alarmı", "Fiyat alarmı", "Yüzde alarmı", "Dalga alarmı", or "Birleşik alarm" for mixed kinds. */
+    public fun kind(alarm: Alarm): String {
+        val types = alarm.conditions.map { it.type }.toSet()
+        val key = if (types.size == 1) "alarm_kind_" + types.single().name.lowercase() else "alarm_kind_mixed"
+        return words.template(key)
+    }
+
+    private fun cardPhrase(
+        condition: Condition,
+        unit: String,
+        states: Map<AlarmPart, String>,
+    ): String {
+        val value = condition.value
+        val text = if (value == null) words.template("alarm_value_missing") else number(value)
+        val op = OPS.getValue(condition.op ?: AlarmOp.UP)
+        val period = words.template("alarm_period_" + (condition.interval ?: DEFAULT_PERIOD))
+        return when (condition.type) {
+            ConditionType.STATE -> {
+                val part = condition.part ?: AlarmPart.DROP
+                val target = condition.target ?: "UP"
+                val from = states[part]?.takeIf { it != target && it in STATES }
+                val name = words.template(CARD_PARTS.getValue(part))
+                val to = words.template("alarm_target_" + target.lowercase())
+                if (from == null) {
+                    words.template("alarm_card_state_plain").format(name, to)
+                } else {
+                    words.template("alarm_card_state").format(name, words.template("alarm_from_" + from.lowercase()), to)
+                }
+            }
+
+            ConditionType.PRICE -> {
+                words.template("alarm_card_price_$op").format(unit + text, value?.let { "’" + TurkishNumbers.genitive(text) }.orEmpty())
+            }
+
+            ConditionType.PERCENT -> {
+                words.template("alarm_card_percent_$op").format(period, text, value?.let { "’" + TurkishNumbers.ablative(text) }.orEmpty())
+            }
+
+            ConditionType.WAVE -> {
+                words.template("alarm_card_wave").format(period, text, value?.let { "’" + TurkishNumbers.ablative(text) }.orEmpty())
+            }
+        }
+    }
+
     private enum class Tense(
         val prefix: String,
     ) {
@@ -96,6 +155,14 @@ public class AlarmText(
 
     public companion object {
         private const val DEFAULT_PERIOD = "1h"
+        private val TURKISH = java.util.Locale.forLanguageTag("tr-TR")
+        private val STATES = setOf("UP", "DOWN", "FLAT", "WAVE")
+        private val CARD_PARTS =
+            mapOf(
+                AlarmPart.DROP to "alarm_card_part_drop",
+                AlarmPart.UPPER_RING to "alarm_card_part_upper_ring",
+                AlarmPart.LOWER_RING to "alarm_card_part_lower_ring",
+            )
         private val OPS = mapOf(AlarmOp.UP to "up", AlarmOp.DOWN to "down", AlarmOp.BOTH to "both")
         private val PARTS =
             mapOf(
@@ -123,6 +190,10 @@ public class AlarmText(
                     listOf("${prefix}_state", "${prefix}_wave") +
                         OPS.values.flatMap { listOf("${prefix}_price_$it", "${prefix}_percent_$it") }
                 } + PARTS.values + listOf("up", "down", "flat", "wave").map { "alarm_target_$it" } +
-                Alarm.PERIODS.map { "alarm_period_$it" } + FREQUENCY.values + VALIDITY.values
+                Alarm.PERIODS.map { "alarm_period_$it" } + FREQUENCY.values + VALIDITY.values +
+                listOf("alarm_card_state", "alarm_card_state_plain", "alarm_card_wave") + CARD_PARTS.values +
+                OPS.values.flatMap { listOf("alarm_card_price_$it", "alarm_card_percent_$it") } +
+                listOf("up", "down", "flat", "wave").map { "alarm_from_$it" } +
+                (ConditionType.entries.map { "alarm_kind_" + it.name.lowercase() } + "alarm_kind_mixed")
     }
 }

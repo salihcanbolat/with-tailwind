@@ -24,6 +24,12 @@
     <string name="interval_days">son %1$d gün</string>
     <string name="interval_weeks">son %1$d hafta</string>
     <string name="interval_months">son %1$d ay</string>
+    <!-- Kısa aralıklar: "1 sa", "1 gün", "1 hf" -->
+    <string name="interval_short_minutes">%1$d dk</string>
+    <string name="interval_short_hours">%1$d sa</string>
+    <string name="interval_short_days">%1$d gün</string>
+    <string name="interval_short_weeks">%1$d hf</string>
+    <string name="interval_short_months">%1$d ay</string>
     <!-- Detaydaki alt başlık -->
     <string name="subtitle_fx">Döviz</string>
     <string name="subtitle_metal">%1$s · %2$s</string>

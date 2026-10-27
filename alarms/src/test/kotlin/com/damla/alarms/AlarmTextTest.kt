@@ -152,4 +152,50 @@ class AlarmTextTest {
         )
         assertEquals("USD/TRY 1 gün içinde %6 düştü ve 15 dk içinde %0,5 oynadı", text.fired(falls, "USD/TRY", "₺", listOf(0, 1)))
     }
+
+    @Test
+    fun `cards say it short, from the current state`() {
+        val usd = alarm(Condition(ConditionType.STATE, AlarmPart.DROP, "UP"))
+        val silver = alarm(Condition(ConditionType.STATE, AlarmPart.LOWER_RING, "DOWN"))
+        val mixed =
+            alarm(
+                Condition(ConditionType.PRICE, op = AlarmOp.UP, value = 4300.0),
+                Condition(ConditionType.PRICE, op = AlarmOp.DOWN, value = 41.5),
+                Condition(ConditionType.PRICE, op = AlarmOp.BOTH),
+                joiner = Joiner.OR,
+            )
+        val moves =
+            alarm(
+                Condition(ConditionType.PERCENT, op = AlarmOp.DOWN, value = 5.0, interval = "1d"),
+                Condition(ConditionType.PERCENT, op = AlarmOp.UP, value = 2.0, interval = "1h"),
+                Condition(ConditionType.PERCENT, op = AlarmOp.BOTH),
+            )
+        val wave = alarm(Condition(ConditionType.WAVE, value = 3.0, interval = "1w"), Condition(ConditionType.WAVE))
+
+        assertEquals("Damla sabitten yükselişe dönünce", text.card(usd, "₺", mapOf(AlarmPart.DROP to "FLAT")))
+        assertEquals("Alt halka düşüşe dönünce", text.card(silver, "₺", mapOf(AlarmPart.LOWER_RING to "DOWN")))
+        assertEquals("Damla yükselişe dönünce", text.card(usd, "₺", mapOf(AlarmPart.DROP to "CLOSED")))
+        assertEquals("Damla yükselişe dönünce", text.card(alarm(Condition(ConditionType.STATE)), "₺", emptyMap()))
+        assertEquals(
+            "Fiyat ₺4.300’ün üzerine çıkınca ya da fiyat ₺41,5’in altına inince ya da fiyat ₺… seviyesini geçince",
+            text.card(mixed, "₺", emptyMap()),
+        )
+        assertEquals(
+            "1 gün içinde %5’ten fazla düşerse ve 1 saat içinde %2’den fazla yükselirse ve 1 saat içinde %… fazla oynarsa",
+            text.card(moves, "₺", emptyMap()),
+        )
+        assertEquals(
+            "1 hafta içinde %3’ten fazla iniş çıkış yapıp yerinde kalırsa ve 1 saat içinde %… fazla iniş çıkış yapıp yerinde kalırsa",
+            text.card(wave, "₺", emptyMap()),
+        )
+    }
+
+    @Test
+    fun `kinds name the alarm`() {
+        assertEquals("Durum alarmı", text.kind(alarm(Condition(ConditionType.STATE))))
+        assertEquals("Fiyat alarmı", text.kind(alarm(Condition(ConditionType.PRICE))))
+        assertEquals("Yüzde alarmı", text.kind(alarm(Condition(ConditionType.PERCENT))))
+        assertEquals("Dalga alarmı", text.kind(alarm(Condition(ConditionType.WAVE))))
+        assertEquals("Birleşik alarm", text.kind(alarm(Condition(ConditionType.WAVE), Condition(ConditionType.PRICE))))
+    }
 }
