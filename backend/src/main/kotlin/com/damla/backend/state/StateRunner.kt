@@ -1,8 +1,12 @@
 package com.damla.backend.state
 
+import com.damla.alarms.AlarmInput
+import com.damla.api.Alarm
+import com.damla.api.AlarmPart
 import com.damla.backend.catalog.AssetCatalog
 import com.damla.backend.catalog.AssetInfo
 import com.damla.backend.catalog.Currency
+import com.damla.backend.catalog.IntervalCodec
 import com.damla.backend.catalog.Target
 import com.damla.backend.market.MarketCalendar
 import com.damla.backend.prices.MarketData
@@ -84,6 +88,45 @@ class StateRunner(
 
     /** The latest price of a target: the asset's own price, or the composed cross rate. */
     suspend fun price(key: GroupKey): Double? = mutex.withLock { groups[key]?.price }
+
+    /**
+     * What alarms on [key]'s target see (docs/07): market status, price, the group's confirmed states, the
+     * price windows of the alarm periods and the stable threshold.
+     */
+    suspend fun alarmInput(
+        key: GroupKey,
+        now: Instant,
+    ): AlarmInput {
+        val (states, price) = mutex.withLock { groups[key]?.let { it.states to it.price } ?: (null to null) }
+        val target = key.target
+        val periods = Alarm.PERIODS.associateWith { checkNotNull(IntervalCodec.parse(it)) }
+        val windows =
+            when (target) {
+                is Target.Single -> {
+                    periods.mapNotNull { (name, interval) -> market.window(target.asset.id, interval, now)?.let { name to it } }.toMap()
+                }
+
+                is Target.Cross -> {
+                    val series = crossSeries(target, now - periods.values.maxOf { it.duration })
+                    periods.mapNotNull { (name, interval) -> priceWindow(series, interval, now)?.let { name to it } }.toMap()
+                }
+            }
+        return AlarmInput(
+            now = now,
+            marketOpen = marketComponents(target).all { calendar.isOpen(it.category, now) },
+            price = price,
+            states =
+                states?.let {
+                    mapOf(
+                        AlarmPart.DROP to it.drop.state.name,
+                        AlarmPart.UPPER_RING to it.upperRing.state.name,
+                        AlarmPart.LOWER_RING to it.lowerRing.state.name,
+                    )
+                } ?: emptyMap(),
+            windows = windows,
+            stable = key.thresholds.stable,
+        )
+    }
 
     private suspend fun save(
         keys: List<GroupKey>,

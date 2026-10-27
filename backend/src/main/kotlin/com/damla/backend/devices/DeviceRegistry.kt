@@ -1,5 +1,6 @@
 package com.damla.backend.devices
 
+import com.damla.api.Alarm
 import com.damla.api.DeviceSettings
 import com.damla.backend.state.GroupKey
 import kotlinx.coroutines.sync.Mutex
@@ -17,6 +18,7 @@ class DeviceRegistry(
         val id: String,
         val token: String?,
         val groups: Map<String, GroupKey>,
+        val alarms: List<Alarm> = emptyList(),
     )
 
     /** Loads stored devices and returns every group they follow. Stored settings are re-validated. */
@@ -25,7 +27,7 @@ class DeviceRegistry(
         return mutex.withLock {
             for ((id, settings) in loaded) {
                 val result = SettingsResolver.resolve(settings)
-                if (result is SettingsResolver.Result.Valid) devices[id] = Device(id, settings.fcmToken, result.groups)
+                if (result is SettingsResolver.Result.Valid) devices[id] = Device(id, settings.fcmToken, result.groups, settings.alarms)
             }
             devices.values.flatMap { it.groups.values }.toSet()
         }
@@ -40,12 +42,15 @@ class DeviceRegistry(
         val result = SettingsResolver.resolve(settings)
         if (result is SettingsResolver.Result.Valid) {
             store.save(id, settings, now)
-            mutex.withLock { devices[id] = Device(id, settings.fcmToken, result.groups) }
+            mutex.withLock { devices[id] = Device(id, settings.fcmToken, result.groups, settings.alarms) }
         }
         return result
     }
 
     suspend fun get(id: String): Device? = mutex.withLock { devices[id] }
+
+    /** Devices that can be told about their alarms: a push token and at least one alarm. */
+    suspend fun withAlarms(): List<Device> = mutex.withLock { devices.values.filter { it.token != null && it.alarms.isNotEmpty() } }
 
     /** Devices with a push token that follow [key]. */
     suspend fun followers(key: GroupKey): List<Device> =

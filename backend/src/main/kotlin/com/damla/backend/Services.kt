@@ -1,5 +1,6 @@
 package com.damla.backend
 
+import com.damla.backend.alarms.AlarmRunner
 import com.damla.backend.catalog.AssetCatalog
 import com.damla.backend.catalog.Target
 import com.damla.backend.config.AppConfig
@@ -67,6 +68,7 @@ class Services(
     val runner = StateRunner(GaugeEngine(), market, calendar, states)
     val devices = DeviceRegistry(deviceStore)
     val dispatcher = PushDispatcher(sender, devices)
+    val alarms = AlarmRunner(devices, runner, sender)
     val ingestion = Ingestion(sources, market, candles, clock, config.memory)
 
     /** Restores engine memory, backfills prices and starts the default and device groups. */
@@ -77,10 +79,11 @@ class Services(
         runner.register(defaults + devices.load(), clock.now())
     }
 
-    /** One step of the loop: close finished minutes, evaluate every group, push the events. */
+    /** One step of the loop: close finished minutes, evaluate every group, push the events, check alarms. */
     suspend fun tick(now: Instant) {
         ingestion.persist(market.closeDue(now))
         for ((key, events) in runner.evaluateAll(now)) dispatcher.dispatch(key, events)
+        alarms.evaluateAll(now)
     }
 
     fun start(scope: CoroutineScope): Job =

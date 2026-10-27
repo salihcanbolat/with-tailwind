@@ -1,6 +1,6 @@
 package com.damla.backend.devices
 
-import com.damla.api.AssetSettings
+import com.damla.alarms.AlarmValidation
 import com.damla.api.DeviceSettings
 import com.damla.backend.catalog.IntervalCodec
 import com.damla.backend.catalog.Target
@@ -11,6 +11,7 @@ import com.damla.engine.Thresholds
 /** Turns settings into engine groups, or explains what is wrong with them. */
 object SettingsResolver {
     const val MAX_ASSETS = 50
+    const val MAX_ALARMS = 50
     private val deviceIdPattern = Regex("^[A-Za-z0-9_-]{8,64}$")
 
     fun isValidDeviceId(id: String): Boolean = deviceIdPattern.matches(id)
@@ -57,7 +58,29 @@ object SettingsResolver {
                 groups[target.id] = GroupKey(target, drop, upper, lower, thresholds)
             }
         }
+        alarms(settings, groups.keys, errors)
         return if (errors.isEmpty()) Result.Valid(groups) else Result.Invalid(errors)
+    }
+
+    /** Alarms must be complete (docs/07) and watch an asset of the device's list, whose settings they use. */
+    private fun alarms(
+        settings: DeviceSettings,
+        watched: Set<String>,
+        errors: MutableList<String>,
+    ) {
+        if (settings.alarms.size > MAX_ALARMS) errors += "at most $MAX_ALARMS alarms"
+        if (settings.alarms
+                .map { it.id }
+                .toSet()
+                .size != settings.alarms.size
+        ) {
+            errors += "duplicate alarm ids"
+        }
+        for (alarm in settings.alarms) {
+            errors += AlarmValidation.problems(alarm)
+            val target = Target.parse(alarm.assetId)?.id
+            if (target == null || target !in watched) errors += "${alarm.id}: asset ${alarm.assetId} is not in the watch list"
+        }
     }
 
     private fun interval(

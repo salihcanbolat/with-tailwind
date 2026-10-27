@@ -59,4 +59,46 @@
     <string name="share_close">Kapat</string>
     <string name="share_send">Paylaş</string>
     <string name="share_chooser">Damla\'yı paylaş</string>
+
+    <!-- Alarm cümleleri (docs/07). Sayı ekleri (’ün, ’ten…) koddaki Türkçe kurallarla eklenir.
+         Özet: "Gram altın fiyatı ₺4.300’ün üzerine çıktığında haber vereceğim. Her seferinde çalar, süresiz." -->
+    <string name="alarm_summary">%1$s %2$s haber vereceğim. %3$s, %4$s.</string>
+    <!-- Bildirim: "Gram altın fiyatı ₺4.300’ün üzerine çıktı" -->
+    <string name="alarm_fired">%1$s %2$s</string>
+    <string name="alarm_and">ve</string>
+    <string name="alarm_or">ya da</string>
+    <string name="alarm_value_missing">…</string>
+    <string name="alarm_cond_state">%1$s %2$s döndüğünde</string>
+    <string name="alarm_fired_state">%1$s %2$s döndü</string>
+    <string name="alarm_part_drop">damlası</string>
+    <string name="alarm_part_upper_ring">üst halkası</string>
+    <string name="alarm_part_lower_ring">alt halkası</string>
+    <string name="alarm_target_up">yükselişe</string>
+    <string name="alarm_target_down">düşüşe</string>
+    <string name="alarm_target_flat">sabite</string>
+    <string name="alarm_target_wave">dalgalıya</string>
+    <string name="alarm_cond_price_up">fiyatı %1$s%2$s üzerine çıktığında</string>
+    <string name="alarm_cond_price_down">fiyatı %1$s%2$s altına indiğinde</string>
+    <string name="alarm_cond_price_both">fiyatı %1$s seviyesini geçtiğinde</string>
+    <string name="alarm_fired_price_up">fiyatı %1$s%2$s üzerine çıktı</string>
+    <string name="alarm_fired_price_down">fiyatı %1$s%2$s altına indi</string>
+    <string name="alarm_fired_price_both">fiyatı %1$s seviyesini geçti</string>
+    <string name="alarm_cond_percent_up">%1$s içinde %%%2$s yükseldiğinde</string>
+    <string name="alarm_cond_percent_down">%1$s içinde %%%2$s düştüğünde</string>
+    <string name="alarm_cond_percent_both">%1$s içinde %%%2$s oynadığında</string>
+    <string name="alarm_fired_percent_up">%1$s içinde %%%2$s yükseldi</string>
+    <string name="alarm_fired_percent_down">%1$s içinde %%%2$s düştü</string>
+    <string name="alarm_fired_percent_both">%1$s içinde %%%2$s oynadı</string>
+    <string name="alarm_cond_wave">%1$s içinde %%%2$s%3$s fazla iniş çıkış yapıp yerinde kaldığında</string>
+    <string name="alarm_fired_wave">%1$s içinde %%%2$s%3$s fazla iniş çıkış yapıp yerinde kaldı</string>
+    <string name="alarm_period_15m">15 dk</string>
+    <string name="alarm_period_1h">1 saat</string>
+    <string name="alarm_period_1d">1 gün</string>
+    <string name="alarm_period_1w">1 hafta</string>
+    <string name="alarm_frequency_once">Bir kez çalar</string>
+    <string name="alarm_frequency_every_time">Her seferinde çalar</string>
+    <string name="alarm_frequency_hourly">Saatte en fazla bir kez çalar</string>
+    <string name="alarm_validity_day">1 gün geçerli</string>
+    <string name="alarm_validity_week">1 hafta geçerli</string>
+    <string name="alarm_validity_forever">süresiz</string>
 </resources>

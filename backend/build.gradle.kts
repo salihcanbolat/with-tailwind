@@ -11,6 +11,7 @@ application {
 dependencies {
     implementation(project(":engine"))
     implementation(project(":api-model"))
+    implementation(project(":alarms"))
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.content.negotiation)

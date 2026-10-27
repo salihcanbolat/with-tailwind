@@ -2,11 +2,12 @@ package com.damla.api
 
 import kotlinx.serialization.Serializable
 
-/** Body of `PUT /v1/devices/{id}` (docs/03). Alarms join in phase 5. */
+/** Body of `PUT /v1/devices/{id}` (docs/03): the push token, the watch list and the alarms. */
 @Serializable
 data class DeviceSettings(
     val fcmToken: String? = null,
     val assets: List<AssetSettings> = emptyList(),
+    val alarms: List<Alarm> = emptyList(),
 )
 
 /** One watched target. Missing intervals and thresholds fall back to the defaults. */
