@@ -2,15 +2,6 @@
 <resources>
     <string name="app_name">Damla</string>
 
-    <!-- Durum kelimeleri (docs/01, docs/kararlar.md) -->
-    <string name="state_up">Yükselişte</string>
-    <string name="state_down">Düşüşte</string>
-    <string name="state_flat">Sabit</string>
-    <string name="state_wave">Dalgalı</string>
-    <string name="state_closed">Piyasa kapalı</string>
-    <!-- Gösterge içerik açıklaması: "Altın, yükselişte" -->
-    <string name="gauge_description">%1$s, %2$s</string>
-
     <!-- Gösterge önizleme ekranı (docs/09, Faz 3) -->
     <string name="preview_title">Damla önizleme</string>
     <string name="preview_drop">Damla</string>

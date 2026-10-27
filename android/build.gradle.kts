@@ -5,4 +5,5 @@ plugins {
     // and the Compose compiler plugin use the same Kotlin version as the root build.
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }

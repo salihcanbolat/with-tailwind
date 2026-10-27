@@ -28,6 +28,8 @@ android {
 }
 
 dependencies {
-    implementation("com.damla:engine")
+    implementation(project(":core"))
+    implementation(project(":gauge"))
     implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.work.runtime)
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Labels on the wallpaper (Kutusuz): white with a soft shadow, which Glance text cannot draw.
+     design/Prototip.dc.html: 12px, weight 400, text-shadow 0 1px 3px rgba(0,0,0,0.55). -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/label"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:maxLines="1"
+    android:shadowColor="#8C000000"
+    android:shadowDy="1"
+    android:shadowRadius="3"
+    android:textColor="#FFFFFF"
+    android:textSize="12sp" />

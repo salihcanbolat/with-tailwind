@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Damla</string>
+    <string name="widget_description">Varlıklarının yönü tek bakışta</string>
+    <!-- Mini widget'ın tek etiketi -->
+    <string name="widget_mini_label">Damla</string>
+    <!-- Erişilebilirlik: "Damla: USD sabit, Altın yükselişte, Bitcoin düşüşte" -->
+    <string name="widget_accessibility">Damla: %1$s</string>
+    <string name="widget_accessibility_item">%1$s %2$s</string>
+    <string name="widget_accessibility_separator">, </string>
+    <!-- Veri gelmeden önce -->
+    <string name="widget_waiting">Veri bekleniyor</string>
+</resources>

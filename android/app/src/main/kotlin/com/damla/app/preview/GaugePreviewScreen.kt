@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.damla.app.R
 import com.damla.app.ui.DamlaColors
-import com.damla.app.ui.stateWord
+import com.damla.core.stateWord
 import com.damla.gauge.BadgeKind
 import com.damla.gauge.GaugeVisual
 import com.damla.gauge.Logo
@@ -45,6 +45,7 @@ import com.damla.gauge.Shape
 import com.damla.gauge.android.Damla
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+import com.damla.core.R as CoreR
 
 /** One logo choice of the preview. */
 private data class LogoChoice(
@@ -96,7 +97,7 @@ fun GaugePreviewScreen() {
     }
 
     val visual = GaugeVisual(shape, upper, lower, closed, turns)
-    val description = stringResource(R.string.gauge_description, stringResource(logo.name), stringResource(stateWord(shape, closed)))
+    val description = stringResource(CoreR.string.gauge_description, stringResource(logo.name), stringResource(stateWord(shape, closed)))
 
     Column(
         modifier =
@@ -138,10 +139,10 @@ fun GaugePreviewScreen() {
         Label(stringResource(R.string.preview_all_states))
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             for (each in shapes) {
-                val word = stringResource(R.string.gauge_description, stringResource(logo.name), stringResource(stateWord(each, false)))
+                val word = stringResource(CoreR.string.gauge_description, stringResource(logo.name), stringResource(stateWord(each, false)))
                 Damla(GaugeVisual(each, each, each), 64.dp, logo.logo, word)
             }
-            val word = stringResource(R.string.gauge_description, stringResource(logo.name), stringResource(R.string.state_closed))
+            val word = stringResource(CoreR.string.gauge_description, stringResource(logo.name), stringResource(CoreR.string.state_closed))
             Damla(GaugeVisual(Shape.UP, Shape.UP, Shape.UP, closed = true), 64.dp, logo.logo, word)
         }
     }

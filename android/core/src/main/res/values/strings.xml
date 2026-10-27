@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Durum kelimeleri (docs/01, docs/kararlar.md) -->
+    <string name="state_up">Yükselişte</string>
+    <string name="state_down">Düşüşte</string>
+    <string name="state_flat">Sabit</string>
+    <string name="state_wave">Dalgalı</string>
+    <string name="state_closed">Piyasa kapalı</string>
+    <!-- Cümle içinde küçük harfle -->
+    <string name="state_up_lower">yükselişte</string>
+    <string name="state_down_lower">düşüşte</string>
+    <string name="state_flat_lower">sabit</string>
+    <string name="state_wave_lower">dalgalı</string>
+    <string name="state_closed_lower">piyasa kapalı</string>
+    <!-- Gösterge içerik açıklaması: "Altın, yükselişte" -->
+    <string name="gauge_description">%1$s, %2$s</string>
+</resources>
