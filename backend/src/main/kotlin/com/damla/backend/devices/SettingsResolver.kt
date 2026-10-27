@@ -1,29 +1,12 @@
 package com.damla.backend.devices
 
+import com.damla.api.AssetSettings
+import com.damla.api.DeviceSettings
 import com.damla.backend.catalog.IntervalCodec
 import com.damla.backend.catalog.Target
 import com.damla.backend.state.GroupKey
 import com.damla.engine.Interval
 import com.damla.engine.Thresholds
-import kotlinx.serialization.Serializable
-
-/** Body of `PUT /v1/devices/{id}` (docs/03). Alarms join in phase 5. */
-@Serializable
-data class DeviceSettings(
-    val fcmToken: String? = null,
-    val assets: List<AssetSettings> = emptyList(),
-)
-
-/** One watched target. Missing intervals and thresholds fall back to the defaults. */
-@Serializable
-data class AssetSettings(
-    val id: String,
-    val drop: String? = null,
-    val upperRing: String? = null,
-    val lowerRing: String? = null,
-    val stable: Double? = null,
-    val wave: Double? = null,
-)
 
 /** Turns settings into engine groups, or explains what is wrong with them. */
 object SettingsResolver {

@@ -174,9 +174,7 @@ public object GaugePainter {
         canvas.save()
         canvas.translate(frame.logoX, frame.logoY)
         when (logo) {
-            null -> {
-                Unit
-            }
+            null -> {}
 
             is Logo.Text -> {
                 val size = layout.logoFontPx(logo.text) / layout.unit

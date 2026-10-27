@@ -1,5 +1,6 @@
 package com.damla.backend.devices
 
+import com.damla.api.DeviceSettings
 import com.damla.backend.store.Database
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

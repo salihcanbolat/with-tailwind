@@ -1,10 +1,14 @@
 package com.damla.backend
 
-import com.damla.backend.api.AssetsResponse
-import com.damla.backend.api.ErrorResponse
-import com.damla.backend.api.HistoryResponse
-import com.damla.backend.api.SnapshotResponse
+import com.damla.api.AssetsResponse
+import com.damla.api.ErrorResponse
+import com.damla.api.HistoryResponse
+import com.damla.api.PriceEvent
+import com.damla.api.SnapshotResponse
+import com.damla.backend.api.priceEvents
+import com.damla.backend.catalog.Target
 import com.damla.backend.prices.PriceUpdate
+import com.damla.backend.state.GroupKey
 import com.damla.engine.Candle
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -17,6 +21,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -199,6 +208,30 @@ class ApiTest {
             assertEquals("state_change", message.data["type"])
             assertEquals("drop", message.data["part"])
             assertEquals("UP", message.data["to"])
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `the stream sends a price event whenever the price moves`() =
+        runTest {
+            seed("usdtry", 100.0)
+            val key = GroupKey.default(Target.parse("usdtry")!!)
+            services.runner.register(listOf(key), WEDNESDAY_NOON)
+            val events = mutableListOf<PriceEvent>()
+            val collector = launch { priceEvents(services.runner, clock, listOf(key), 1.seconds).collect { events += it } }
+            runCurrent()
+
+            advanceTimeBy(1_001)
+            runCurrent()
+            services.market.accept(PriceUpdate.Tick("usdtry", "test", 100.5, WEDNESDAY_NOON), WEDNESDAY_NOON)
+            services.tick(WEDNESDAY_NOON + 1.seconds)
+            advanceTimeBy(1_001)
+            runCurrent()
+            collector.cancel()
+
+            assertEquals(listOf(100.0, 100.5), events.map { it.price })
+            assertEquals(listOf(0, 1), events.map { it.direction })
+            assertEquals("usdtry", events.first().asset)
         }
 
     @Test

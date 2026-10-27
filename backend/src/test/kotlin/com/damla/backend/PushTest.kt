@@ -1,9 +1,9 @@
 package com.damla.backend
 
+import com.damla.api.AssetSettings
+import com.damla.api.DeviceSettings
 import com.damla.backend.catalog.Target
-import com.damla.backend.devices.AssetSettings
 import com.damla.backend.devices.DeviceRegistry
-import com.damla.backend.devices.DeviceSettings
 import com.damla.backend.devices.InMemoryDeviceStore
 import com.damla.backend.push.FcmSender
 import com.damla.backend.push.PushDispatcher

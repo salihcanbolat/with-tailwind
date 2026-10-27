@@ -1,4 +1,4 @@
-package com.damla.backend.api
+package com.damla.api
 
 import kotlinx.serialization.Serializable
 
@@ -76,4 +76,17 @@ data class HistoryPoint(
 @Serializable
 data class ErrorResponse(
     val errors: List<String>,
+)
+
+/**
+ * One event of `GET /v1/stream` (server-sent events, event name `price`): the latest price of a target
+ * and whether it went up (1), down (-1) or stayed (0) since the previous event. Drives the pulse while
+ * the overlay is open (docs/06, "Nabız").
+ */
+@Serializable
+data class PriceEvent(
+    val asset: String,
+    val price: Double,
+    val direction: Int,
+    val at: String,
 )

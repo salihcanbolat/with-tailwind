@@ -1,5 +1,6 @@
 package com.damla.backend.devices
 
+import com.damla.api.DeviceSettings
 import com.damla.backend.state.GroupKey
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

@@ -1,6 +1,6 @@
 package com.damla.backend
 
-import com.damla.backend.api.ErrorResponse
+import com.damla.api.ErrorResponse
 import com.damla.backend.api.api
 import com.damla.backend.config.AppConfig
 import io.ktor.http.HttpStatusCode
@@ -17,6 +17,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import io.ktor.server.sse.SSE
 import kotlinx.serialization.json.Json
 
 fun main() {
@@ -33,6 +34,7 @@ fun Application.damla(services: Services) {
     install(ContentNegotiation) {
         json(Json { ignoreUnknownKeys = true })
     }
+    install(SSE)
     install(StatusPages) {
         exception<BadRequestException> { call, cause ->
             val message = generateSequence<Throwable>(cause) { it.cause }.last().message ?: "bad request"

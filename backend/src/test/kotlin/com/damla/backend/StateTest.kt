@@ -1,8 +1,8 @@
 package com.damla.backend
 
+import com.damla.api.AssetSettings
+import com.damla.api.DeviceSettings
 import com.damla.backend.catalog.Target
-import com.damla.backend.devices.AssetSettings
-import com.damla.backend.devices.DeviceSettings
 import com.damla.backend.devices.SettingsResolver
 import com.damla.backend.state.GroupKey
 import com.damla.backend.state.MemoryCodec

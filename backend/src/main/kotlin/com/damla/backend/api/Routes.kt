@@ -1,12 +1,20 @@
 package com.damla.backend.api
 
+import com.damla.api.AssetSnapshot
+import com.damla.api.AssetsResponse
+import com.damla.api.CatalogEntry
+import com.damla.api.DeviceSettings
+import com.damla.api.ErrorResponse
+import com.damla.api.HistoryPoint
+import com.damla.api.HistoryResponse
+import com.damla.api.PartSnapshot
+import com.damla.api.SnapshotResponse
 import com.damla.backend.Services
 import com.damla.backend.catalog.AssetCatalog
 import com.damla.backend.catalog.AssetInfo
 import com.damla.backend.catalog.Currency
 import com.damla.backend.catalog.IntervalCodec
 import com.damla.backend.catalog.Target
-import com.damla.backend.devices.DeviceSettings
 import com.damla.backend.devices.SettingsResolver
 import com.damla.backend.state.GroupKey
 import com.damla.backend.state.StateRunner
@@ -18,11 +26,16 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
+import io.ktor.server.sse.sse
+import io.ktor.sse.ServerSentEvent
+import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 private const val MAX_SNAPSHOT_ASSETS = 50
 private const val DEFAULT_POINTS = 24
+private val STREAM_CHECK_EVERY = 1.seconds
 private val historyRanges = mapOf("1d" to 1.days, "1w" to 7.days, "1mo" to 30.days, "1y" to 365.days)
 
 /** The v1 API of docs/03. */
@@ -66,6 +79,15 @@ fun Route.api(services: Services) {
                 points = series.map { (time, price) -> HistoryPoint(time.toString(), price) },
             ),
         )
+    }
+
+    // Live prices while the overlay is open (docs/06); the connection ends when the client leaves.
+    sse("/v1/stream") {
+        val keys = list(call.parameters["assets"]).mapNotNull(Target::parse).take(MAX_SNAPSHOT_ASSETS).map { GroupKey.default(it) }
+        services.runner.register(keys, services.clock.now())
+        priceEvents(services.runner, services.clock, keys, STREAM_CHECK_EVERY).collect { event ->
+            send(ServerSentEvent(data = Json.encodeToString(event), event = "price"))
+        }
     }
 
     put("/v1/devices/{id}") {
