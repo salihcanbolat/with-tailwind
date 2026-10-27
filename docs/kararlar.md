@@ -60,6 +60,30 @@ Paket kökü `com.damla`, applicationId `com.damla.app`. Mağazaya çıkmadan de
 7. **Kayan nokta:** Eşik karşılaştırmalarında 1e-9 tolerans kullanılır. Örneğin p0 = 100, p1 = 100,1 için net = 0,0999999… çıkar ve tolerans olmadan 0,10'u geçemez.
 8. **Çapraz kur:** Pay ÷ payda, 1 dk mum kapanışlarının oranından hesaplanır; hi/lo bu oran serisinden alınır. Biri kapalıysa CLOSED. Kategori payın kategorisidir. Para birimi normalizasyonu (ör. Bitcoin/Altın) backend işidir, Faz 2'de kesinleşir.
 
+Uygulama sırasında netleşenler (Faz 1):
+
+9. **Pencere hesabı:**
+   - p0, pencere başlangıcında ya da ondan önce biten son 1 dk mumun kapanışıdır.
+   - hi/lo, p0'ı ve pencereyle örtüşen mumları kapsar.
+   - Pencere başlangıcından önce mum yoksa pencere oluşmaz ("yetersiz veri").
+   - Pencerede hiç işlem yoksa p1 = p0 olur; sonuç FLAT çıkar, tazelik katmanı soluklaştırır.
+10. **Çapraz kur ayrıntısı:** Bir dakikada mumu olmayan tarafın son kapanışı ileri taşınır. İki tarafın da fiyatı oluşmadan önceki dakikalar atlanır. Aynı varlık iki tarafa seçilirse `CrossPair` hata verir.
+11. **"1 ay":** 30 günlük kayan pencere (43.200 dk).
+12. **Eşik doğrulaması:** s > 0 ve d > s zorunlu; ikisi de sonlu sayı olmalı. h (0, 1] aralığında, bekleme süreleri negatif olamaz.
+13. **İlk değerlendirme:** Durum bekleme süresi beklemeden atanır ve olay üretilmez. Üç parçanın da en az bir kez verisi olana kadar `AssetStates` yoktur (null).
+14. **Açılış:**
+    - Durum anında gösterilir.
+    - Önce `MarketOpened`, ardından şekli kapanış öncesinden farklı olan her parça için durum olayı üretilir.
+    - Kapanış anında bekleyen aday düşer.
+    - Açılışta veri yoksa korunan şekil geri gelir.
+15. **`since`:** Bekleme sonrası onaylanan durumda, adayın ilk görüldüğü andır. Kapanışta kapanış anı, açılışta açılış anıdır.
+16. **Olaylar:**
+    - Her olayda onaylandığı an (`at`) bulunur; push yükündeki `at` buradan gelir.
+    - Sıralama: piyasa olayı, damla, üst halka, alt halka.
+    - Durum aynı kaldıkça olay üretilmez; net/range değerleri yine güncellenir.
+17. **Saflık:** `GaugeEngine` durum tutmaz. Önceki `AssetMemory` girdi olarak verilir, yenisi çıktı olarak döner; backend onu olduğu gibi saklar.
+18. **"Piyasa kapalıyken gri göster" kapalıysa:** Motor yine CLOSED üretir. Arayüz rengi `shapeState`'ten alır ve açıklamaya "piyasa kapalı" ekler.
+
 ## Tasarım–belge çelişkilerinde uygulanacaklar
 Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ilerle" onayıyla uygulanıyor (2026-10-27):
 

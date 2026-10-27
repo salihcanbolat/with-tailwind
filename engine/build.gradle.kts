@@ -1,3 +1,4 @@
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -28,4 +29,15 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+kover {
+    reports {
+        verify {
+            rule {
+                minBound(100, CoverageUnit.BRANCH)
+                minBound(100, CoverageUnit.LINE)
+            }
+        }
+    }
 }
