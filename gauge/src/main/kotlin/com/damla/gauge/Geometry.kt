@@ -81,6 +81,8 @@ public object Geometry {
 /** Pixel sizes that the design rounds or clamps (design/Gosterge.dc.html). */
 public data class GaugeLayout(
     val sizePx: Double,
+    /** The prototype's `kucuk`: the simple badge symbol even when there is room for the full badge. */
+    val forceSmallBadge: Boolean = false,
 ) {
     public val unit: Double get() = sizePx / Geometry.WIDTH
 
@@ -91,7 +93,7 @@ public data class GaugeLayout(
     public val badgePx: Int get() = maxOf(3, (sizePx * 0.4).roundToInt())
 
     /** Below 14 px the badge switches to its simple symbol (docs/01). */
-    public val smallBadge: Boolean get() = badgePx < 14
+    public val smallBadge: Boolean get() = forceSmallBadge || badgePx < 14
 
     /** White ring around the badge. */
     public val badgeRingPx: Double get() = maxOf(0.6, sizePx * 0.014)

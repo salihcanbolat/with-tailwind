@@ -30,4 +30,33 @@
     <string name="logo_eth">Ethereum</string>
     <string name="logo_gbp">Sterlin</string>
     <string name="logo_try">Türk lirası</string>
+
+    <!-- Kaplama (docs/06) -->
+    <string name="overlay_back">Bir adım geri</string>
+    <string name="overlay_collapse">Widget\'a küçült</string>
+    <string name="overlay_edit_folder">Klasörü düzenle</string>
+    <string name="overlay_folder_title">Damla</string>
+    <string name="overlay_mini_label">Damla</string>
+    <!-- Detay sahnesi: "Damla · son 15 dk" -->
+    <string name="part_drop_label">Damla · %1$s</string>
+    <string name="part_upper_label">Üst halka · %1$s</string>
+    <string name="part_lower_label">Alt halka · %1$s</string>
+    <!-- "+%0,12 · son 15 dk" ve paylaşım kartında "Yükselişte · son 15 dk" -->
+    <string name="detail_change">%1$s · %2$s</string>
+    <string name="detail_chart">Fiyat grafiği, sürükleyerek incele</string>
+    <!-- Grafikte parmağın altındaki nokta: "Pzt 14:00 · ₺4.215,30" -->
+    <string name="detail_scrub">%1$s · %2$s</string>
+    <string name="detail_alarm">Alarm kur</string>
+    <string name="detail_open">Uygulamada aç</string>
+    <string name="detail_share">Paylaş</string>
+    <string name="range_day">1 gün</string>
+    <string name="range_week">1 hafta</string>
+    <string name="range_month">1 ay</string>
+    <string name="range_year">1 yıl</string>
+    <!-- Paylaşım kartı -->
+    <string name="share_dialog">Paylaşım kartı</string>
+    <string name="share_dismiss">Paylaşımı kapat</string>
+    <string name="share_close">Kapat</string>
+    <string name="share_send">Paylaş</string>
+    <string name="share_chooser">Damla\'yı paylaş</string>
 </resources>

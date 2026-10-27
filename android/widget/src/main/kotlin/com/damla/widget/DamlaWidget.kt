@@ -25,10 +25,11 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
@@ -46,10 +47,14 @@ import com.damla.core.WidgetConfig
 import com.damla.core.WidgetSize
 import com.damla.core.WidgetStyle
 import com.damla.core.closed
+import com.damla.core.labelBadge
 import com.damla.core.logo
 import com.damla.core.shape
+import com.damla.core.shownAssets
 import com.damla.core.stateWordLower
 import com.damla.core.visual
+import com.damla.gauge.Geometry
+import com.damla.gauge.WidgetArrangement
 import com.damla.gauge.android.GaugeBitmaps
 import kotlinx.coroutines.flow.first
 import kotlin.math.roundToInt
@@ -75,26 +80,13 @@ class DamlaWidget : GlanceAppWidget() {
 
     companion object {
         val ONE_CELL = DpSize(60.dp, 60.dp)
-        val TWO_CELLS = DpSize(130.dp, 60.dp)
-        val THREE_CELLS = DpSize(200.dp, 60.dp)
+        val TWO_CELLS = DpSize(WidgetArrangement.TWO_CELLS_WIDTH.toFloat().dp, 60.dp)
+        val THREE_CELLS = DpSize(WidgetArrangement.THREE_CELLS_WIDTH.toFloat().dp, 60.dp)
 
         /** The overlay lives in the app module; it reads this extra to find the widget's settings. */
         const val OVERLAY_ACTIVITY = "com.damla.app.overlay.OverlayActivity"
         const val EXTRA_WIDGET_ID = "com.damla.widget.WIDGET_ID"
     }
-}
-
-/** Sizes from design/Prototip.dc.html, in dp. */
-private object Sizes {
-    const val MINI_THREE = 26
-    const val MINI_TWO = 32
-    const val BARE = 46
-    const val BOXED = 38
-    const val BOXED_SINGLE = 42
-
-    /** Centre distance of the small drops in a one-cell widget; they overlap slightly. */
-    const val MINI_THREE_STEP = 20
-    const val MINI_TWO_STEP = 26
 }
 
 @Composable
@@ -105,89 +97,101 @@ private fun WidgetContent(
     settings: AppSettings,
 ) {
     val context = LocalContext.current
-    val byId = snapshot?.assets.orEmpty().associateBy { it.id }
-    val assets = config.inWidget.mapNotNull(byId::get)
-    val oneCell = LocalSize.current.width < DamlaWidget.TWO_CELLS.width
+    val assets = snapshot.shownAssets(config.inWidget, settings)
     val bare = config.style == WidgetStyle.BARE
     val open =
         Intent()
             .setClassName(context.packageName, DamlaWidget.OVERLAY_ACTIVITY)
             .putExtra(DamlaWidget.EXTRA_WIDGET_ID, widgetId)
+    val arrangement =
+        WidgetArrangement.of(
+            LocalSize.current.width.value
+                .toDouble(),
+            bare,
+            single = config.size == WidgetSize.SINGLE,
+            available = assets.size,
+        )
+    val shown = assets.take(arrangement.drops)
     val root =
         GlanceModifier
             .fillMaxSize()
             .clickable(actionStartActivity(open))
-            .semantics { contentDescription = description(context, assets, settings) }
-            .let { if (bare) it else it.background(Color.White).cornerRadius(if (config.size == WidgetSize.SINGLE) 20.dp else 22.dp) }
+            .semantics { contentDescription = description(context, shown, settings) }
+            .let { if (bare) it else it.background(Color.White).cornerRadius(BOX_RADIUS.dp) }
     Box(root, contentAlignment = Alignment.Center) {
-        when {
-            assets.isEmpty() -> Label(context.getString(R.string.widget_waiting), bare)
-            oneCell && config.size != WidgetSize.SINGLE -> Mini(assets, settings, bare)
-            oneCell -> Single(assets.first(), settings, bare)
-            else -> Wide(assets, settings, bare)
+        if (shown.isEmpty()) {
+            Label(context.getString(R.string.widget_waiting), bare)
+        } else {
+            Block(arrangement, shown, settings)
         }
     }
 }
 
+/**
+ * The prototype's fixed block of drops and labels ([WidgetArrangement]), centred in the widget. It has
+ * [BLOCK_PADDING] above and below so the drops' shadows fit; the overlay computes the same positions.
+ */
 @Composable
-private fun Mini(
+private fun Block(
+    arrangement: WidgetArrangement,
     assets: List<AssetSnapshot>,
     settings: AppSettings,
-    bare: Boolean,
 ) {
-    val shown = assets.take(3)
-    val size = if (shown.size == 2) Sizes.MINI_TWO else Sizes.MINI_THREE
-    val step = if (shown.size == 2) Sizes.MINI_TWO_STEP else Sizes.MINI_THREE_STEP
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        if (!bare) Label(LocalContext.current.getString(R.string.widget_mini_label), bare = false)
-        Box(contentAlignment = Alignment.Center) {
-            shown.forEachIndexed { index, asset ->
-                // Glance cannot overlap rows, so each drop is offset inside a centred box by padding twice the shift.
-                val shift = ((index - (shown.size - 1) / 2.0) * step).toFloat()
-                val modifier =
-                    if (shift >=
-                        0
-                    ) {
-                        GlanceModifier.padding(start = (2 * shift).dp)
-                    } else {
-                        GlanceModifier.padding(end = (-2 * shift).dp)
+    val context = LocalContext.current
+    val density = context.resources.displayMetrics.density
+    val bare = arrangement.bare
+    val size = arrangement.dropSize
+    val heightDp = size * Geometry.HEIGHT / Geometry.WIDTH
+    val margin = if (bare) GaugeBitmaps.shadowMarginPx(density) / density else 0f
+    val dropTop = (BLOCK_PADDING + arrangement.dropCentreY - heightDp / 2 - margin).toFloat()
+    val labelTop = (BLOCK_PADDING + arrangement.labelTop).toFloat()
+    Box(GlanceModifier.fillMaxWidth().height((arrangement.blockHeight + 2 * BLOCK_PADDING).toFloat().dp)) {
+        Columns(arrangement, GlanceModifier.padding(top = labelTop.dp)) { k ->
+            when {
+                arrangement.kind == WidgetArrangement.Kind.MINI -> Label(context.getString(R.string.widget_mini_label), bare)
+                bare -> Label(assets[k].short, bare = true)
+                else -> BoxedLabel(assets[k])
+            }
+        }
+        Columns(arrangement, GlanceModifier.padding(top = dropTop.dp)) { k ->
+            if (arrangement.kind == WidgetArrangement.Kind.MINI) {
+                Box(contentAlignment = Alignment.TopCenter) {
+                    assets.forEachIndexed { index, asset ->
+                        // Glance cannot overlap rows, so each drop is offset inside a centred box by padding twice the shift.
+                        val shift = ((index - (assets.size - 1) / 2.0) * arrangement.miniStep).toFloat()
+                        val modifier =
+                            if (shift >=
+                                0
+                            ) {
+                                GlanceModifier.padding(start = (2 * shift).dp)
+                            } else {
+                                GlanceModifier.padding(end = (-2 * shift).dp)
+                            }
+                        Drop(asset, settings, size.toFloat(), bare, modifier)
                     }
-                Drop(asset, settings, size, bare, modifier)
+                }
+            } else if (k < assets.size) {
+                Drop(assets[k], settings, size.toFloat(), bare)
             }
         }
-        if (bare) Label(LocalContext.current.getString(R.string.widget_mini_label), bare = true)
     }
 }
 
+/** One centred slot for mini and single widgets, equal columns for wide ones. */
 @Composable
-private fun Single(
-    asset: AssetSnapshot,
-    settings: AppSettings,
-    bare: Boolean,
+private fun Columns(
+    arrangement: WidgetArrangement,
+    modifier: GlanceModifier,
+    content: @Composable (Int) -> Unit,
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        if (!bare) BoxedLabel(asset)
-        Drop(asset, settings, if (bare) Sizes.BARE else Sizes.BOXED_SINGLE, bare)
-        if (bare) Label(asset.short, bare = true)
-    }
-}
-
-@Composable
-private fun Wide(
-    assets: List<AssetSnapshot>,
-    settings: AppSettings,
-    bare: Boolean,
-) {
-    val columns = if (LocalSize.current.width < DamlaWidget.THREE_CELLS.width) 2 else 3
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        assets.take(columns).forEachIndexed { index, asset ->
-            if (index > 0) Spacer(GlanceModifier.width(12.dp))
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (!bare) BoxedLabel(asset)
-                Drop(asset, settings, if (bare) Sizes.BARE else Sizes.BOXED, bare)
-                if (bare) Label(asset.short, bare = true)
+    if (arrangement.kind == WidgetArrangement.Kind.WIDE) {
+        Row(modifier.fillMaxWidth()) {
+            for (k in 0 until arrangement.columns) {
+                Box(GlanceModifier.defaultWeight(), contentAlignment = Alignment.TopCenter) { content(k) }
             }
         }
+    } else {
+        Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) { content(0) }
     }
 }
 
@@ -195,7 +199,7 @@ private fun Wide(
 private fun Drop(
     asset: AssetSnapshot,
     settings: AppSettings,
-    sizeDp: Int,
+    sizeDp: Float,
     bare: Boolean,
     modifier: GlanceModifier = GlanceModifier,
 ) {
@@ -239,29 +243,21 @@ private fun Label(
 /** The boxed style's label: a small coloured badge and the short name (design/Prototip.dc.html). */
 @Composable
 private fun BoxedLabel(asset: AssetSnapshot) {
-    val (background, foreground, symbol) = labelBadge(asset.badge)
+    val badge = labelBadge(asset.badge)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.padding(bottom = 2.dp)) {
         Box(
-            modifier = GlanceModifier.size(12.dp).background(background).cornerRadius(6.dp),
+            modifier = GlanceModifier.size(12.dp).background(Color(badge.background)).cornerRadius(6.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Text(symbol, style = TextStyle(color = ColorProvider(foreground), fontSize = 6.sp, fontWeight = FontWeight.Bold))
+            Text(
+                badge.symbol,
+                style = TextStyle(color = ColorProvider(Color(badge.foreground)), fontSize = 6.sp, fontWeight = FontWeight.Bold),
+            )
         }
         Spacer(GlanceModifier.width(3.dp))
         Text(asset.short, style = TextStyle(color = ColorProvider(DARK_TEXT), fontSize = 10.sp, fontWeight = FontWeight.Medium))
     }
 }
-
-/** Badge colours of the boxed widget's labels; assets the design does not show get a neutral grey. */
-private fun labelBadge(badge: String): Triple<Color, Color, String> =
-    when (badge) {
-        "au" -> Triple(Color(0xFFF2C230), Color(0xFF5A4300), "Au")
-        "usd" -> Triple(Color(0xFF2E7D4F), Color.White, "$")
-        "ag" -> Triple(Color(0xFFC7CCD3), Color(0xFF3A4048), "Ag")
-        "btc" -> Triple(Color(0xFFF7931A), Color.White, "₿")
-        "eur" -> Triple(Color(0xFF003399), Color(0xFFFFCC00), "€")
-        else -> Triple(Color(0xFFE5E5EA), DARK_TEXT, badge.take(2).uppercase())
-    }
 
 /** "Damla: USD sabit, Altın yükselişte, Bitcoin düşüşte" (docs/06). */
 private fun description(
@@ -279,3 +275,9 @@ private fun description(
 }
 
 private val DARK_TEXT = Color(0xFF1C1C1E)
+
+/** Corner radius of the white box (design/Prototip.dc.html). */
+private const val BOX_RADIUS = 22f
+
+/** Room above and below the block for the drops' shadows. */
+private const val BLOCK_PADDING = 10.0

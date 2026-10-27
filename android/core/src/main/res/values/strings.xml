@@ -14,4 +14,26 @@
     <string name="state_closed_lower">piyasa kapalı</string>
     <!-- Gösterge içerik açıklaması: "Altın, yükselişte" -->
     <string name="gauge_description">%1$s, %2$s</string>
+    <!-- Parça adları (docs/01) -->
+    <string name="part_drop">Damla</string>
+    <string name="part_upper_ring">Üst halka</string>
+    <string name="part_lower_ring">Alt halka</string>
+    <!-- Aralıklar: "son 15 dk" (docs/kararlar.md) -->
+    <string name="interval_minutes">son %1$d dk</string>
+    <string name="interval_hours">son %1$d saat</string>
+    <string name="interval_days">son %1$d gün</string>
+    <string name="interval_weeks">son %1$d hafta</string>
+    <string name="interval_months">son %1$d ay</string>
+    <!-- Detaydaki alt başlık -->
+    <string name="subtitle_fx">Döviz</string>
+    <string name="subtitle_metal">%1$s · %2$s</string>
+    <string name="subtitle_crypto">Kripto · %1$s</string>
+    <string name="subtitle_cross">Çapraz kur</string>
+    <!-- Tazelik satırı (docs/03, docs/06) -->
+    <string name="fresh_now">canlı · şimdi</string>
+    <string name="fresh_seconds">canlı · %1$d sn önce</string>
+    <string name="fresh_minutes">canlı · %1$d dk önce</string>
+    <string name="fresh_stale">veri gecikiyor</string>
+    <string name="fresh_closed">piyasa kapalı</string>
+    <string name="fresh_waiting">veri bekleniyor</string>
 </resources>

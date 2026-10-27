@@ -104,6 +104,7 @@ class GeometryTest {
         val tiny = GaugeLayout(16.0)
         assertEquals(6, tiny.badgePx)
         assertEquals(true, tiny.smallBadge)
+        assertEquals(true, GaugeLayout(120.0, forceSmallBadge = true).smallBadge)
         assertClose(0.6, tiny.badgeRingPx)
         assertClose(0.4, GaugeLayout(20.0).highlightBlurPx)
         assertEquals(3, GaugeLayout(4.0).badgePx)

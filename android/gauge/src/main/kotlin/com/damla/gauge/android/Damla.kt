@@ -28,7 +28,8 @@ import com.damla.gauge.Logo
  * Every change of [visual] plays the matching transitions and effects; a change of
  * [GaugeVisual.pulseTurns] plays the light turn and glint. [speed] scales all durations (the
  * prototype's "Hız"). With [reduceMotion] — by default the system's "remove animations" setting —
- * changes are immediate and the one-off effects do not play.
+ * changes are immediate and the one-off effects do not play. [smallBadge] forces the simple badge symbol
+ * (the prototype's `kucuk`, used for the mini widget's drops).
  */
 @Composable
 fun Damla(
@@ -39,6 +40,7 @@ fun Damla(
     modifier: Modifier = Modifier,
     speed: Double = 1.0,
     reduceMotion: Boolean = !ValueAnimator.areAnimatorsEnabled(),
+    smallBadge: Boolean = false,
 ) {
     val motion = remember(speed, reduceMotion) { GaugeMotion(visual, speed, reduceMotion) }
     var now by remember { mutableDoubleStateOf(0.0) }
@@ -56,7 +58,8 @@ fun Damla(
             .semantics { this.contentDescription = contentDescription },
     ) {
         val frame = motion.frame(now)
-        drawIntoCanvas { canvas -> GaugePainter.paint(frame, GaugeLayout(this.size.width.toDouble()), logo, ComposeGaugeCanvas(canvas)) }
+        val layout = GaugeLayout(this.size.width.toDouble(), forceSmallBadge = smallBadge)
+        drawIntoCanvas { canvas -> GaugePainter.paint(frame, layout, logo, ComposeGaugeCanvas(canvas)) }
     }
 }
 

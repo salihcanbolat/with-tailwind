@@ -36,14 +36,14 @@ public data class OverlayGeometry(
      * The glass folder (Klasör), 176 x 216: its edge on the widget's side lines up with the widget, and its
      * top with the widget's top unless that would leave the screen.
      */
-    internal val folderLeft: Double
+    public val folderLeft: Double
         get() =
             if (right) {
                 (minOf(widgetLeft + widgetWidth, rightEdge) - FOLDER_WIDTH).coerceAtLeast(leftEdge)
             } else {
                 widgetLeft.coerceIn(leftEdge, rightEdge - FOLDER_WIDTH)
             }
-    internal val folderTop: Double get() = minOf(widgetTop, bottomEdge - FOLDER_HEIGHT)
+    public val folderTop: Double get() = minOf(widgetTop, bottomEdge - FOLDER_HEIGHT)
 
     /** Drop centre of cell [i] in the 2 x 2 folder grid. */
     internal fun folderCell(i: Int): Pair<Double, Double> = folderLeft + 10 + 78 * (i % 2) + 39 to folderTop + 66 + 85 * (i / 2)
@@ -59,13 +59,13 @@ public data class OverlayGeometry(
     }
 
     /** Left and top of the detail scene (260 x 380, scaled by 0.86 from its top corner on the widget's side). */
-    internal val detailLeft: Double get() = if (right) rightEdge - DETAIL_WIDTH else leftEdge
-    internal val detailTop: Double get() = minOf(widgetTop + 10, bottomEdge - DETAIL_HEIGHT * DETAIL_SCALE)
+    public val detailLeft: Double get() = if (right) rightEdge - DETAIL_WIDTH else leftEdge
+    public val detailTop: Double get() = minOf(widgetTop + 10, bottomEdge - DETAIL_HEIGHT * DETAIL_SCALE)
 
     public companion object {
         internal const val MARGIN = 10.0
-        internal const val FOLDER_WIDTH = 176.0
-        internal const val FOLDER_HEIGHT = 216.0
+        public const val FOLDER_WIDTH: Double = 176.0
+        public const val FOLDER_HEIGHT: Double = 216.0
         internal const val FLOW_STEP_X = 70.0
         internal const val FLOW_STEP_Y = 80.0
 
@@ -80,6 +80,36 @@ public data class OverlayGeometry(
 
         /** The detail scene's gauge (design: `size="80"`). */
         public const val HERO_GAUGE: Double = 80.0
+
+        /**
+         * The geometry around a widget whose bounds on a [screenWidth] x [screenHeight] screen are [left], [top],
+         * [width], [height] (Android's `Intent.getSourceBounds`, in dp). The widget's side is the half of the
+         * screen its centre is on.
+         */
+        public fun forWidget(
+            screenWidth: Double,
+            screenHeight: Double,
+            left: Double,
+            top: Double,
+            width: Double,
+            height: Double,
+            arrangement: WidgetArrangement,
+        ): OverlayGeometry {
+            val right = left + width / 2 > screenWidth / 2
+            return OverlayGeometry(
+                right = right,
+                screenWidth = screenWidth,
+                screenHeight = screenHeight,
+                widgetLeft = left,
+                widgetTop = top,
+                widgetWidth = width,
+                widgetHeight = height,
+                widgetDrops = arrangement.dropCentres(width, height).map { (x, y) -> left + x to top + y },
+                dropSize = arrangement.dropSize,
+                edgeColumnX = left + arrangement.edgeColumnX(width, right),
+                dropY = top + (height - arrangement.blockHeight) / 2 + arrangement.dropCentreY,
+            )
+        }
 
         /**
          * The geometry of design/Prototip.dc.html for a widget [size] and [style], on a 390-wide screen with

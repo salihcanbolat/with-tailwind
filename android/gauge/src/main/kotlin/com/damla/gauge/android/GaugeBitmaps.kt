@@ -39,13 +39,14 @@ object GaugeBitmaps {
         density: Float,
     ): ShadowedBitmap {
         val gauge = render(visual, sizePx, logo)
-        val blur = SHADOW_BLUR * density
+        val blur = CssBlur.filterRadius(SHADOW_BLUR * density)
         val offset = SHADOW_OFFSET_Y * density
-        val margin = ceil(blur * 2 + offset).toInt()
+        val margin = shadowMarginPx(density)
         val result = Bitmap.createBitmap(gauge.width + 2 * margin, gauge.height + 2 * margin, Bitmap.Config.ARGB_8888)
         val canvas = android.graphics.Canvas(result)
         val shadowOffset = IntArray(2)
-        val alpha = gauge.extractAlpha(Paint().apply { maskFilter = BlurMaskFilter(blur, BlurMaskFilter.Blur.NORMAL) }, shadowOffset)
+        val mask = if (blur > 0) BlurMaskFilter(blur, BlurMaskFilter.Blur.NORMAL) else null
+        val alpha = gauge.extractAlpha(Paint().apply { maskFilter = mask }, shadowOffset)
         val shadowPaint = Paint().apply { color = android.graphics.Color.argb(SHADOW_ALPHA, 0, 0, 0) }
         canvas.drawBitmap(alpha, margin + shadowOffset[0].toFloat(), margin + shadowOffset[1] + offset, shadowPaint)
         canvas.drawBitmap(gauge, margin.toFloat(), margin.toFloat(), null)
@@ -54,11 +55,15 @@ object GaugeBitmaps {
         return ShadowedBitmap(result, margin)
     }
 
+    /** The room [renderWithShadow] leaves on every side for the shadow. */
+    fun shadowMarginPx(density: Float): Int = ceil((SHADOW_BLUR * 3 + SHADOW_OFFSET_Y) * density).toInt()
+
     class ShadowedBitmap(
         val bitmap: Bitmap,
         val marginPx: Int,
     )
 
+    /** `drop-shadow(0 2px 3px rgba(0,0,0,0.35))`: Chromium blurs it with a standard deviation of 3 px. */
     private const val SHADOW_BLUR = 3f
     private const val SHADOW_OFFSET_Y = 2f
     private const val SHADOW_ALPHA = 89 // 0.35 * 255

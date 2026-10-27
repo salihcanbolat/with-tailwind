@@ -38,9 +38,19 @@ data class WidgetConfig(
     }
 }
 
-/** How often the pulse may play (design/Ayarlar.dc.html, "Nabız"). */
+/**
+ * How often the pulse may play (design/Ayarlar.dc.html, "Nabız"): the shortest time between two pulses of
+ * one asset. Provisional values from the prototype's average pulse rates (docs/kararlar.md).
+ */
 @Serializable
-enum class PulseMode { CALM, NORMAL, FAST, OFF }
+enum class PulseMode(
+    val minIntervalMillis: Long?,
+) {
+    CALM(4_000),
+    NORMAL(1_800),
+    FAST(800),
+    OFF(null),
+}
 
 /** App-wide settings (docs/07, Ayarlar). */
 @Serializable
