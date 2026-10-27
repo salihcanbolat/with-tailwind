@@ -149,6 +149,30 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Test kaynağı:** `DAMLA_SOURCES=test` sentetik fiyat üretir (100 civarı). Gerçek veri değildir ve `source: "test"` olarak etiketlenir.
 - **EVDS:** Anahtar gelince eklenecek.
 
+## Gösterge bileşeni (Faz 3, 2026-10-27)
+- **Yapı:**
+  - Hareket modeli (`GaugeMotion`) ve çizim mantığı (`GaugePainter`) platformdan bağımsız, saf Kotlin `:gauge` modülünde.
+  - Android'deki `Damla` bileşeni bunları Compose tuvaline aktaran ince bir katman. Widget, bildirim ve saat bitmap'leri de aynı ressamı kullanacak.
+- **Prototiple doğrulama** (`tools/gauge-reference`):
+  - Prototipin kendi DOM'u ve `renderVals()` betiği Chromium'da oynatılıyor.
+  - 22 senaryoda 116.241 animasyon değeri kaydedildi; dönüşüm matrisleri, opaklıklar, renkler, kesik çizgi kaymaları ve zamanlama dahil. `PrototypeReferenceTest` her derlemede bu değerleri karşılaştırıyor.
+  - Piksel karşılaştırmasında 42 durumda ortalama fark 1–3/255.
+- **CSS anlamı:**
+  - Eğri her keyframe aralığına ayrı uygulanır.
+  - Geçiş yarıda değişirse o anki değerden devam edilir.
+  - CSS'in geri dönüşte süreyi kısaltma kuralı (reversing shortening) uygulanmadı. Durum değişimleri en az 60 sn arayla geldiği için pratikte oluşmaz.
+- **Bulanıklık:** Işık yayılımı ve yansıma, bulanıklaştırılmış dairenin tam profilini izleyen radyal gradyanla çiziliyor. Böylece API 26'dan itibaren aynı görünüyor ve RenderEffect gerekmiyor.
+- **Prototip davranışları, olduğu gibi uygulananlar:**
+  - **Yansıma rozetin üstünde:** Yansıma `position: absolute` olduğu için CSS onu rozetin üstüne boyar.
+  - **Halkaların ölçeği:** Halkalar kendi S×H kutularında `meet` ile ölçeklenir.
+  - **Gecikmedeki nokta:** Yeniden çizim gecikmesi sırasında halkanın sağ ucunda, renginde bir nokta görünür (sıfır uzunluklu çizginin yuvarlak ucu).
+- **Prototipten bilinçli sapmalar:**
+  - **Halkanın yeniden çizimi (belge esas):** Damla şekli ve halka rengi aynı anda değişince prototip o halkayı yeniden çizmiyor; animasyon adları A/B dönüşümlü seçildiği için. docs/04'e göre ikisinden biri değişince halka yeniden çizilir; böyle uygulandı.
+  - **Piksel yaslama:** Tarayıcı, tek sayılı rozet çaplarında rozeti tam piksele yaslıyor (en fazla 0,5 px). Bu taklit edilmedi.
+- **Yazı tipi:** Metin logoları sistem sans-serif yazı tipiyle, 800 kalınlıkta çiziliyor. Android 9 öncesinde kalın (bold) kullanılıyor.
+- **Animasyonları azalt:** Varsayılan olarak sistemin animasyon ayarından (`ValueAnimator.areAnimatorsEnabled`) okunuyor. Açıkken geçişler anlık olur; esneme, ışık, halka çizimi ve parıltı oynamaz.
+- **Önizleme ekranı:** Faz 5'e kadar uygulamanın açılış ekranı.
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
   - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.

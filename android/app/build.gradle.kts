@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":gauge"))
     implementation(project(":widget"))
     implementation("com.damla:engine")
 

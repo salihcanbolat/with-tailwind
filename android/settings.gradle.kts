@@ -26,4 +26,4 @@ rootProject.name = "damla-android"
 
 includeBuild("..")
 
-include(":app", ":widget")
+include(":app", ":gauge", ":widget")

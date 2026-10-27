@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "damla"
 
-include(":engine", ":backend")
+include(":engine", ":gauge", ":backend")

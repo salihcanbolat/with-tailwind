@@ -1,0 +1,746 @@
+{
+ "cases": [
+  {
+   "name": "rest-up",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "rest-down",
+   "from": {
+    "size": 120,
+    "tip": "down",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "rest-flat",
+   "from": {
+    "size": 120,
+    "tip": "flat",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "rest-wave",
+   "from": {
+    "size": 120,
+    "tip": "wave",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "rest-closed",
+   "from": {
+    "size": 120,
+    "tip": "wave",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": true,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-silver",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Ag",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-usd",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "$",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-eur",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "€",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-btc",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "₿",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-eth",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Ξ",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-text3",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "GBP",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "logo-text-on-flat",
+   "from": {
+    "size": 120,
+    "tip": "flat",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Ξ",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size16-gold",
+   "from": {
+    "size": 16,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size16-usd",
+   "from": {
+    "size": 16,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "$",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size16-silver",
+   "from": {
+    "size": 16,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Ag",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size16-eur",
+   "from": {
+    "size": 16,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "€",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size16-btc",
+   "from": {
+    "size": 16,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "₿",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size32-gold",
+   "from": {
+    "size": 32,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size32-usd",
+   "from": {
+    "size": 32,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "$",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size32-silver",
+   "from": {
+    "size": 32,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Ag",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size32-eur",
+   "from": {
+    "size": 32,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "€",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size32-btc",
+   "from": {
+    "size": 32,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "₿",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size64-gold",
+   "from": {
+    "size": 64,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size64-btc",
+   "from": {
+    "size": 64,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "₿",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size240-gold",
+   "from": {
+    "size": 240,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "size240-btc",
+   "from": {
+    "size": 240,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "₿",
+    "donus": 0
+   },
+   "steps": [],
+   "t": 0
+  },
+  {
+   "name": "shape-up-down-150",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "down"
+     }
+    }
+   ],
+   "t": 150
+  },
+  {
+   "name": "shape-up-down-300",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "down"
+     }
+    }
+   ],
+   "t": 300
+  },
+  {
+   "name": "shape-up-down-500",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "down"
+     }
+    }
+   ],
+   "t": 500
+  },
+  {
+   "name": "shape-up-flat-100",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "flat"
+     }
+    }
+   ],
+   "t": 100
+  },
+  {
+   "name": "shape-up-flat-250",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "flat"
+     }
+    }
+   ],
+   "t": 250
+  },
+  {
+   "name": "shape-flat-wave-200",
+   "from": {
+    "size": 120,
+    "tip": "flat",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "wave"
+     }
+    }
+   ],
+   "t": 200
+  },
+  {
+   "name": "shape-flat-wave-400",
+   "from": {
+    "size": 120,
+    "tip": "flat",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "wave"
+     }
+    }
+   ],
+   "t": 400
+  },
+  {
+   "name": "shape-down-wave-350",
+   "from": {
+    "size": 120,
+    "tip": "down",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "wave"
+     }
+    }
+   ],
+   "t": 350
+  },
+  {
+   "name": "halo-peak",
+   "from": {
+    "size": 120,
+    "tip": "down",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "tip": "up"
+     }
+    }
+   ],
+   "t": 325
+  },
+  {
+   "name": "upper-ring-500",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "c1": "#FF9500"
+     }
+    }
+   ],
+   "t": 500
+  },
+  {
+   "name": "lower-ring-600",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "c2": "#FFCC00"
+     }
+    }
+   ],
+   "t": 600
+  },
+  {
+   "name": "pulse-200",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "donus": 360
+     }
+    }
+   ],
+   "t": 200
+  },
+  {
+   "name": "pulse-385",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "donus": 360
+     }
+    }
+   ],
+   "t": 385
+  },
+  {
+   "name": "pulse-700",
+   "from": {
+    "size": 120,
+    "tip": "up",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "donus": 360
+     }
+    }
+   ],
+   "t": 700
+  },
+  {
+   "name": "pulse-flat-385",
+   "from": {
+    "size": 120,
+    "tip": "flat",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "donus": -360
+     }
+    }
+   ],
+   "t": 385
+  },
+  {
+   "name": "close-200",
+   "from": {
+    "size": 120,
+    "tip": "down",
+    "c1": "#34C759",
+    "c2": "#FF3B30",
+    "kapali": false,
+    "hiz": 1,
+    "logo": "Au",
+    "donus": 0
+   },
+   "steps": [
+    {
+     "at": 0,
+     "props": {
+      "kapali": true
+     }
+    }
+   ],
+   "t": 200
+  }
+ ]
+}

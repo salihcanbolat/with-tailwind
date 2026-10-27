@@ -1,4 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Damla</string>
+
+    <!-- Durum kelimeleri (docs/01, docs/kararlar.md) -->
+    <string name="state_up">Yükselişte</string>
+    <string name="state_down">Düşüşte</string>
+    <string name="state_flat">Sabit</string>
+    <string name="state_wave">Dalgalı</string>
+    <string name="state_closed">Piyasa kapalı</string>
+    <!-- Gösterge içerik açıklaması: "Altın, yükselişte" -->
+    <string name="gauge_description">%1$s, %2$s</string>
+
+    <!-- Gösterge önizleme ekranı (docs/09, Faz 3) -->
+    <string name="preview_title">Damla önizleme</string>
+    <string name="preview_drop">Damla</string>
+    <string name="preview_upper_ring">Üst halka</string>
+    <string name="preview_lower_ring">Alt halka</string>
+    <string name="preview_closed">Piyasa kapalı</string>
+    <string name="preview_pulse">Nabız</string>
+    <string name="preview_pulse_up">Fiyat yükseldi</string>
+    <string name="preview_pulse_down">Fiyat düştü</string>
+    <string name="preview_auto_prices">Otomatik fiyat</string>
+    <string name="preview_speed">Hız</string>
+    <string name="preview_reduce_motion">Animasyonları azalt</string>
+    <string name="preview_logo">Logo</string>
+    <string name="preview_size">Boyut</string>
+    <string name="preview_all_sizes">Tüm boyutlar</string>
+    <string name="preview_all_states">Tüm durumlar</string>
+    <string name="preview_on">Açık</string>
+    <string name="preview_off">Kapalı</string>
+
+    <!-- Logo adları -->
+    <string name="logo_gold">Altın</string>
+    <string name="logo_silver">Gümüş</string>
+    <string name="logo_usd">ABD doları</string>
+    <string name="logo_eur">Euro</string>
+    <string name="logo_btc">Bitcoin</string>
+    <string name="logo_eth">Ethereum</string>
+    <string name="logo_gbp">Sterlin</string>
+    <string name="logo_try">Türk lirası</string>
 </resources>
