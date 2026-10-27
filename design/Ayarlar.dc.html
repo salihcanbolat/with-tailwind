@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ayarlar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0A84FF}a:hover{color:#409CFF}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #0B0F14; padding: 58px 16px 0; overflow: hidden; display: flex; flex-direction: column; gap: 16px; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #F2F4F7">
+
+<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.4px">Ayarlar</h1>
+
+<sc-for list="{{sections}}" as="s" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; padding: 0 4px; font-size: 13px; font-weight: 600; color: rgba(235,235,245,0.6)">{{s.title}}</h2>
+<div style="border-radius: 20px; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); padding: 0 14px; display: flex; flex-direction: column">
+<sc-for list="{{s.rows}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; flex-wrap: wrap; align-items: center; column-gap: 10px; row-gap: 0; min-height: 46px; {{r.sep}}">
+<sc-if value="{{r.hasPreview}}" hint-placeholder-val="{{ false }}"><dc-import name="Gosterge" tip="up" c1="#FFCC00" c2="#34C759" logo="Au" donus="{{spin}}" size="26" hint-size="26px,31px"></dc-import></sc-if>
+<span style="font-size: 15px; flex-shrink: 0; {{r.labelW}}">{{r.label}}</span>
+<sc-if value="{{r.isSeg}}" hint-placeholder-val="{{ false }}">
+<div style="position: relative; flex-grow: 1; height: 32px; box-sizing: border-box; padding: 2px; border-radius: 10px; background: rgba(255,255,255,0.07)">
+<div aria-hidden="true" style="position: absolute; left: 2px; top: 2px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.16); {{r.pill}}"></div>
+<div role="group" aria-label="{{r.label}}" style="position: relative; display: grid; height: 28px; {{r.cols}}">
+<sc-for list="{{r.items}}" as="c" hint-placeholder-count="3">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="border: none; background: transparent; padding: 0; font: inherit; font-size: 12px; color: #F2F4F7; cursor: pointer; {{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{r.isToggle}}" hint-placeholder-val="{{ false }}">
+<span style="flex-grow: 1"></span>
+<button type="button" onClick="{{r.flip}}" aria-pressed="{{r.on}}" aria-label="{{r.label}}" style="position: relative; width: 50px; height: 30px; border: none; border-radius: 15px; padding: 0; cursor: pointer; transition: background 240ms ease; {{r.track}}"><span style="position: absolute; left: 2px; top: 2px; width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: transform 280ms cubic-bezier(0.3, 1.3, 0.5, 1); {{r.knob}}"></span></button>
+</sc-if>
+<sc-if value="{{r.isAcc}}" hint-placeholder-val="{{ false }}">
+<span style="flex-grow: 1"></span>
+<button type="button" onClick="{{r.toggle}}" aria-expanded="{{r.open}}" aria-label="{{r.aria}}" style="border: none; background: transparent; padding: 12px 0; font: inherit; font-size: 15px; color: rgba(235,235,245,0.6); cursor: pointer; display: flex; align-items: center; gap: 8px">{{r.value}}<svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="rgba(235,235,245,0.45)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{r.chev}}"><path d="M1 1.5l5 5 5-5"></path></svg></button>
+<div style="width: 100%; overflow: hidden; transition: max-height 380ms cubic-bezier(0.32, 0.72, 0, 1), opacity 260ms ease; {{r.panel}}"><div role="group" aria-label="{{r.label}}" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; padding: 0 0 12px">
+<sc-for list="{{r.chips}}" as="c" hint-placeholder-count="6"><button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="height: 32px; border: none; border-radius: 10px; padding: 0; font: inherit; font-size: 12px; cursor: pointer; transition: background 220ms ease, color 220ms ease; {{c.style}}">{{c.label}}</button></sc-for>
+</div></div>
+</sc-if>
+<sc-if value="{{r.isInfo}}" hint-placeholder-val="{{ false }}">
+<span style="flex-grow: 1"></span>
+<span style="font-size: 15px; color: rgba(235,235,245,0.5)">{{r.value}}</span>
+</sc-if>
+<sc-if value="{{r.isLink}}" hint-placeholder-val="{{ false }}">
+<span style="flex-grow: 1"></span>
+<a href="VarlikAyar.dc.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; font-size: 15px; color: rgba(235,235,245,0.6)">{{r.value}}<svg width="7" height="12" viewBox="0 0 8 14" fill="none" stroke="rgba(235,235,245,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l6 6-6 6"></path></svg></a>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+
+<div role="status" aria-live="polite" style="position: absolute; left: 50%; bottom: 98px; height: 36px; padding: 0 16px; border-radius: 18px; background: rgba(40,46,56,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 0 0 0.5px rgba(255,255,255,0.12); display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; white-space: nowrap; pointer-events: none; {{toastStyle}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Kaydedildi</div>
+
+<nav style="position: absolute; left: 0; right: 0; bottom: 0; height: 82px; box-sizing: border-box; padding-top: 8px; background: rgba(16,20,26,0.86); backdrop-filter: blur(24px) saturate(1.6); -webkit-backdrop-filter: blur(24px) saturate(1.6); border-top: 0.5px solid rgba(255,255,255,0.08); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<a href="Panel.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: rgba(235,235,245,0.55); font-size: 10px; font-weight: 600"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5c3.2 4.3 6.5 8 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.7 3.3-7.4 6.5-11.7z"></path></svg>Panel</a>
+<a href="Alarmlar.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: rgba(235,235,245,0.55); font-size: 10px; font-weight: 600"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>Alarmlar</a>
+<a href="Ayarlar.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #0A84FF; font-size: 10px; font-weight: 600"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"></path></svg>Ayarlar</a>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const tn = st.toast || 0;
+const toastOn = tn > 0 && st.toastOff !== tn;
+const save = (o) => {
+  const n = ((this.state && this.state.toast) || 0) + 1;
+  this.setState(Object.assign({}, o, { toast: n }));
+  setTimeout(() => { if ((this.state || {}).toast === n) this.setState({ toastOff: n }); }, 1400);
+};
+if (!this._spinT) {
+  this._spinT = setInterval(() => {
+    const s = this.state || {};
+    const n = s.nabiz ?? 1;
+    const p = [0.08, 0.2, 0.45, 0][n];
+    if (Math.random() < p) this.setState({ spin: (s.spin || 0) + (Math.random() < 0.6 ? 360 : -360) });
+  }, 400);
+}
+const v = {
+  nabiz: st.nabiz ?? 1, tema: st.tema ?? 0, taraf: st.taraf ?? 1,
+  titresim: st.titresim ?? true, gri: st.gri ?? true
+};
+const segW = 358 - 28;
+const seg = (key, label, items, labelW) => {
+  const n = items.length, w = segW - labelW - 10 - 4 - (key === 'nabiz' ? 36 : 0), cw = w / n, cur = v[key];
+  return {
+    label, isSeg: true, hasPreview: key === 'nabiz', labelW: 'width: ' + labelW + 'px;',
+    cols: 'grid-template-columns: repeat(' + n + ', minmax(0, 1fr));',
+    pill: 'width: ' + cw.toFixed(2) + 'px; transform: translateX(' + (cur * cw).toFixed(2) + 'px); transition: transform 380ms cubic-bezier(0.25, 1.04, 0.5, 1);',
+    items: items.map((l, j) => ({ label: l, on: j === cur ? 'true' : 'false', style: 'font-weight: ' + (j === cur ? 600 : 400) + ';', pick: () => { const o = {}; o[key] = j; save(o); } }))
+  };
+};
+const tog = (key, label) => ({
+  label, isToggle: true, labelW: '', on: v[key] ? 'true' : 'false',
+  track: 'background: ' + (v[key] ? '#30D158' : 'rgba(120,120,128,0.36)') + ';',
+  knob: 'transform: translateX(' + (v[key] ? 20 : 0) + 'px);',
+  flip: () => { const o = {}; o[key] = !v[key]; save(o); }
+});
+const link = (label, value) => ({ label, value, isLink: true, labelW: '' });
+const aopts = ['15 dk', '1 sa', '4 sa', '1 gün', '1 hf', '1 ay'];
+const along = ['Son 15 dakika', 'Son 1 saat', 'Son 4 saat', 'Son 1 gün', 'Son 1 hafta', 'Son 1 ay'];
+const ar = st.ar || [1, 3, 4];
+const acc = (idx, label) => {
+  const cur = ar[idx], open = st.acc === idx;
+  return {
+    label, isAcc: true, labelW: '', value: along[cur],
+    open: open ? 'true' : 'false',
+    aria: label + ': ' + along[cur] + ', değiştir',
+    chev: 'transform: rotate(' + (open ? 180 : 0) + 'deg); transition: transform 300ms ease;',
+    panel: 'max-height: ' + (open ? 60 : 0) + 'px; opacity: ' + (open ? 1 : 0) + ';',
+    toggle: () => this.setState({ acc: open ? -1 : idx }),
+    chips: aopts.map((l, k) => ({
+      label: l, on: k === cur ? 'true' : 'false',
+      style: k === cur ? 'background: #0A84FF; color: #FFFFFF; font-weight: 600;' : 'background: rgba(255,255,255,0.07); color: rgba(235,235,245,0.85);',
+      pick: () => { const a = ar.slice(); a[idx] = k; save({ ar: a }); }
+    }))
+  };
+};
+const sections = [
+  { title: 'Canlılık', rows: [seg('nabiz', 'Nabız', ['Sakin', 'Normal', 'Hızlı', 'Kapalı'], 48), tog('titresim', 'Fiyat gelince titreşim'), tog('gri', 'Piyasa kapalıyken gri göster')] },
+  { title: 'Görünüm', rows: [seg('tema', 'Tema', ['Koyu', 'Açık', 'Sistem'], 84)] },
+  { title: 'Yeni varlıklar için aralıklar', rows: [acc(0, 'Damla'), acc(1, 'Üst halka'), acc(2, 'Alt halka'), { label: 'Veri kaynağı', isInfo: true, value: '[KAYNAK]', labelW: '' }] }
+];
+return {
+  spin: st.spin || 0,
+  toastStyle: 'opacity: ' + (toastOn ? 1 : 0) + '; transform: translate(-50%, ' + (toastOn ? 0 : 12) + 'px) scale(' + (toastOn ? 1 : 0.94) + '); transition: opacity 260ms ease, transform 420ms cubic-bezier(0.3, 1.3, 0.5, 1);',
+  sections: sections.map((s) => ({
+    title: s.title,
+    rows: s.rows.map((r, i) => Object.assign({ hasPreview: false, isSeg: false, isToggle: false, isLink: false, isAcc: false, isInfo: false }, r, { sep: i ? 'border-top: 0.5px solid rgba(255,255,255,0.07);' : '' }))
+  }))
+};
+}
+}
+</script>
+</body>
+</html>

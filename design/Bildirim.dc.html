@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Kalıcı bildirim</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+@keyframes dmCanli{0%{box-shadow:0 0 0 0 rgba(48,209,88,0.55)}70%{box-shadow:0 0 0 5px rgba(48,209,88,0)}100%{box-shadow:0 0 0 0 rgba(48,209,88,0)}}
+.bnBas{transition:transform 160ms ease}
+.bnBas:active{transform:scale(0.97)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0D12; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #F2F4F7">
+
+<div aria-hidden="true" style="position: absolute; left: -60px; top: 420px; width: 300px; height: 300px; border-radius: 150px; background: #1E4D8C; filter: blur(90px); opacity: 0.55"></div>
+<div aria-hidden="true" style="position: absolute; right: -80px; top: 120px; width: 280px; height: 280px; border-radius: 140px; background: #5B2A86; filter: blur(90px); opacity: 0.45"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; {{scrim}}"></div>
+
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 34px; padding: 0 22px; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600">
+<span style="font-variant-numeric: tabular-nums">10:42</span>
+<svg width="13" height="13" viewBox="-38 -38 76 76" aria-label="Damla durum simgesi: {{iconLabel}}" role="img" style="overflow: visible">
+<g style="{{icDrop}}"><path d="M0,-34 C3,-24 11.4,-12.2 19.05,1 A22 22 0 1 1 -19.05,1 C-11.4,-12.2 -3,-24 0,-34 Z" fill="#FFFFFF"></path></g>
+<circle cx="0" cy="0" r="24" fill="#FFFFFF" style="{{icCirc}}"></circle>
+</svg>
+<span style="flex: 1 1 auto"></span>
+<svg width="15" height="12" viewBox="0 0 24 18" fill="#FFFFFF" aria-hidden="true"><path d="M12 17.5l3.3-4.1a5.3 5.3 0 0 0-6.6 0zM5.7 9.6l1.9 2.4a7 7 0 0 1 8.8 0l1.9-2.4a10 10 0 0 0-12.6 0zM2.5 5.6l1.9 2.4a12.2 12.2 0 0 1 15.2 0l1.9-2.4a15.3 15.3 0 0 0-19 0z"></path></svg>
+<svg width="22" height="12" viewBox="0 0 28 14" aria-hidden="true"><rect x="0.5" y="0.5" width="24" height="13" rx="4" fill="none" stroke="rgba(255,255,255,0.5)"></rect><rect x="2.5" y="2.5" width="16" height="9" rx="2.2" fill="#FFFFFF"></rect><rect x="25.5" y="4.5" width="2" height="5" rx="1" fill="rgba(255,255,255,0.5)"></rect></svg>
+</div>
+
+<sc-if value="{{lock}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; right: 0; top: 96px; display: flex; flex-direction: column; align-items: center; gap: 4px">
+<span style="font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.8)">Salı 27 Ekim</span>
+<span style="font-size: 84px; font-weight: 300; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums">10:42</span>
+</div>
+</sc-if>
+<sc-if value="{{shade}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; left: 16px; right: 16px; top: 52px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 6px"><span style="font-size: 30px; font-weight: 400; font-variant-numeric: tabular-nums">10:42</span><span style="font-size: 13px; color: rgba(255,255,255,0.65)">Salı 27 Ekim</span></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{qs}}" as="q" hint-placeholder-count="4"><div style="height: 56px; border-radius: 20px; display: flex; align-items: center; justify-content: center; {{q.bg}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="{{q.label}}" role="img" style="{{q.fg}}"><path d="{{q.d}}"></path></svg></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<div style="position: absolute; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 8px; {{stackPos}}">
+
+<sc-if value="{{shade}}" hint-placeholder-val="{{ true }}"><span style="padding: 0 10px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7)">Devam eden</span></sc-if>
+
+<div class="bnBas" style="border-radius: 26px; background: rgba(28,32,38,0.86); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.1), 0 12px 30px rgba(0,0,0,0.35); overflow: hidden">
+<button type="button" onClick="{{toggle}}" aria-expanded="{{openStr}}" aria-label="{{toggleLabel}}" style="width: 100%; border: none; background: transparent; padding: 14px 16px 0; display: flex; align-items: center; gap: 8px; color: inherit; font: inherit; cursor: pointer; text-align: left">
+<span style="width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="11" height="13" viewBox="0 0 24 24" fill="#0B0F14" aria-hidden="true"><path d="M12 2.5c3.2 4.3 6.5 8 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.7 3.3-7.4 6.5-11.7z"></path></svg></span>
+<span style="font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.85)">Damla</span>
+<span style="display: flex; align-items: center; gap: 5px; font-size: 12px; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums"><span style="width: 5px; height: 5px; border-radius: 3px; background: #30D158; animation: dmCanli 2s ease-out infinite"></span>{{fresh}}</span>
+<span style="flex: 1 1 auto"></span>
+<span style="width: 26px; height: 26px; border-radius: 13px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{chev}}"><path d="M6 9l6 6 6-6"></path></svg></span>
+</button>
+
+<div style="display: grid; {{colRows}}">
+<div style="min-height: 0; overflow: hidden">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 12px 14px 16px">
+<sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 8px; min-width: 0">
+<dc-import name="Gosterge" tip="{{a.tip}}" c1="{{a.c1}}" c2="{{a.c2}}" logo="{{a.badge}}" donus="{{a.spin}}" size="30" hint-size="30px,36px"></dc-import>
+<span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{a.short}}</span><span style="font-size: 11px; font-weight: 600; white-space: nowrap; transition: color 400ms ease; {{a.wordStyle}}">{{a.word}}</span></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="display: grid; {{expRows}}">
+<div style="min-height: 0; overflow: hidden">
+<div style="display: flex; flex-direction: column; padding: 8px 8px 0">
+<sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px; {{a.sep}}">
+<dc-import name="Gosterge" tip="{{a.tip}}" c1="{{a.c1}}" c2="{{a.c2}}" logo="{{a.badge}}" donus="{{a.spin}}" size="40" hint-size="40px,48px"></dc-import>
+<span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700">{{a.name}}</span><span style="font-size: 12px; color: rgba(255,255,255,0.55)">[FİYAT] · <span style="font-weight: 600; transition: color 400ms ease; {{a.wordStyle}}">{{a.word}}</span></span></span>
+<span style="display: flex; gap: 4px; flex-shrink: 0">
+<sc-for list="{{a.parts}}" as="p" hint-placeholder-count="3"><span title="{{p.title}}" style="width: 22px; height: 6px; border-radius: 3px; transition: background 400ms ease; {{p.bg}}"></span></sc-for>
+</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 8px; padding: 10px 16px 16px">
+<a href="Panel.dc.html" class="bnBas" style="flex: 1 1 0; height: 38px; border-radius: 19px; background: rgba(255,255,255,0.12); color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Uygulamayı aç</a>
+<a href="KlasorIcerik.dc.html" class="bnBas" style="flex: 1 1 0; height: 38px; border-radius: 19px; background: rgba(255,255,255,0.12); color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Düzenle</a>
+<button type="button" class="bnBas" onClick="{{togglePause}}" style="flex: 1 1 0; height: 38px; border: none; border-radius: 19px; background: rgba(255,255,255,0.12); color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{pauseLabel}}</button>
+</div>
+</div>
+</div>
+</div>
+
+<sc-if value="{{shade}}" hint-placeholder-val="{{ true }}">
+<span style="padding: 8px 10px 0; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7)">Bildirimler</span>
+<div style="border-radius: 26px; background: rgba(28,32,38,0.86); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.1); padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #2B6CB0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 700">M</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 12px; color: rgba(255,255,255,0.55)">Mesajlar · 5 dk</span><span style="font-size: 14px; font-weight: 600">Mert</span><span style="font-size: 13px; color: rgba(255,255,255,0.75)">Akşam toplantı 8'de, unutma</span></span>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{lock}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; right: 0; bottom: 34px; display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(255,255,255,0.75); font-size: 12px">
+<svg width="18" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<span>Kilidi açmak için yukarı kaydır</span>
+</div>
+</sc-if>
+
+<sc-if value="{{shade}}" hint-placeholder-val="{{ true }}"><div aria-hidden="true" style="position: absolute; left: 175px; bottom: 14px; width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.4)"></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"gorunum":{"editor":"enum","options":["Bildirim paneli","Kilit ekranı"],"default":"Bildirim paneli"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+if (!this._bnTick) {
+  this._bnTick = setInterval(() => {
+    const s0 = this.state || {};
+    if (s0.paused) return;
+    const cur = s0.tk || [{ a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }];
+    const rates = [0.22, 0.14, 0.38];
+    const bias = [0.6, 0.72, 0.3];
+    let changed = false;
+    const nx = cur.map((o, i) => {
+      if (Math.random() < rates[i]) { changed = true; return { a: o.a + (Math.random() < bias[i] ? 360 : -360), t: Date.now() }; }
+      return o;
+    });
+    this._bnN = (this._bnN || 0) + 1;
+    const flip = this._bnN % 38 === 0;
+    if (changed || flip) this.setState(flip ? { tk: nx, usdUp: !s0.usdUp } : { tk: nx });
+    else if (this._bnN % 3 === 0) this.setState({ now: Date.now() });
+  }, 400);
+}
+const lock = (this.props.gorunum ?? 'Bildirim paneli') === 'Kilit ekranı';
+const open = st.open ?? !lock;
+const paused = !!st.paused;
+const tk = st.tk || [{ a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }];
+const G = '#34C759', Y = '#FFCC00', O = '#FF9500';
+const words = { Y: 'Yükselişte', S: 'Sabit', D: 'Düşüşte', W: 'Dalgalı' };
+const bright = { Y: '#30D158', S: '#FFD60A', D: '#FF453A', W: '#FF9F0A' };
+const raw = [
+  { name: 'USD/TRY', short: 'USD', badge: '$', tip: st.usdUp ? 'up' : 'flat', c1: Y, c2: G, w: [st.usdUp ? 'Y' : 'S', 'S', 'Y'] },
+  { name: 'Gram altın', short: 'Altın', badge: 'Au', tip: 'up', c1: G, c2: Y, w: ['Y', 'Y', 'S'] },
+  { name: 'Bitcoin', short: 'BTC', badge: '₿', tip: 'down', c1: O, c2: G, w: ['D', 'W', 'Y'] }
+];
+const ease = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const last = Math.max(...tk.map((o) => o.t || 0));
+const sec = last ? Math.floor((Date.now() - last) / 1000) : 0;
+const tipNow = raw[0].tip;
+const icR = { up: 0, down: 180, wave: 90, flat: 0 }[tipNow];
+const qd = [
+  ['Wi-Fi', 'M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01M2 9a14.5 14.5 0 0 1 20 0', true],
+  ['Bluetooth', 'M7 7l10 10-5 4V3l5 4L7 17', true],
+  ['Rahatsız etme', 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z', false],
+  ['El feneri', 'M9 2h6v5l-2 3v12h-2V10L9 7z', false]
+];
+return {
+  lock, shade: !lock,
+  scrim: 'background: rgba(0,0,0,' + (lock ? 0.15 : 0.5) + '); backdrop-filter: blur(' + (lock ? 0 : 24) + 'px); -webkit-backdrop-filter: blur(' + (lock ? 0 : 24) + 'px);',
+  stackPos: lock ? 'top: 236px;' : 'top: 196px;',
+  qs: qd.map((q) => ({ label: q[0], d: q[1], bg: q[2] ? 'background: #A8C7FA;' : 'background: rgba(255,255,255,0.1);', fg: q[2] ? 'stroke: #0B1D36;' : 'stroke: #FFFFFF;' })),
+  iconLabel: words[raw[0].w[0]],
+  icDrop: 'transform-box: view-box; transform-origin: 0px 0px; transform: rotate(' + icR + 'deg) scale(' + (tipNow === 'flat' ? 0.5 : 1) + '); opacity: ' + (tipNow === 'flat' ? 0 : 1) + '; transition: transform 700ms cubic-bezier(0.25, 1.1, 0.5, 1), opacity 260ms ease;',
+  icCirc: 'transform-box: view-box; transform-origin: 0px 0px; transform: scale(' + (tipNow === 'flat' ? 1 : 0.4) + '); opacity: ' + (tipNow === 'flat' ? 1 : 0) + '; transition: transform 600ms cubic-bezier(0.25, 1.1, 0.5, 1), opacity 260ms ease;',
+  fresh: paused ? 'duraklatıldı' : (sec < 2 ? 'şimdi' : sec + ' sn önce'),
+  toggle: () => this.setState({ open: !open }),
+  openStr: open ? 'true' : 'false',
+  toggleLabel: open ? 'Bildirimi daralt' : 'Bildirimi genişlet',
+  chev: 'transform: rotate(' + (open ? 180 : 0) + 'deg); transition: transform 420ms ' + ease + ';',
+  colRows: 'grid-template-rows: ' + (open ? '0fr' : '1fr') + '; opacity: ' + (open ? 0 : 1) + '; transition: grid-template-rows 460ms ' + ease + ', opacity 240ms ease;',
+  expRows: 'grid-template-rows: ' + (open ? '1fr' : '0fr') + '; opacity: ' + (open ? 1 : 0) + '; transition: grid-template-rows 460ms ' + ease + ', opacity 300ms ease ' + (open ? 120 : 0) + 'ms;',
+  togglePause: () => this.setState({ paused: !paused }),
+  pauseLabel: paused ? 'Sürdür' : 'Duraklat',
+  assets: raw.map((d, i) => ({
+    name: d.name, short: d.short, badge: d.badge, tip: d.tip, c1: d.c1, c2: d.c2,
+    spin: (tk[i] && tk[i].a) || 0,
+    word: words[d.w[0]],
+    wordStyle: 'color: ' + bright[d.w[0]] + ';',
+    sep: i ? 'border-top: 0.5px solid rgba(255,255,255,0.07);' : '',
+    parts: d.w.map((k, j) => ({ title: ['Damla', 'Üst halka', 'Alt halka'][j] + ': ' + words[k], bg: 'background: ' + bright[k] + ';' }))
+  }))
+};
+}
+}
+</script>
+</body>
+</html>

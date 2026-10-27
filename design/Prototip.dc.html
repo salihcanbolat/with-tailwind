@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Canlı prototip</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#007AFF}a:hover{color:#0060DF}
+@keyframes dmNefes{0%,100%{transform:scale(0.85);opacity:0.5}50%{transform:scale(1.3);opacity:0.16}}
+@keyframes dmCanli{0%{box-shadow:0 0 0 0 rgba(52,199,89,0.55)}70%{box-shadow:0 0 0 6px rgba(52,199,89,0)}100%{box-shadow:0 0 0 0 rgba(52,199,89,0)}}
+@keyframes dmUc{0%{transform:scale(1);opacity:0.55}100%{transform:scale(3.2);opacity:0}}
+.dmBas{display:flex;align-items:center;justify-content:center;transition:transform 180ms cubic-bezier(0.3,1.3,0.5,1)}
+.dmBas:active{transform:scale(0.92)}
+@keyframes dmAtimA{0%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(0,0,0,0))}16%{transform:scale(1.12);filter:drop-shadow(0 0 8px var(--dmc))}38%{transform:scale(0.96)}60%{transform:scale(1.03)}100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(0,0,0,0))}}
+@keyframes dmAtimB{0%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(0,0,0,0))}16%{transform:scale(1.12);filter:drop-shadow(0 0 8px var(--dmc))}38%{transform:scale(0.96)}60%{transform:scale(1.03)}100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(0,0,0,0))}}
+@keyframes dmDalgaA{0%{transform:scale(0.6);opacity:0.8}100%{transform:scale(2.1);opacity:0}}
+@keyframes dmDalgaB{0%{transform:scale(0.6);opacity:0.8}100%{transform:scale(2.1);opacity:0}}
+@keyframes dmFlasA{0%{background-color:var(--dmcs)}100%{background-color:rgba(0,0,0,0)}}
+@keyframes dmFlasB{0%{background-color:var(--dmcs)}100%{background-color:rgba(0,0,0,0)}}
+@keyframes dmPopA{0%{transform:scale(0.3) translateY(4px);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes dmPopB{0%{transform:scale(0.3) translateY(4px);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes dmUcA{0%{transform:scale(1);opacity:0.6}100%{transform:scale(3.4);opacity:0}}
+@keyframes dmUcB{0%{transform:scale(1);opacity:0.6}100%{transform:scale(3.4);opacity:0}}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #1F3B4D; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #1C1C1E">
+
+<div aria-hidden="true" style="position: absolute; inset: 0; color: #FFFFFF; {{homeStyle}}">
+<span style="position: absolute; left: 24px; top: 56px; font-size: 22px; font-weight: 500">Paz, 25 Eki</span>
+<sc-for list="{{slots}}" as="s" hint-placeholder-count="6">
+<div style="position: absolute; width: 56px; display: flex; flex-direction: column; align-items: center; gap: 6px; {{s.style}}"><div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div><span style="font-size: 12px; white-space: nowrap">{{s.label}}</span></div>
+</sc-for>
+<div style="position: absolute; left: 0; right: 0; top: 330px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); justify-items: center">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div><span style="font-size: 12px">Fotoğraflar</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div><span style="font-size: 12px">Kamera</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div><span style="font-size: 12px">Haritalar</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div><span style="font-size: 12px">Mesajlar</span></div>
+</div>
+<div style="position: absolute; left: 0; right: 0; top: 680px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); justify-items: center">
+<div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div>
+<div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div>
+<div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div>
+<div style="width: 56px; height: 56px; border-radius: 28px; background: rgba(255,255,255,0.2)"></div>
+</div>
+<div style="position: absolute; left: 20px; right: 20px; top: 760px; height: 52px; border-radius: 26px; background: rgba(255,255,255,0.18); display: flex; align-items: center; gap: 10px; padding: 0 18px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><span style="font-size: 15px">Ara</span></div>
+<div style="position: absolute; left: 141px; bottom: 10px; width: 108px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.7)"></div>
+</div>
+
+<button type="button" aria-label="Bir adım geri" onClick="{{dimClick}}" style="position: absolute; inset: 0; border: none; padding: 0; background: rgba(0,0,0,0.3); {{dimStyle}}"></button>
+
+<div style="position: absolute; {{boxStyle}}">
+
+<button type="button" onClick="{{openFolder}}" aria-label="Damla widget'ını aç" style="position: absolute; top: 0; width: {{wW}}px; height: {{wH}}px; box-sizing: border-box; border: none; background: transparent; padding: {{wPad}}; display: grid; grid-template-columns: repeat({{wCols}}, minmax(0, 1fr)); gap: 4px; font: inherit; color: #1C1C1E; cursor: pointer; align-items: {{wAlign}}; {{wLayer}}">
+<sc-for list="{{widgetAssets}}" as="a" hint-placeholder-count="2">
+<span style="position: absolute; transform: translateX(-50%); white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; {{a.wPos}}"><span style="width: 12px; height: 12px; border-radius: 6px; font-size: 6px; font-weight: 700; display: flex; align-items: center; justify-content: center; {{a.badgeStyle}} {{wBadge}}">{{a.badge}}</span><span style="font-size: 10px; font-weight: 600; {{wText}}">{{a.short}}</span></span>
+</sc-for>
+</button>
+
+<div style="position: absolute; top: 0; width: 176px; height: 216px; box-sizing: border-box; padding: 6px 10px 8px; display: flex; flex-direction: column; gap: 2px; {{fLayer}}">
+<div style="height: 30px; display: flex; align-items: center; gap: 2px; flex-direction: {{hdrDir}}; {{hdrStyle}}">
+<span style="flex-grow: 1; display: flex; align-items: center; gap: 6px; padding: 0 4px; justify-content: {{titleJustify}}"><span style="font-size: 14px; font-weight: 700">Damla</span><span aria-label="Canlı" style="width: 6px; height: 6px; border-radius: 3px; background: #34C759; animation: dmCanli 2s ease-out infinite"></span></span>
+<a href="KlasorIcerik.dc.html" aria-label="Klasörü düzenle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center"><span class="dmBas"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"></path></svg></span></a>
+<button type="button" onClick="{{closeAll}}" aria-label="Widget'a küçült" style="width: 30px; height: 30px; border: none; background: transparent; padding: 0; cursor: pointer"><span class="dmBas" style="width: 24px; height: 24px; border-radius: 12px; background: rgba(120,120,128,0.16); margin: 0 auto"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{closeIcon}}"></path></svg></span></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1px">
+<sc-for list="{{assets}}" as="a" hint-placeholder-count="4">
+<button type="button" onClick="{{a.open}}" style="border: none; background: transparent; padding: 4px 0; font: inherit; color: #1C1C1E; cursor: pointer; {{a.cellStyle}}">
+<span class="dmBas" style="flex-direction: column; gap: 3px">
+<span style="position: relative; display: block; width: 40px; height: 48px"><span aria-hidden="true" style="position: absolute; left: 5px; top: 11px; width: 30px; height: 30px; border-radius: 15px; border: 2px solid var(--dmc); box-sizing: border-box; opacity: 0; pointer-events: none; {{a.ripStyle}}"></span><span style="display: block; transform-origin: 50% 55%; {{a.beatStyle}}"><dc-import name="Gosterge" tip="{{a.tip}}" c1="{{a.c1}}" c2="{{a.c2}}" logo="{{a.badge}}" donus="{{a.donus}}" kucuk="{{a.small}}" size="40" hiz="{{hiz}}" hint-size="40px,48px"></dc-import></span></span>
+<span style="display: flex; flex-direction: column; align-items: center; {{a.labelStyle}}"><span style="font-size: 11px; font-weight: 600; line-height: 13px">{{a.name}}</span><span style="font-size: 9.5px; font-weight: 600; line-height: 12px; {{a.stateStyle}}">{{a.stateWord}}</span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+</div>
+
+<sc-for list="{{assets}}" as="a" hint-placeholder-count="4">
+<button type="button" onClick="{{a.open}}" style="position: absolute; height: 34px; box-sizing: border-box; padding: 0 12px; border: none; border-radius: 17px; background: rgba(250,250,252,0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 6px 18px rgba(0,0,0,0.22); display: flex; align-items: center; gap: 6px; font: inherit; color: #1C1C1E; cursor: pointer; white-space: nowrap; {{a.pillPos}}"><span style="font-size: 13px; font-weight: 600">{{a.name}}</span><span style="font-size: 11px; font-weight: 600; {{a.stateStyle}}">{{a.stateWord}}</span><span style="font-size: 9px; font-weight: 700; {{a.arrowStyle}}">{{a.arrow}}</span></button>
+</sc-for>
+<button type="button" onClick="{{closeAll}}" aria-label="Kapat" style="position: absolute; width: 40px; height: 40px; border: none; border-radius: 20px; padding: 0; background: rgba(250,250,252,0.9); box-shadow: 0 4px 14px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; cursor: pointer; {{closeOrb}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+
+<div style="position: absolute; inset: 0; pointer-events: none">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(0,0,0,0.3); {{fdDim}}"></div>
+
+<div style="position: absolute; width: 260px; height: 380px; {{fdBox}}">
+<div style="position: absolute; left: 0; top: 40px; width: 260px; height: 140px; touch-action: pan-y; pointer-events: {{fdPE}}" onPointerDown="{{swDown}}" onPointerUp="{{swUp}}"></div>
+
+<div style="position: absolute; left: 0; top: 0; display: flex; flex-direction: column; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.35); {{sec0}}">
+<span style="font-size: 17px; font-weight: 700; line-height: 21px">{{d.name}}</span>
+<span style="font-size: 11px; color: rgba(255,255,255,0.75)">{{d.sub}}</span>
+<span style="display: flex; align-items: center; gap: 5px; margin-top: 3px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums"><span style="width: 5px; height: 5px; border-radius: 3px; background: #30D158; animation: dmCanli 2s ease-out infinite"></span>{{fresh}}</span>
+</div>
+
+<svg width="260" height="380" viewBox="0 0 260 380" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible">
+<path d="{{an0}}" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1" style="{{al0}}"></path>
+<path d="{{an1}}" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1" style="{{al1}}"></path>
+<path d="{{an2}}" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1" style="{{al2}}"></path>
+<circle cx="{{ax0}}" cy="{{ay0}}" r="2" fill="#FFFFFF" style="{{ad0}}"></circle>
+<circle cx="{{ax1}}" cy="{{ay1}}" r="2" fill="#FFFFFF" style="{{ad1}}"></circle>
+<circle cx="{{ax2}}" cy="{{ay2}}" r="2" fill="#FFFFFF" style="{{ad2}}"></circle>
+</svg>
+
+<sc-for list="{{anno}}" as="n" hint-placeholder-count="3">
+<div style="position: absolute; left: 102px; display: flex; flex-direction: column; text-shadow: 0 1px 3px rgba(0,0,0,0.35); {{n.pos}}"><span style="font-size: 10px; line-height: 13px; color: rgba(255,255,255,0.78)">{{n.label}}</span><span style="font-size: 14px; font-weight: 700; line-height: 17px; transition: color 300ms ease; {{n.wordStyle}}">{{n.word}}</span></div>
+</sc-for>
+
+<div style="position: absolute; left: 0; top: 170px; display: flex; flex-direction: column; gap: 1px; color: #FFFFFF; {{sec2}}">
+<span style="display: flex; align-items: center; gap: 5px"><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.4px; font-variant-numeric: tabular-nums; padding: 0 5px; margin-left: -5px; border-radius: 7px; text-shadow: 0 1px 3px rgba(0,0,0,0.3); {{d.flashStyle}}">₺[FİYAT]</span><span style="font-size: 11px; font-weight: 700; {{arrowBright}}">{{d.arrow}}</span></span>
+<span style="font-size: 11px; font-weight: 600; transition: color 300ms ease; {{pillBright}}">{{pillText}}</span>
+</div>
+
+<div style="position: absolute; left: 0; top: 222px; width: 260px; height: 62px; {{sec3}}">
+<svg width="260" height="54" viewBox="0 0 260 54" role="img" aria-label="Örnek fiyat grafiği, sürükleyerek incele" onPointerMove="{{scrubMove}}" onPointerDown="{{scrubMove}}" onPointerLeave="{{scrubEnd}}" onPointerUp="{{scrubEnd}}" style="position: absolute; left: 0; top: 8px; display: block; overflow: visible; touch-action: none; cursor: crosshair; pointer-events: {{fdPE}}">
+<path d="{{chartBase}}" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="3 4"></path>
+<path d="{{chartArea}}" style="{{areaStyle}}"></path>
+<path d="{{chartLine}}" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="{{lineStyle}}"></path>
+<sc-if value="{{noScrub}}" hint-placeholder-val="{{ true }}">
+<circle cx="{{endX}}" cy="{{endY}}" r="3" style="{{endDot}}"></circle>
+<circle cx="{{endX}}" cy="{{endY}}" r="3" style="{{endRip}} {{endDot}}"></circle>
+</sc-if>
+<sc-if value="{{hasScrub}}" hint-placeholder-val="{{ false }}">
+<line x1="{{scrubX}}" y1="-6" x2="{{scrubX}}" y2="54" stroke="rgba(255,255,255,0.6)" stroke-width="1"></line>
+<circle cx="{{scrubX}}" cy="{{scrubY}}" r="4" fill="#FFFFFF" stroke-width="2" style="{{scrubStroke}}"></circle>
+</sc-if>
+</svg>
+<sc-if value="{{hasScrub}}" hint-placeholder-val="{{ false }}">
+<span style="position: absolute; top: -12px; height: 17px; padding: 0 6px; border-radius: 6px; background: rgba(255,255,255,0.92); color: #1C1C1E; font-size: 10px; font-weight: 600; display: flex; align-items: center; white-space: nowrap; pointer-events: none; {{tipPos}}">{{tipText}}</span>
+</sc-if>
+</div>
+
+<div style="position: absolute; left: 0; top: 290px; width: 260px; height: 26px; box-sizing: border-box; padding: 2px; border-radius: 9px; background: rgba(255,255,255,0.14); pointer-events: {{fdPE}}; {{sec4}}">
+<div aria-hidden="true" style="position: absolute; left: 2px; top: 2px; width: 62.5px; height: 22px; border-radius: 7px; background: rgba(255,255,255,0.92); {{rngMove}}"></div>
+<div style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; height: 22px">
+<sc-for list="{{ranges}}" as="g" hint-placeholder-count="4">
+<button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="border: none; background: transparent; padding: 0; font: inherit; font-size: 11px; cursor: pointer; transition: color 250ms ease; {{g.style}}">{{g.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; top: 328px; display: flex; align-items: center; gap: 14px; pointer-events: {{fdPE}}; {{sec5}}">
+<a href="AlarmKur.dc.html" aria-label="Alarm kur" style="display: flex; text-decoration: none"><span class="dmBas" style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.18); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.45)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></span></a>
+<a href="Panel.dc.html" aria-label="Uygulamada aç" style="display: flex; text-decoration: none"><span class="dmBas" style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.18); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.45)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span></a>
+<button type="button" onClick="{{openShare}}" aria-label="Paylaş" style="width: 40px; height: 40px; border: none; padding: 0; background: transparent; cursor: pointer"><span class="dmBas" style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.18); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.45)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></span></button>
+<span style="flex-grow: 1"></span>
+<sc-if value="{{showSwitcher}}" hint-placeholder-val="{{ true }}">
+<span style="display: flex; gap: 0">
+<sc-for list="{{dots}}" as="o" hint-placeholder-count="4">
+<button type="button" onClick="{{o.pick}}" aria-label="{{o.name}}" style="width: 20px; height: 24px; border: none; background: transparent; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer"><span style="height: 5px; border-radius: 3px; background: #FFFFFF; transition: width 300ms cubic-bezier(0.32, 0.72, 0, 1), opacity 300ms ease; {{o.style}}"></span></button>
+</sc-for>
+</span>
+</sc-if>
+</div>
+</div>
+
+<div style="position: absolute; left: 0; top: 0; transform-origin: 0 0; {{heroStyle}}">
+<dc-import name="Gosterge" tip="{{d.tip}}" c1="{{d.c1}}" c2="{{d.c2}}" logo="{{d.badge}}" donus="{{d.donus}}" size="80" hiz="{{hiz}}" hint-size="80px,97px"></dc-import>
+</div>
+</div>
+
+<button type="button" aria-label="Paylaşımı kapat" onClick="{{closeShare}}" style="position: absolute; inset: 0; border: none; padding: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: default; {{shDim}}"></button>
+<div role="dialog" aria-label="Paylaşım kartı" style="position: absolute; left: 45px; top: 150px; width: 300px; display: flex; flex-direction: column; gap: 14px; {{shBox}}">
+<div style="position: relative; height: 380px; border-radius: 30px; overflow: hidden; background: #0E141B; box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 0 0 0.5px rgba(255,255,255,0.14); display: flex; flex-direction: column; align-items: center; padding: 22px 20px; box-sizing: border-box; color: #F2F4F7">
+<div aria-hidden="true" style="position: absolute; left: 70px; top: 70px; width: 160px; height: 160px; border-radius: 80px; filter: blur(50px); opacity: 0.45; transition: background 400ms ease; {{shGlow}}"></div>
+<div style="position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(235,235,245,0.6)"><span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #F2F4F7"><svg width="12" height="14" viewBox="0 0 24 24" fill="#F2F4F7" aria-hidden="true"><path d="M12 2.5c3.2 4.3 6.5 8 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.7 3.3-7.4 6.5-11.7z"></path></svg>Damla</span><span>Paz, 25 Eki</span></div>
+<div style="position: relative; margin-top: 18px"><dc-import name="Gosterge" tip="{{d.tip}}" c1="{{d.c1}}" c2="{{d.c2}}" logo="{{d.badge}}" size="104" hint-size="104px,126px"></dc-import></div>
+<span style="position: relative; margin-top: 12px; font-size: 24px; font-weight: 700; letter-spacing: -0.3px">{{d.name}}</span>
+<span style="position: relative; font-size: 15px; font-weight: 700; {{shWord}}">{{shWordText}}</span>
+<div style="position: relative; width: 100%; margin-top: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{anno}}" as="n" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: 12px; background: rgba(255,255,255,0.05)"><span style="font-size: 10px; color: rgba(235,235,245,0.55); white-space: nowrap">{{n.short}}</span><span style="font-size: 12px; font-weight: 700; {{n.wordStyle}}">{{n.word}}</span></div></sc-for>
+</div>
+</div>
+<div style="display: flex; gap: 10px">
+<button type="button" onClick="{{closeShare}}" style="flex: 1 1 0; height: 48px; border: none; border-radius: 16px; background: rgba(255,255,255,0.14); color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Kapat</button>
+<button type="button" onClick="{{closeShare}}" style="flex: 2 1 0; height: 48px; border: none; border-radius: 16px; background: #FFFFFF; color: #0B0F14; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0F14" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg>Paylaş</button>
+</div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"nabiz":{"editor":"enum","options":["Normal","Hareketli","Sakin","Kapalı"],"default":"Normal"},"acilis":{"editor":"enum","options":["Akış","Klasör"],"default":"Akış"},"stil":{"editor":"enum","options":["Kutusuz","Kutulu"],"default":"Kutusuz"},"boyut":{"editor":"enum","options":["1 yuva · 2 damla","1 yuva · 3 damla","Tek varlık","3×1","2×1"],"default":"Tek varlık"},"taraf":{"editor":"enum","options":["sağ","sol"],"default":"sağ"},"hiz":{"editor":"range","min":0.5,"max":4,"step":0.5,"default":1},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+if (!this._dmTick) {
+  this._dmTick = setInterval(() => {
+    const mode = (this.props && this.props.nabiz) || 'Normal';
+    if (mode === 'Kapalı') return;
+    const k = mode === 'Hareketli' ? 2.2 : (mode === 'Sakin' ? 0.45 : 1);
+    const cur = (this.state && this.state.tk) || [{ n: 0, d: 1 }, { n: 0, d: 1 }, { n: 0, d: 1 }, { n: 0, d: 1 }];
+    const rates = [0.2, 0.11, 0.16, 0.42];
+    const bias = [0.72, 0.5, 0.28, 0.5];
+    let changed = false;
+    const nx = cur.map((o, i) => {
+      if (Math.random() < rates[i] * k) { changed = true; const dd = Math.random() < bias[i] ? 1 : -1; return { n: o.n + 1, d: dd, a: (o.a || 0) + dd * 360, t: Date.now() }; }
+      return o;
+    });
+    this._dmN = (this._dmN || 0) + 1;
+    const flipU = this._dmN % 38 === 0;
+    if (changed || flipU) this.setState(flipU ? { tk: nx, usdUp: !(this.state && this.state.usdUp) } : { tk: nx });
+  }, 400);
+}
+const stage = st.stage ?? 0;
+const boyut = this.props.boyut ?? 'Tek varlık';
+const mini = boyut === '1 yuva · 3 damla' || boyut === '1 yuva · 2 damla';
+const mini2 = boyut === '1 yuva · 2 damla';
+const single = boyut === '1×1';
+const nW = mini2 ? 2 : ((mini || boyut === '3×1') ? 3 : (boyut === '2×1' ? 2 : 1));
+const nSlot = mini ? 1 : nW;
+const flow = (this.props.acilis ?? 'Akış') === 'Akış' && !single;
+const bare = (this.props.stil ?? 'Kutusuz') === 'Kutusuz';
+const sel = single ? 0 : (st.sel ?? 0);
+const from = st.from ?? 0;
+const rng = st.rng ?? 1;
+const scrub = (typeof st.scrub === 'number') ? st.scrub : null;
+const R = (this.props.taraf ?? 'sağ') !== 'sol';
+const m = Number(this.props.hiz ?? 1);
+const t = (ms) => Math.round(ms * m);
+const ease = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const easeIn = 'cubic-bezier(0.4, 0, 0.2, 1)';
+const spring = 'cubic-bezier(0.25, 1.12, 0.5, 1)';
+const softSpring = 'cubic-bezier(0.25, 1.04, 0.5, 1)';
+
+const G = '#34C759', RD = '#FF3B30', Y = '#FFCC00', O = '#FF9500';
+const words = { Y: 'Yükseliş', D: 'Düşüş', S: 'Sabit', W: 'Dalgalı' };
+const wcol = { Y: '#1E7B34', D: '#C4271C', S: '#7A5F00', W: '#B25E00' };
+const dcol = { Y: G, D: RD, S: Y, W: O };
+const tf1 = ['Son 1 saat', 'Dün', 'Son 1 hafta'];
+const raw = [
+  { name: 'Gram altın', short: 'Altın', sub: 'Altın · TRY', badge: 'Au', bb: '#F2C230', bf: '#5A4300', tip: 'up', c1: Y, c2: G, w: ['Y', 'S', 'Y'], tf: tf1 },
+  { name: 'USD/TRY', short: 'USD', sub: 'Döviz', badge: '$', bb: '#2E7D4F', bf: '#FFFFFF', tip: st.usdUp ? 'up' : 'flat', c1: Y, c2: G, w: [st.usdUp ? 'Y' : 'S', 'S', 'Y'], tf: tf1 },
+  { name: 'Gümüş', short: 'Gümüş', sub: 'Gümüş · TRY', badge: 'Ag', bb: '#C7CCD3', bf: '#3A4048', tip: 'down', c1: RD, c2: Y, w: ['D', 'D', 'S'], tf: ['Son 4 saat', 'Son 3 gün', 'Son 1 ay'] },
+  { name: 'Bitcoin', short: 'BTC', sub: 'Kripto · USD', badge: '₿', bb: '#F7931A', bf: '#FFFFFF', tip: 'wave', c1: G, c2: RD, w: ['W', 'Y', 'D'], tf: ['Son 15 dk', 'Dün', 'Son 1 hafta'] }
+];
+const mainCol = { up: G, down: RD, flat: '#E0B000', wave: O };
+const pills = {
+  up: ['+[%] · ', '#E3F7E8', '#1E7B34'],
+  down: ['−[%] · ', '#FDE7E6', '#C4271C'],
+  flat: ['±[%] · ', '#FFF6D6', '#7A5F00'],
+  wave: ['±[%] · ', '#FFF0DC', '#B25E00']
+};
+
+// Grafik: her zaman 24 nokta, böylece şekiller birbirine akıcı dönüşür
+const CW = 260, CH = 54, NP = 24;
+const gen = (tip, rg) => {
+  const out = [];
+  const amp = 1 + rg * 0.35, ph = rg * 1.7;
+  for (let k = 0; k < NP; k++) {
+    const u = k / (NP - 1);
+    let v;
+    if (tip === 'up') v = 0.8 - 0.58 * u + 0.07 * amp * Math.sin(u * 12 + ph);
+    else if (tip === 'down') v = 0.2 + 0.58 * u + 0.07 * amp * Math.sin(u * 11 + 1 + ph);
+    else if (tip === 'flat') v = 0.5 + 0.035 * amp * Math.sin(u * 9 + ph);
+    else v = 0.5 + 0.32 * Math.sin(u * Math.PI * (4 + 2 * (rg % 2))) * (1 - 0.15 * u);
+    v = Math.min(0.94, Math.max(0.06, v));
+    out.push([u * CW, v * CH]);
+  }
+  return out;
+};
+const f1 = (n) => n.toFixed(1);
+const toPath = (p) => {
+  let s = 'M' + f1(p[0][0]) + ',' + f1(p[0][1]);
+  for (let i = 0; i < p.length - 1; i++) {
+    const p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+    s += ' C' + f1(p1[0] + (p2[0] - p0[0]) / 6) + ',' + f1(p1[1] + (p2[1] - p0[1]) / 6) + ' ' + f1(p2[0] - (p3[0] - p1[0]) / 6) + ',' + f1(p2[1] - (p3[1] - p1[1]) / 6) + ' ' + f1(p2[0]) + ',' + f1(p2[1]);
+  }
+  return s;
+};
+
+// Ekran geometrisi
+const RE = 380, LE = 10;
+const FL = R ? RE - 176 : LE;
+const cellC = (i) => [FL + 10 + 78 * (i % 2) + 39, 122 + 66 + 85 * Math.floor(i / 2)];
+const cStart = R ? 4 - nSlot : 0;
+const colX = (c) => c * 97.5 + 48.75;
+const wLeft = cStart * 97.5 + 10;
+const wW = nSlot * 97.5 - 20, wH = bare ? 90 : 76;
+const wS = mini ? (mini2 ? 32 : 26) : (bare ? 46 : (single ? 42 : 38));
+const wY = mini ? (bare ? 154 : 168) : (bare ? 156 : 169);
+const wC = (j) => mini ? [colX(cStart) + (mini2 ? (j - 0.5) * 26 : (j - 1) * 20), wY] : [colX(cStart + j), wY];
+const wMid = [wLeft + wW / 2, 122 + wH / 2];
+const fx0 = mini ? colX(cStart) : wMid[0], fy0 = wY;
+const flowP = (i) => [R ? colX(3) - 70 * (1 - (i % 2)) : colX(0) + 70 * (i % 2), fy0 + 80 * Math.floor(i / 2)];
+const posC = (i) => flow ? flowP(i) : cellC(i);
+const CL = R ? RE - 280 : LE;
+const heroS = single ? wS / 40 : 1;
+const occ = [];
+for (let k = 0; k < nSlot; k++) occ.push(cStart + k);
+const slots = ['Takvim', 'Saat', 'Notlar', 'Hava', 'Dosyalar', 'Kişiler', 'Müzik', 'Ayarlar'].map((n, k) => {
+  const rr = Math.floor(k / 4), cc = k % 4;
+  const hide = rr === 0 && occ.indexOf(cc) >= 0;
+  return { label: n, style: 'left: ' + (cc * 97.5 + 20.75) + 'px; top: ' + (128 + rr * 94) + 'px; opacity: ' + (hide ? 0 : 1) + ';' };
+});
+const sc0 = single ? wC(0) : posC(sel);
+const rx = Math.round(sc0[0] - CL), ry = Math.round(sc0[1] - 122);
+
+const go = (s, extra) => this.setState(Object.assign({ stage: s, from: (this.state && this.state.stage) || 0, scrub: null }, extra || {}));
+const closeAll = () => {
+  const cur = (this.state && this.state.stage) || 0;
+  if (cur === 2 && !single) {
+    go(1);
+    setTimeout(() => go(0), t(440));
+  } else {
+    go(0);
+  }
+};
+
+const nabizOn = (this.props.nabiz ?? 'Normal') !== 'Kapalı';
+const tks = st.tk || [];
+const tkS = (i) => {
+  const o = tks[i] || { n: 0, d: 1 };
+  const on = nabizOn && o.n > 0;
+  const ab = o.n % 2 ? 'A' : 'B';
+  const up = o.d > 0;
+  const cc = up ? '#34C759' : '#FF3B30';
+  return {
+    beat: 'animation: none;',
+    rip: 'display: none;',
+    ang: o.a || 0,
+    flash: '--dmcs: ' + (up ? 'rgba(52,199,89,0.3)' : 'rgba(255,59,48,0.26)') + '; animation: ' + (on ? 'dmFlas' + ab + ' ' + t(900) + 'ms ease-out' : 'none') + ';',
+    arrow: o.n ? (up ? '▲' : '▼') : '',
+    arrowSt: 'color: ' + (up ? '#1E7B34' : '#C4271C') + '; display: inline-block; animation: ' + (on ? 'dmPop' + ab + ' ' + t(420) + 'ms cubic-bezier(0.3, 1.4, 0.5, 1)' : 'none') + ';'
+  };
+};
+
+const assets = raw.map((a, i) => {
+  const c = cellC(i);
+  let tx = 0, ty = 0, s = 1, op = 1, blur = 0, lop = 1, tr = '', ltr = '';
+  const pc = posC(i);
+  const bx = pc[0] - c[0], by = pc[1] - c[1];
+  if (stage === 0) {
+    lop = 0;
+    if (i < nW) {
+      const wp = wC(i);
+      tx = wp[0] - c[0]; ty = wp[1] - c[1]; s = wS / 40; op = 1;
+      tr = 'transform ' + t(540) + 'ms ' + ease + ', opacity ' + t(200) + 'ms ease ' + (from === 2 ? t(360) : 0) + 'ms';
+    } else {
+      tx = (wMid[0] - c[0]) * 0.45; ty = (wMid[1] - c[1]) * 0.45; s = 0.7; op = 0;
+      tr = 'transform ' + t(420) + 'ms ' + easeIn + ', opacity ' + t(160) + 'ms ease';
+    }
+    ltr = 'opacity ' + t(90) + 'ms ease';
+  } else if (stage === 1) {
+    tx = bx; ty = by;
+    if (from === 2) {
+      const dl = i === sel ? t(360) : 0;
+      tr = 'transform ' + t(520) + 'ms ' + ease + ', opacity ' + t(i === sel ? 120 : 300) + 'ms ease ' + dl + 'ms, filter ' + t(300) + 'ms ease';
+      ltr = 'opacity ' + t(240) + 'ms ease';
+    } else {
+      const dl = i < 2 ? 0 : t(60 + i * 40);
+      tr = 'transform ' + t(i < 2 ? 600 : 560) + 'ms ' + (i < 2 ? softSpring : spring) + ' ' + dl + 'ms, opacity ' + t(240) + 'ms ease ' + dl + 'ms, filter ' + t(300) + 'ms ease';
+      ltr = 'opacity ' + t(260) + 'ms ease ' + t(200 + i * 40) + 'ms';
+      if (flow) {
+        const fdl = t(i * 45);
+        tr = 'transform ' + t(560) + 'ms ' + softSpring + ' ' + fdl + 'ms, opacity ' + t(200) + 'ms ease ' + fdl + 'ms, filter ' + t(300) + 'ms ease';
+      }
+    }
+  } else if (single) {
+    lop = 0; ltr = 'opacity 1ms';
+    if (i === 0) {
+      const wp = wC(0);
+      tx = wp[0] - c[0]; ty = wp[1] - c[1]; s = wS / 40; op = 0;
+      tr = 'opacity ' + t(70) + 'ms ease';
+    } else {
+      tx = (wMid[0] - c[0]) * 0.45; ty = (wMid[1] - c[1]) * 0.45; s = 0.7; op = 0;
+      tr = 'opacity 1ms';
+    }
+  } else {
+    if (i === sel) {
+      op = 0;
+      tr = 'opacity ' + t(70) + 'ms ease';
+    } else {
+      const vx = pc[0] - sc0[0], vy = pc[1] - sc0[1];
+      const len = Math.hypot(vx, vy) || 1;
+      tx = bx + vx / len * 14; ty = by + vy / len * 14; s = 0.85; op = 0; blur = 2;
+      tr = 'transform ' + t(560) + 'ms ' + ease + ', opacity ' + t(280) + 'ms ease, filter ' + t(280) + 'ms ease';
+    }
+    ltr = 'opacity ' + t(180) + 'ms ease';
+  }
+  return Object.assign({}, a, {
+    badgeStyle: 'background: ' + a.bb + '; color: ' + a.bf + ';',
+    stateWord: words[a.w[0]],
+    beatStyle: tkS(i).beat,
+    ripStyle: tkS(i).rip,
+    flashStyle: tkS(i).flash,
+    arrowStyle: tkS(i).arrowSt,
+    arrow: tkS(i).arrow,
+    small: (stage === 0 && mini) ? 'true' : 'false',
+    donus: tkS(i).ang,
+    pillPos: (() => {
+      const vis = false;
+      const dl = vis ? t(260 + i * 70) : 0;
+      return 'top: ' + Math.round(pc[1] - 17) + 'px; ' + (R ? 'right: ' + Math.round(390 - (pc[0] - 30)) : 'left: ' + Math.round(pc[0] + 30)) + 'px; transform-origin: ' + (R ? 'right' : 'left') + ' center; opacity: ' + (vis ? 1 : 0) + '; transform: translateX(' + (vis ? 0 : (R ? 12 : -12)) + 'px) scale(' + (vis ? 1 : 0.92) + '); pointer-events: ' + (vis ? 'auto' : 'none') + '; transition: opacity ' + t(vis ? 260 : 120) + 'ms ease ' + dl + 'ms, transform ' + t(460) + 'ms ' + ease + ' ' + dl + 'ms;';
+    })(),
+    wPos: 'left: ' + (colX(cStart + i) - wLeft).toFixed(1) + 'px; top: ' + (bare ? 68 : 7) + 'px;',
+    stateStyle: 'color: ' + (flow ? dcol[a.w[0]] : wcol[a.w[0]]) + ';',
+    isSel: i === sel ? 'true' : 'false',
+    open: () => go(2, { sel: i }),
+    pick: () => this.setState({ sel: i, scrub: null }),
+    cellStyle: 'transform-origin: 50% 28px; transform: translate(' + tx.toFixed(1) + 'px, ' + ty.toFixed(1) + 'px) scale(' + s.toFixed(3) + '); opacity: ' + op + '; filter: blur(' + blur + 'px) drop-shadow(0 2px 3px rgba(0,0,0,' + (((bare && stage === 0) || (flow && stage >= 1)) ? 0.35 : 0) + ')); transition: ' + tr + ';',
+    labelStyle: 'opacity: ' + lop + '; transition: ' + ltr + ';' + (flow ? ' color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.6);' : '')
+  });
+});
+const d = assets[sel] || assets[0];
+const p = pills[d.tip];
+const col = mainCol[d.tip];
+const pts = gen(d.tip, rng);
+const linePath = toPath(pts);
+const areaPath = linePath + ' L' + CW + ',' + CH + ' L0,' + CH + ' Z';
+const last = pts[NP - 1];
+
+let scrubY = 0, tipText = '', tipLeft = 0;
+if (scrub !== null) {
+  const fx = scrub / CW * (NP - 1);
+  const i0 = Math.min(NP - 2, Math.floor(fx));
+  const fr = fx - i0;
+  scrubY = pts[i0][1] + (pts[i0 + 1][1] - pts[i0][1]) * fr;
+  const u = scrub / CW;
+  const gunler = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  const when = rng === 0 ? String(Math.floor(u * 23.99)).padStart(2, '0') + ':00' : rng === 1 ? gunler[Math.floor(u * 6.99)] : rng === 2 ? (1 + Math.floor(u * 29.99)) + '. gün' : aylar[Math.floor(u * 11.99)];
+  tipText = when + ' · ₺[FİYAT]';
+  tipLeft = Math.max(0, Math.min(CW - 92, scrub - 46));
+}
+
+const FDW = 260;
+const OX = R ? RE - FDW : LE, OY = 132;
+const HLx = 44, HLy = 100, HS2 = 80, u2 = HS2 / 76;
+const FK = 0.86;
+const HCx = R ? OX + FDW - (FDW - HLx) * FK : OX + HLx * FK, HCy = OY + HLy * FK;
+const hs0 = (single ? wS : 40) / HS2;
+const annoLocal = [[20, 0], [22.9, 32.8], [24, 41.6]];
+const annoTops = [48, 90, 132];
+const annoPts = annoLocal.map((q) => [HLx + q[0] * u2, HLy + (q[1] - 8) * u2]);
+const annoPath = (k) => 'M' + f1(annoPts[k][0]) + ',' + f1(annoPts[k][1]) + ' L92,' + (annoTops[k] + 15) + ' L98,' + (annoTops[k] + 15);
+const annoLine = (k) => 'stroke-dasharray: 140; stroke-dashoffset: ' + (d2 ? 0 : 140) + '; transition: stroke-dashoffset ' + t(d2 ? 520 : 140) + 'ms ' + ease + ' ' + (d2 ? t(380 + k * 70) : 0) + 'ms;';
+const annoDot = (k) => 'opacity: ' + (d2 ? 1 : 0) + '; transition: opacity ' + t(d2 ? 260 : 100) + 'ms ease ' + (d2 ? t(360 + k * 70) : 0) + 'ms;';
+const brightW = { Y: '#4CD964', D: '#FF6B6B', S: '#FFD60A', W: '#FFB340' };
+const brightT = { up: '#4CD964', down: '#FF6B6B', flat: '#FFD60A', wave: '#FFB340' };
+const goBack = () => (single ? go(0) : go(1));
+const open = stage >= 1;
+const fo = open && !single && !flow;
+const d2 = stage === 2;
+const w = fo ? 176 : wW, h = fo ? 216 : wH, r = fo ? 22 : (single ? 20 : 22);
+const left = fo ? (R ? RE - w : LE) : wLeft;
+const anchor = R ? 'right: 0;' : 'left: 0;';
+const boxOx = Math.round(sc0[0] - left), boxOy = Math.round(sc0[1] - 122);
+const cardH = single ? 400 : 446;
+const sec = (n) => d2
+  ? 'opacity: 1; transform: translateY(0px); filter: blur(0px); transition: opacity ' + t(340) + 'ms ease ' + t(190 + n * 40) + 'ms, transform ' + t(540) + 'ms ' + ease + ' ' + t(190 + n * 40) + 'ms, filter ' + t(380) + 'ms ease ' + t(190 + n * 40) + 'ms;'
+  : 'opacity: 0; transform: translateY(8px); filter: blur(4px); transition: opacity ' + t(110) + 'ms ease, transform ' + t(200) + 'ms ease, filter ' + t(150) + 'ms ease;';
+const ranges = ['1 gün', '1 hafta', '1 ay', '1 yıl'].map((lb, i) => ({
+  label: lb,
+  on: i === rng ? 'true' : 'false',
+  style: 'font-weight: ' + (i === rng ? 600 : 400) + '; color: ' + (i === rng ? '#1C1C1E' : '#FFFFFF') + ';',
+  pick: () => this.setState({ rng: i, scrub: null })
+}));
+
+return {
+  hiz: m,
+  endRip: (() => { const o = tks[sel] || { n: 0, d: 1 }; const on = nabizOn && o.n > 0; return 'transform-box: fill-box; transform-origin: center; animation: ' + (on ? 'dmUc' + (o.n % 2 ? 'A' : 'B') + ' ' + t(1000) + 'ms ease-out' : 'none') + ';'; })(),
+  cardLeft: CL,
+  closeOrb: (() => {
+    const cv = false;
+    const dl = cv ? t(220) : 0;
+    return 'left: ' + Math.round(fx0 - 20) + 'px; top: ' + Math.round(fy0 - 20) + 'px; opacity: ' + (cv ? 1 : 0) + '; transform: rotate(' + (cv ? 0 : -90) + 'deg) scale(' + (cv ? 1 : 0.5) + '); pointer-events: ' + (cv ? 'auto' : 'none') + '; transition: opacity ' + t(220) + 'ms ease ' + dl + 'ms, transform ' + t(520) + 'ms ' + softSpring + ' ' + dl + 'ms;';
+  })(),
+  cardH,
+  wW, wH, slots,
+  wCols: single ? 1 : 2,
+  wPad: bare ? (single ? '4px 2px 3px' : '4px 8px 3px') : (single ? '5px 4px' : '7px 8px 6px'),
+  wAlign: bare ? 'end' : 'start',
+  wText: bare ? 'color: #FFFFFF; font-size: 12px; font-weight: 400; text-shadow: 0 1px 3px rgba(0,0,0,0.55);' : '',
+  wBadge: (bare || mini) ? 'display: none;' : '',
+  showSwitcher: !single,
+  backLabel: single ? 'Kapat' : 'Damla',
+  homeStyle: 'filter: blur(' + (stage ? 6 : 0) + 'px); transform: scale(' + (stage ? 0.985 : 1) + '); transition: filter ' + t(520) + 'ms ease, transform ' + t(600) + 'ms ' + ease + ';',
+  dimStyle: 'opacity: ' + (stage ? 1 : 0) + '; pointer-events: ' + (stage ? 'auto' : 'none') + '; transition: opacity ' + t(420) + 'ms ease; cursor: default;',
+  boxStyle: 'opacity: ' + (d2 ? 0 : 1) + '; overflow: ' + (flow ? 'visible' : 'hidden') + '; left: ' + left + 'px; top: 122px; width: ' + w + 'px; height: ' + h + 'px; border-radius: ' + r + 'px; background: ' + (fo ? 'rgba(250,250,252,0.8)' : (bare ? 'rgba(250,250,252,0)' : '#FFFFFF')) + '; backdrop-filter: ' + (fo ? 'blur(24px) saturate(1.8)' : 'none') + '; -webkit-backdrop-filter: ' + (fo ? 'blur(24px) saturate(1.8)' : 'none') + '; box-shadow: ' + (fo ? '0 16px 44px rgba(0,0,0,0.32), inset 0 0 0 0.5px rgba(255,255,255,0.7)' : (bare ? '0 0 0 rgba(0,0,0,0), inset 0 0 0 0.5px rgba(255,255,255,0)' : '0 2px 10px rgba(0,0,0,0.15), inset 0 0 0 0.5px rgba(255,255,255,0)')) + '; transform-origin: ' + boxOx + 'px ' + boxOy + 'px; transform: scale(' + (d2 ? 0.985 : 1) + '); transition: left ' + t(540) + 'ms ' + ease + ', width ' + t(540) + 'ms ' + ease + ', height ' + t(540) + 'ms ' + ease + ', border-radius ' + t(540) + 'ms ' + ease + ', background ' + t(300) + 'ms ease, box-shadow ' + t(540) + 'ms ease, transform ' + t(600) + 'ms ' + ease + ', opacity ' + t(260) + 'ms ease;',
+  wLayer: anchor + ' opacity: ' + (stage === 0 ? 1 : 0) + '; pointer-events: ' + (stage === 0 ? 'auto' : 'none') + '; transition: opacity ' + (stage === 0 ? t(220) + 'ms ease ' + t(360) + 'ms' : t(100) + 'ms ease') + ';',
+  fLayer: anchor + ' pointer-events: ' + (stage === 1 ? 'auto' : 'none') + ';',
+  hdrStyle: 'pointer-events: ' + (flow ? 'none' : 'auto') + '; opacity: ' + (stage === 1 && !flow ? 1 : 0) + '; transform: translateY(' + (stage === 1 && !flow ? 0 : -5) + 'px); transition: opacity ' + t(stage === 1 ? 260 : 110) + 'ms ease ' + (stage === 1 && from === 0 ? t(180) : 0) + 'ms, transform ' + t(420) + 'ms ' + ease + ';',
+  hdrDir: R ? 'row' : 'row-reverse',
+  titleJustify: R ? 'flex-start' : 'flex-end',
+  closeIcon: R ? 'M6 6l6 6-6 6M13 6l6 6-6 6' : 'M18 6l-6 6 6 6M11 6l-6 6 6 6',
+  cardWrap: 'pointer-events: ' + (d2 ? 'auto' : 'none') + ';',
+  cardClip: d2
+    ? 'clip-path: circle(560px at ' + rx + 'px ' + ry + 'px); opacity: 1; transition: clip-path ' + t(600) + 'ms ' + ease + ', opacity 1ms;'
+    : 'clip-path: circle(24px at ' + rx + 'px ' + ry + 'px); opacity: 0; transition: clip-path ' + t(440) + 'ms ' + easeIn + ', opacity ' + t(110) + 'ms ease ' + t(350) + 'ms;',
+  heroStyle: d2
+    ? 'opacity: 1; transform: translate(' + f1(HCx - 40 * FK) + 'px, ' + f1(HCy - 48.5 * FK) + 'px) scale(' + FK + '); transition: transform ' + t(640) + 'ms ' + ease + ', opacity 1ms;'
+    : 'opacity: 0; transform: translate(' + f1(sc0[0] - 40 * hs0) + 'px, ' + f1(sc0[1] - 48.5 * hs0) + 'px) scale(' + hs0.toFixed(3) + '); transition: transform ' + t(440) + 'ms ' + ease + ', opacity ' + t(90) + 'ms ease ' + t(380) + 'ms;',
+  fdDim: 'opacity: ' + (d2 ? 1 : 0) + '; transition: opacity ' + t(420) + 'ms ease;',
+  fdPE: d2 ? 'auto' : 'none',
+  fresh: (() => { const o = tks[sel] || {}; if (!o.t) return 'canlı'; const sec = Math.floor((Date.now() - o.t) / 1000); return sec < 2 ? 'canlı · şimdi' : 'canlı · ' + sec + ' sn önce'; })(),
+  openShare: () => this.setState({ share: true }),
+  closeShare: () => this.setState({ share: false }),
+  shDim: 'opacity: ' + (st.share && d2 ? 1 : 0) + '; pointer-events: ' + (st.share && d2 ? 'auto' : 'none') + '; transition: opacity ' + t(320) + 'ms ease;',
+  shBox: 'opacity: ' + (st.share && d2 ? 1 : 0) + '; transform: translateY(' + (st.share && d2 ? 0 : 24) + 'px) scale(' + (st.share && d2 ? 1 : 0.92) + '); pointer-events: ' + (st.share && d2 ? 'auto' : 'none') + '; transition: opacity ' + t(320) + 'ms ease, transform ' + t(560) + 'ms ' + ease + ';',
+  shGlow: 'background: ' + col + ';',
+  shWord: 'color: ' + brightW[d.w[0]] + ';',
+  shWordText: words[d.w[0]] + ' · ' + d.tf[0].toLowerCase(),
+  fdBox: 'left: ' + OX + 'px; top: ' + OY + 'px; transform: scale(' + FK + '); transform-origin: ' + (R ? 'top right' : 'top left') + ';',
+  an0: annoPath(0), an1: annoPath(1), an2: annoPath(2),
+  al0: annoLine(0), al1: annoLine(1), al2: annoLine(2),
+  ax0: f1(annoPts[0][0]), ay0: f1(annoPts[0][1]), ax1: f1(annoPts[1][0]), ay1: f1(annoPts[1][1]), ax2: f1(annoPts[2][0]), ay2: f1(annoPts[2][1]),
+  ad0: annoDot(0), ad1: annoDot(1), ad2: annoDot(2),
+  anno: d.w.map((k, j) => ({
+    label: ['Damla', 'Üst halka', 'Alt halka'][j] + ' · ' + d.tf[j].toLowerCase(),
+    short: ['Damla', 'Üst halka', 'Alt halka'][j],
+    word: words[k],
+    wordStyle: 'color: ' + brightW[k] + ';',
+    pos: 'top: ' + annoTops[j] + 'px; opacity: ' + (d2 ? 1 : 0) + '; transform: translateX(' + (d2 ? 0 : -8) + 'px); filter: blur(' + (d2 ? 0 : 3) + 'px); transition: opacity ' + t(d2 ? 340 : 110) + 'ms ease ' + (d2 ? t(460 + j * 70) : 0) + 'ms, transform ' + t(520) + 'ms ' + ease + ' ' + (d2 ? t(460 + j * 70) : 0) + 'ms, filter ' + t(360) + 'ms ease ' + (d2 ? t(460 + j * 70) : 0) + 'ms;'
+  })),
+  arrowBright: (() => { const o = tks[sel] || { n: 0, d: 1 }; const on = nabizOn && o.n > 0; return 'color: ' + (o.d > 0 ? '#4CD964' : '#FF6B6B') + '; display: inline-block; animation: ' + (on ? 'dmPop' + (o.n % 2 ? 'A' : 'B') + ' ' + t(420) + 'ms cubic-bezier(0.3, 1.4, 0.5, 1)' : 'none') + ';'; })(),
+  pillBright: 'color: ' + brightT[d.tip] + ';',
+  dots: assets.map((a, i) => ({ name: a.name, pick: () => this.setState({ sel: i, scrub: null }), style: 'width: ' + (i === sel ? 18 : 6) + 'px; opacity: ' + (i === sel ? 1 : 0.45) + ';' })),
+  swDown: (e) => { this._sx = e && typeof e.clientX === 'number' ? e.clientX : null; },
+  swUp: (e) => {
+    const sx = this._sx; this._sx = null;
+    if (sx === null || sx === undefined || !e) { goBack(); return; }
+    const dx = e.clientX - sx;
+    const cur = (this.state && typeof this.state.sel === 'number') ? this.state.sel : 0;
+    if (Math.abs(dx) > 40 && !single) this.setState({ sel: (cur + (dx < 0 ? 1 : -1) + 4) % 4, scrub: null });
+    else if (Math.abs(dx) < 10) goBack();
+  },
+  haloTop: single ? 50 : 96,
+  haloWrap: 'opacity: ' + (d2 ? 1 : 0) + '; transition: opacity ' + t(d2 ? 600 : 120) + 'ms ease ' + (d2 ? t(520) : 0) + 'ms;',
+  haloColor: 'background: ' + col + '; transition: background 400ms ease;',
+  pillMove: 'transform: translateX(' + (sel * 63.25).toFixed(2) + 'px); transition: transform ' + t(460) + 'ms ' + softSpring + ';',
+  rngMove: 'transform: translateX(' + (rng * 64.5).toFixed(2) + 'px); transition: transform ' + t(420) + 'ms ' + softSpring + ';',
+  ranges,
+  sec0: sec(0), sec1: sec(1), sec2: sec(2), sec3: sec(3), sec4: sec(4), sec5: sec(5), sec6: sec(6),
+  assets,
+  widgetAssets: mini ? [{ short: 'Damla', badge: '', badgeStyle: '', wPos: 'left: ' + (colX(cStart) - wLeft).toFixed(1) + 'px; top: ' + (bare ? 68 : 7) + 'px;' }] : assets.slice(0, nW),
+  d,
+  pillText: p[0] + d.tf[0].toLowerCase(),
+  pillStyle: 'background: ' + p[1] + '; color: ' + p[2] + ';',
+  rows: d.w.map((k, j) => ({
+    label: ['Damla', 'Üst halka', 'Alt halka'][j] + ' · ' + d.tf[j].toLowerCase(),
+    word: words[k],
+    style: 'color: ' + wcol[k] + ';',
+    dot: 'background: ' + dcol[k] + ';',
+    sep: j ? 'border-top: 0.5px solid #E5E5EA; padding-top: 5px;' : ''
+  })),
+  chartBase: 'M0,' + f1(pts[0][1]) + ' L' + CW + ',' + f1(pts[0][1]),
+  chartLine: linePath,
+  chartArea: areaPath,
+  lineStyle: 'd: path("' + linePath + '"); stroke: ' + col + '; stroke-dasharray: 600; stroke-dashoffset: ' + (d2 ? 0 : 600) + '; transition: d ' + t(560) + 'ms ' + ease + ', stroke-dashoffset ' + t(1000) + 'ms ' + ease + ' ' + (d2 ? t(380) : 0) + 'ms, stroke ' + t(400) + 'ms ease;',
+  areaStyle: 'd: path("' + areaPath + '"); fill: ' + col + '; fill-opacity: ' + (d2 ? 0.2 : 0) + '; transition: d ' + t(560) + 'ms ' + ease + ', fill-opacity ' + t(600) + 'ms ease ' + (d2 ? t(760) : 0) + 'ms, fill ' + t(400) + 'ms ease;',
+  endX: f1(last[0]), endY: f1(last[1]),
+  endDot: 'fill: ' + col + '; opacity: ' + (d2 ? 1 : 0) + '; transition: fill 400ms ease, opacity ' + t(300) + 'ms ease ' + (d2 ? t(1200) : 0) + 'ms;',
+  noScrub: scrub === null,
+  hasScrub: scrub !== null,
+  scrubX: scrub === null ? 0 : f1(scrub),
+  scrubY: f1(scrubY),
+  scrubStroke: 'stroke: ' + col + ';',
+  tipText,
+  tipPos: 'left: ' + f1(tipLeft) + 'px;',
+  scrubMove: (e) => {
+    const el = e && e.currentTarget;
+    if (!el || !el.getBoundingClientRect) return;
+    const rc = el.getBoundingClientRect();
+    if (!rc.width) return;
+    const frc = Math.min(1, Math.max(0, (e.clientX - rc.left) / rc.width));
+    this.setState({ scrub: frc * CW });
+  },
+  scrubEnd: () => this.setState({ scrub: null }),
+  openFolder: () => (single ? go(2, { sel: 0 }) : go(1)),
+  back: goBack,
+  closeAll,
+  dimClick: () => { const cur = (this.state && this.state.stage) || 0; if (cur === 2 && !single) go(1); else go(0); }
+};
+}
+}
+</script>
+</body>
+</html>

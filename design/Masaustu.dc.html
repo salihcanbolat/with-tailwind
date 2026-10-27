@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Bilgisayar eşlikçisi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+@keyframes dmCanli{0%{box-shadow:0 0 0 0 rgba(48,209,88,0.55)}70%{box-shadow:0 0 0 5px rgba(48,209,88,0)}100%{box-shadow:0 0 0 0 rgba(48,209,88,0)}}
+@keyframes msGel{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+.msBas{transition:transform 160ms ease, background 200ms ease}
+.msBas:active{transform:scale(0.96)}
+.msSatir:hover{background:rgba(255,255,255,0.06)}
+</style>
+</helmet>
+<div style="position: relative; width: 1200px; height: 760px; overflow: hidden; background: #0C1016; font-family: -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, system-ui, sans-serif; color: #F2F4F7; user-select: none">
+
+<div aria-hidden="true" style="position: absolute; left: 640px; top: -120px; width: 520px; height: 520px; border-radius: 260px; background: #1F3E6E; filter: blur(120px); opacity: 0.6"></div>
+<div aria-hidden="true" style="position: absolute; left: -120px; top: 420px; width: 480px; height: 480px; border-radius: 240px; background: #3A2462; filter: blur(120px); opacity: 0.5"></div>
+
+<div aria-hidden="true" style="position: absolute; left: 110px; width: 800px; height: 500px; border-radius: 14px; background: #12171E; box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 0 0 0.5px rgba(255,255,255,0.08); overflow: hidden; {{winPos}}">
+<div style="height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: rgba(255,255,255,0.03); border-bottom: 0.5px solid rgba(255,255,255,0.06); font-size: 12px; color: rgba(235,235,245,0.5)">
+<sc-if value="{{mac}}" hint-placeholder-val="{{ true }}"><span style="display: flex; gap: 7px"><span style="width: 11px; height: 11px; border-radius: 6px; background: #FF5F57"></span><span style="width: 11px; height: 11px; border-radius: 6px; background: #FEBC2E"></span><span style="width: 11px; height: 11px; border-radius: 6px; background: #28C840"></span></span></sc-if>
+<span style="flex: 1 1 auto; text-align: center">Borsa terminali</span>
+</div>
+<svg width="800" height="464" viewBox="0 0 800 464" style="display: block">
+<g stroke="rgba(255,255,255,0.05)"><path d="M0 100H800M0 200H800M0 300H800M0 400H800"></path></g>
+<path d="M0 330 C60 320 90 280 140 290 S220 340 270 300 S350 200 410 220 S500 290 560 240 S660 150 720 170 S780 140 800 130" fill="none" stroke="rgba(235,235,245,0.28)" stroke-width="2"></path>
+</svg>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; display: flex; align-items: center; padding: 0 12px; gap: 14px; font-size: 13px; z-index: 3; {{barStyle}}">
+<sc-if value="{{mac}}" hint-placeholder-val="{{ true }}"><span style="font-weight: 700">Terminal</span><span style="color: rgba(255,255,255,0.75)">Dosya</span><span style="color: rgba(255,255,255,0.75)">Görünüm</span></sc-if>
+<sc-if value="{{win}}" hint-placeholder-val="{{ false }}"><span style="flex: 1 1 auto"></span><span style="display: flex; gap: 6px"><span style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.08)"></span><span style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.08)"></span><span style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.14); box-shadow: inset 0 -2px 0 #60A5FA"></span><span style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.08)"></span></span></sc-if>
+<span style="flex: 1 1 auto"></span>
+<button type="button" class="msBas" onClick="{{togglePop}}" aria-expanded="{{popStr}}" aria-label="Damla: {{trayAria}}" style="border: none; padding: 0 8px; height: 26px; border-radius: 7px; display: flex; align-items: center; gap: 4px; cursor: pointer; {{trayBg}}">
+<sc-for list="{{tray}}" as="a" hint-placeholder-count="3"><dc-import name="Gosterge" tip="{{a.tip}}" c1="{{a.c1}}" c2="{{a.c2}}" donus="{{a.spin}}" logo="" size="16" hint-size="16px,19px"></dc-import></sc-for>
+</button>
+<svg width="16" height="12" viewBox="0 0 24 18" fill="#FFFFFF" aria-hidden="true"><path d="M12 17.5l3.3-4.1a5.3 5.3 0 0 0-6.6 0zM5.7 9.6l1.9 2.4a7 7 0 0 1 8.8 0l1.9-2.4a10 10 0 0 0-12.6 0zM2.5 5.6l1.9 2.4a12.2 12.2 0 0 1 15.2 0l1.9-2.4a15.3 15.3 0 0 0-19 0z"></path></svg>
+<span style="font-variant-numeric: tabular-nums; {{clockStyle}}">{{clock}}</span>
+</div>
+
+<div role="group" aria-label="Damla mini şerit, sürükleyerek taşı" onPointerDown="{{dragStart}}" onPointerMove="{{dragMove}}" onPointerUp="{{dragEnd}}" onPointerCancel="{{dragEnd}}" style="position: absolute; z-index: 2; display: flex; align-items: center; gap: 14px; padding: 8px 16px 8px 10px; border-radius: 22px; background: rgba(22,26,33,0.72); backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.16), 0 16px 40px rgba(0,0,0,0.45); touch-action: none; {{strip}}">
+<span aria-hidden="true" style="display: grid; grid-template-columns: repeat(2, 3px); gap: 3px; opacity: 0.35"><span style="width: 3px; height: 3px; border-radius: 2px; background: #FFF"></span><span style="width: 3px; height: 3px; border-radius: 2px; background: #FFF"></span><span style="width: 3px; height: 3px; border-radius: 2px; background: #FFF"></span><span style="width: 3px; height: 3px; border-radius: 2px; background: #FFF"></span><span style="width: 3px; height: 3px; border-radius: 2px; background: #FFF"></span><span style="width: 3px; height: 3px; border-radius: 2px; background: #FFF"></span></span>
+<sc-for list="{{stripItems}}" as="a" hint-placeholder-count="3">
+<span style="display: flex; align-items: center; gap: 8px">
+<dc-import name="Gosterge" tip="{{a.tip}}" c1="{{a.c1}}" c2="{{a.c2}}" logo="{{a.badge}}" donus="{{a.spin}}" size="28" hint-size="28px,34px"></dc-import>
+<span style="display: flex; flex-direction: column"><span style="font-size: 12px; font-weight: 700">{{a.short}}</span><span style="font-size: 11px; font-weight: 600; transition: color 400ms ease; {{a.wordStyle}}">{{a.word}}</span></span>
+</span>
+</sc-for>
+</div>
+
+<div role="dialog" aria-label="Damla paneli" style="position: absolute; z-index: 4; width: 340px; border-radius: 18px; background: rgba(24,28,35,0.82); backdrop-filter: blur(40px) saturate(1.5); -webkit-backdrop-filter: blur(40px) saturate(1.5); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.14), 0 24px 60px rgba(0,0,0,0.55); padding: 14px 8px 8px; display: flex; flex-direction: column; gap: 10px; {{popStyle}}">
+<div style="display: flex; align-items: center; gap: 8px; padding: 0 8px">
+<svg width="12" height="14" viewBox="0 0 24 24" fill="#F2F4F7" aria-hidden="true"><path d="M12 2.5c3.2 4.3 6.5 8 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.7 3.3-7.4 6.5-11.7z"></path></svg>
+<span style="font-size: 14px; font-weight: 700">Damla</span>
+<span style="flex: 1 1 auto"></span>
+<span style="display: flex; align-items: center; gap: 5px; font-size: 11px; color: rgba(235,235,245,0.6); font-variant-numeric: tabular-nums"><span style="width: 5px; height: 5px; border-radius: 3px; background: #30D158; animation: dmCanli 2s ease-out infinite"></span>{{fresh}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 0 8px">
+<div style="display: flex; height: 5px; gap: 3px"><sc-for list="{{mood}}" as="m" hint-placeholder-count="4"><span style="border-radius: 3px; {{m.bar}}"></span></sc-for></div>
+<div style="display: flex; gap: 12px; font-size: 11px; color: rgba(235,235,245,0.6)"><sc-for list="{{mood}}" as="m" hint-placeholder-count="4"><span style="{{m.show}}"><b style="color: #F2F4F7">{{m.n}}</b> {{m.label}}</span></sc-for></div>
+</div>
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+<div class="msSatir" style="display: flex; align-items: center; gap: 12px; padding: 7px 8px; border-radius: 10px; {{r.enter}}">
+<dc-import name="Gosterge" tip="{{r.tip}}" c1="{{r.c1}}" c2="{{r.c2}}" logo="{{r.badge}}" donus="{{r.spin}}" size="34" hint-size="34px,41px"></dc-import>
+<span style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0"><span style="font-size: 13px; font-weight: 600">{{r.name}}</span><span style="font-size: 11px; color: rgba(235,235,245,0.55)">[FİYAT]</span></span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px"><span style="font-size: 12px; font-weight: 600; transition: color 400ms ease; {{r.wordStyle}}">{{r.word}}</span><span style="display: flex; gap: 3px"><sc-for list="{{r.parts}}" as="p" hint-placeholder-count="3"><span title="{{p.title}}" style="width: 14px; height: 4px; border-radius: 2px; transition: background 400ms ease; {{p.bg}}"></span></sc-for></span></span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 8px 4px; border-top: 0.5px solid rgba(255,255,255,0.08)">
+<span style="flex: 1 1 auto; font-size: 13px">Ekranda mini şerit</span>
+<button type="button" role="switch" aria-checked="{{stripStr}}" aria-label="Ekranda mini şerit" onClick="{{toggleStrip}}" style="width: 38px; height: 22px; border: none; border-radius: 11px; padding: 0; position: relative; cursor: pointer; transition: background 240ms ease; {{swBg}}"><span style="position: absolute; top: 2px; width: 18px; height: 18px; border-radius: 9px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left 260ms cubic-bezier(0.32, 0.72, 0, 1); {{swKnob}}"></span></button>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; padding: 2px 8px 4px; font-size: 11px; color: rgba(235,235,245,0.5)">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+<span style="flex: 1 1 auto">Telefonla eşitlendi · alarmlar ortak</span>
+<a href="Ayarlar.dc.html" style="color: #4DA3FF; text-decoration: none">Ayarlar</a>
+</div>
+</div>
+
+<div role="status" aria-live="polite" style="position: absolute; z-index: 5; width: 340px; border-radius: 16px; background: rgba(28,32,40,0.88); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.14), 0 20px 50px rgba(0,0,0,0.5); padding: 12px 14px; display: flex; align-items: center; gap: 12px; {{toastStyle}}">
+<dc-import name="Gosterge" tip="{{toast.tip}}" c1="{{toast.c1}}" c2="{{toast.c2}}" logo="$" donus="{{toast.spin}}" size="38" hint-size="38px,46px"></dc-import>
+<span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 11px; color: rgba(235,235,245,0.55)">Damla · şimdi</span><span style="font-size: 14px; font-weight: 700">USD/TRY <span style="{{toast.c}}">{{toast.msg}}</span></span><span style="font-size: 11px; color: rgba(235,235,245,0.55)">Telefonda ve saatte de bildirildi</span></span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"sistem":{"editor":"enum","options":["Windows","macOS"],"default":"Windows"},"$preview":{"width":1200,"height":760}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+if (!this._msTick) {
+  this._msTick = setInterval(() => {
+    const s0 = this.state || {};
+    const cur = s0.tk || [{ a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }];
+    const rates = [0.18, 0.12, 0.34, 0.15];
+    const bias = [0.6, 0.72, 0.3, 0.5];
+    let changed = false;
+    const nx = cur.map((o, i) => {
+      if (Math.random() < rates[i]) { changed = true; return { a: o.a + (Math.random() < bias[i] ? 360 : -360), t: Date.now() }; }
+      return o;
+    });
+    this._msN = (this._msN || 0) + 1;
+    const patch = {};
+    if (changed) patch.tk = nx;
+    if (this._msN % 30 === 0) { patch.usdUp = !s0.usdUp; patch.toastAt = Date.now(); }
+    patch.fl = this._msN;
+    this.setState(patch);
+  }, 400);
+}
+const mac = (this.props.sistem ?? 'Windows') === 'macOS';
+const tk = st.tk || [{ a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }];
+const pop = st.pop ?? true;
+const stripOn = st.strip ?? true;
+const G = '#34C759', Y = '#FFCC00', O = '#FF9500', R = '#FF3B30';
+const words = { Y: 'Yükselişte', S: 'Sabit', D: 'Düşüşte', W: 'Dalgalı' };
+const bright = { Y: '#30D158', S: '#FFD60A', D: '#FF453A', W: '#FF9F0A' };
+const raw = [
+  { name: 'USD/TRY', short: 'USD', badge: '$', tip: st.usdUp ? 'up' : 'flat', c1: Y, c2: G, w: [st.usdUp ? 'Y' : 'S', 'S', 'Y'] },
+  { name: 'Gram altın', short: 'Altın', badge: 'Au', tip: 'up', c1: G, c2: Y, w: ['Y', 'Y', 'S'] },
+  { name: 'Bitcoin', short: 'BTC', badge: '₿', tip: 'down', c1: O, c2: G, w: ['D', 'W', 'Y'] },
+  { name: 'Gümüş', short: 'Gümüş', badge: 'Ag', tip: 'wave', c1: Y, c2: R, w: ['W', 'S', 'D'] }
+];
+const ease = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const items = raw.map((d, i) => ({
+  name: d.name, short: d.short, badge: d.badge, tip: d.tip, c1: d.c1, c2: d.c2,
+  spin: (tk[i] && tk[i].a) || 0,
+  word: words[d.w[0]], wordStyle: 'color: ' + bright[d.w[0]] + ';',
+  parts: d.w.map((k, j) => ({ title: ['Damla', 'Üst halka', 'Alt halka'][j] + ': ' + words[k], bg: 'background: ' + bright[k] + ';' })),
+  enter: pop ? 'animation: msGel 420ms ' + ease + ' ' + (80 + i * 45) + 'ms both;' : ''
+}));
+const last = Math.max(...tk.map((o) => o.t || 0));
+const sec = last ? Math.floor((Date.now() - last) / 1000) : 0;
+const toastOn = !!st.toastAt && Date.now() - st.toastAt < 5200;
+const W = 1200, H = 760;
+const sw = 3 * 120 + 40;
+const def = { x: 40, y: mac ? 640 : 600 };
+const pos = st.pos || def;
+const drag = this._msDrag;
+const popPos = mac ? 'top: 38px; right: 96px;' : 'bottom: 58px; right: 96px;';
+const counts = ['Y', 'S', 'D', 'W'].map((k) => raw.filter((d) => d.w[0] === k).length);
+return {
+  mac, win: !mac,
+  winPos: mac ? 'top: 70px;' : 'top: 50px;',
+  barStyle: mac
+    ? 'top: 0; height: 30px; background: rgba(18,22,28,0.55); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);'
+    : 'bottom: 0; height: 48px; background: rgba(24,28,36,0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 0.5px solid rgba(255,255,255,0.08);',
+  clock: mac ? 'Sal 10:42' : '10:42',
+  clockStyle: mac ? 'font-weight: 500;' : 'font-size: 12px;',
+  tray: items.slice(0, 3),
+  trayAria: items.slice(0, 3).map((a) => a.short + ' ' + a.word).join(', '),
+  trayBg: 'background: ' + (pop ? 'rgba(255,255,255,0.16)' : 'transparent') + ';',
+  togglePop: () => this.setState({ pop: !pop }),
+  popStr: pop ? 'true' : 'false',
+  popStyle: popPos + ' transform-origin: ' + (mac ? 'top right' : 'bottom right') + '; opacity: ' + (pop ? 1 : 0) + '; transform: scale(' + (pop ? 1 : 0.96) + ') translateY(' + (pop ? 0 : (mac ? -6 : 6)) + 'px); pointer-events: ' + (pop ? 'auto' : 'none') + '; transition: opacity 220ms ease, transform 360ms ' + ease + ';',
+  fresh: sec < 2 ? 'şimdi' : sec + ' sn önce',
+  mood: [['yükselişte', 'Y'], ['sabit', 'S'], ['düşüşte', 'D'], ['dalgalı', 'W']].map((p, i) => ({ n: counts[i], label: p[0], bar: 'flex-grow: ' + counts[i] + '; background: ' + bright[p[1]] + '; display: ' + (counts[i] ? 'block' : 'none') + ';', show: counts[i] ? '' : 'display: none;' })),
+  rows: items,
+  stripItems: items.slice(0, 3),
+  stripStr: stripOn ? 'true' : 'false',
+  toggleStrip: () => this.setState({ strip: !stripOn }),
+  swBg: 'background: ' + (stripOn ? '#30D158' : 'rgba(255,255,255,0.18)') + ';',
+  swKnob: 'left: ' + (stripOn ? 18 : 2) + 'px;',
+  strip: 'left: ' + pos.x + 'px; top: ' + pos.y + 'px; opacity: ' + (stripOn ? 1 : 0) + '; transform: scale(' + (stripOn ? (drag ? 1.03 : 1) : 0.9) + '); pointer-events: ' + (stripOn ? 'auto' : 'none') + '; cursor: ' + (drag ? 'grabbing' : 'grab') + '; transition: ' + (drag ? 'transform 200ms ease' : 'left 420ms ' + ease + ', top 420ms ' + ease + ', opacity 260ms ease, transform 300ms ' + ease) + ';',
+  dragStart: (e) => { e.currentTarget.setPointerCapture(e.pointerId); const p = (this.state && this.state.pos) || def; this._msDrag = { sx: e.clientX, sy: e.clientY, ox: p.x, oy: p.y }; this.setState({ pos: p }); },
+  dragMove: (e) => { const d = this._msDrag; if (!d) return; this.setState({ pos: { x: d.ox + e.clientX - d.sx, y: d.oy + e.clientY - d.sy } }); },
+  dragEnd: (e) => {
+    if (!this._msDrag) return;
+    this._msDrag = null;
+    const p = (this.state && this.state.pos) || def;
+    const w = e.currentTarget.offsetWidth || sw;
+    const top = mac ? 44 : 14, bottom = H - (mac ? 14 : 62) - 50;
+    const x = p.x + w / 2 < W / 2 ? 20 : W - w - 20;
+    this.setState({ pos: { x, y: Math.max(top, Math.min(bottom, p.y)) } });
+  },
+  toast: { tip: st.usdUp ? 'up' : 'flat', c1: Y, c2: G, spin: (tk[0] && tk[0].a) || 0, msg: st.usdUp ? 'yükselişe döndü' : 'sabite döndü', c: 'color: ' + (st.usdUp ? '#30D158' : '#FFD60A') + ';' },
+  toastStyle: (mac ? 'top: 40px;' : 'bottom: 60px;') + ' right: ' + (pop ? 452 : 16) + 'px;' + ' opacity: ' + (toastOn ? 1 : 0) + '; transform: translateX(' + (toastOn ? 0 : 30) + 'px); pointer-events: ' + (toastOn ? 'auto' : 'none') + '; transition: opacity 300ms ease, transform 520ms ' + ease + ', right 420ms ' + ease + ';'
+};
+}
+}
+</script>
+</body>
+</html>

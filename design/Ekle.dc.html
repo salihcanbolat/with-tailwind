@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Varlık ekle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0A84FF}a:hover{color:#409CFF}
+.dmBas{display:flex;align-items:center;justify-content:center;transition:transform 180ms cubic-bezier(0.3,1.3,0.5,1)}
+.dmBas:active{transform:scale(0.9)}
+#ara::placeholder{color:rgba(235,235,245,0.45)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #0B0F14; padding: 54px 16px 0; overflow: hidden; display: flex; flex-direction: column; gap: 14px; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #F2F4F7">
+
+<div style="position: relative; height: 44px; display: flex; align-items: center; justify-content: center">
+<span style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 17px; font-weight: 600">Varlık ekle</span><span style="font-size: 12px; color: rgba(235,235,245,0.55)">{{countText}}</span></span>
+<a href="Panel.dc.html" style="position: absolute; right: 0; top: 0; height: 44px; display: flex; align-items: center; text-decoration: none; font-size: 16px; font-weight: 600; color: #0A84FF">Bitti</a>
+</div>
+
+<div style="height: 40px; border-radius: 12px; background: rgba(255,255,255,0.07); display: flex; align-items: center; gap: 8px; padding: 0 12px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(235,235,245,0.5)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<label for="ara" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Varlık ara</label>
+<input id="ara" type="search" placeholder="Döviz, maden, coin ara" value="{{q}}" onInput="{{onQ}}" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font: inherit; font-size: 16px; color: #F2F4F7; outline: none">
+</div>
+
+<div style="position: relative; height: 34px; box-sizing: border-box; padding: 2px; border-radius: 10px; background: rgba(255,255,255,0.07)">
+<div aria-hidden="true" style="position: absolute; left: 2px; top: 2px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.16); {{catPill}}"></div>
+<div role="group" aria-label="Kategori" style="position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); height: 30px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="5">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="border: none; background: transparent; padding: 0; font: inherit; font-size: 13px; color: #F2F4F7; cursor: pointer; {{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{isCross}}" hint-placeholder-val="{{ false }}">
+<a href="CaprazKur.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 22px; background: rgba(10,132,255,0.12); box-shadow: inset 0 0 0 0.5px rgba(10,132,255,0.4); text-decoration: none; color: #F2F4F7">
+<span style="display: flex; align-items: center"><dc-import name="Gosterge" tip="up" c1="#FFCC00" c2="#34C759" logo="Au" size="34" hint-size="34px,41px"></dc-import><span style="font-size: 20px; font-weight: 300; color: rgba(235,235,245,0.6); margin: 0 2px">÷</span><dc-import name="Gosterge" tip="down" c1="#FF3B30" c2="#FFCC00" logo="Ag" size="34" hint-size="34px,41px"></dc-import></span>
+<span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 16px; font-weight: 700">Çapraz kur oluştur</span><span style="font-size: 12px; line-height: 16px; color: rgba(235,235,245,0.65)">İki varlığı seç, oranını tek damlada izle</span></span>
+<svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l6 6-6 6"></path></svg>
+</a>
+</sc-if>
+
+<div style="border-radius: 22px; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); overflow: hidden; display: flex; flex-direction: column">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="6">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 12px; {{it.sep}}">
+<span style="width: 36px; display: flex; justify-content: center"><dc-import name="Gosterge" tip="{{it.tip}}" c1="{{it.c1}}" c2="{{it.c2}}" logo="{{it.logo}}" size="30" hint-size="30px,36px"></dc-import></span>
+<span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 16px; font-weight: 600">{{it.name}}</span><span style="font-size: 12px; color: rgba(235,235,245,0.55)">{{it.sub}}</span></span>
+<button type="button" onClick="{{it.toggle}}" aria-pressed="{{it.on}}" aria-label="{{it.aria}}" style="width: 44px; height: 44px; border: none; background: transparent; padding: 0; cursor: pointer"><span class="dmBas" style="width: 30px; height: 30px; border-radius: 15px; margin: 0 auto; transition: background 260ms ease, transform 180ms ease; {{it.btn}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{it.icon}}"></path></svg></span></button>
+</div>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 24px; text-align: center; font-size: 14px; color: rgba(235,235,245,0.55)">Sonuç bulunamadı</div>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const cat = st.cat ?? 0;
+const q = st.q ?? '';
+const added = st.added || { 'Gram altın': true, 'USD/TRY': true, 'Gümüş': true, 'Bitcoin': true };
+const G = '#34C759', RD = '#FF3B30', Y = '#FFCC00';
+const all = [
+  { name: 'Gram altın', sub: 'Maden · TRY', c: 2, logo: 'Au', tip: 'up', c1: Y, c2: G },
+  { name: 'Çeyrek altın', sub: 'Maden · TRY', c: 2, logo: 'Au', tip: 'up', c1: G, c2: G },
+  { name: 'Gümüş', sub: 'Maden · TRY', c: 2, logo: 'Ag', tip: 'down', c1: RD, c2: Y },
+  { name: 'USD/TRY', sub: 'Döviz', c: 1, logo: '$', tip: 'flat', c1: Y, c2: G },
+  { name: 'EUR/TRY', sub: 'Döviz', c: 1, logo: '€', tip: 'up', c1: G, c2: G },
+  { name: 'GBP/TRY', sub: 'Döviz', c: 1, logo: '£', tip: 'flat', c1: Y, c2: Y },
+  { name: 'Bitcoin', sub: 'Kripto · USD', c: 3, logo: '₿', tip: 'wave', c1: G, c2: RD },
+  { name: 'Ethereum', sub: 'Kripto · USD', c: 3, logo: 'Ξ', tip: 'down', c1: RD, c2: RD }
+];
+const catLabels = ['Tümü', 'Döviz', 'Maden', 'Kripto', 'Çapraz'];
+const isCross = cat === 4;
+const ql = q.toLocaleLowerCase('tr');
+const list = all.filter((a) => (cat === 0 || cat === 4 || a.c === cat) && (!ql || a.name.toLocaleLowerCase('tr').indexOf(ql) >= 0)).slice(0, isCross ? 3 : 8);
+const opts = ['Gümüş', 'Gram altın', 'Bitcoin', 'Türk lirası', 'Dolar', 'Euro'];
+const ca = st.ca ?? 0, cb = st.cb ?? 3;
+const short = { 'Gümüş': 'Gümüş', 'Gram altın': 'Altın', 'Bitcoin': 'BTC', 'Türk lirası': 'TRY', 'Dolar': 'USD', 'Euro': 'EUR' };
+const pw = 354 / 5;
+const crossDone = st.crossDone || {};
+const cName = short[opts[ca]] + '/' + short[opts[cb]];
+const nCount = Object.keys(added).filter((k) => added[k]).length + Object.keys(crossDone).length;
+return {
+  q,
+  onQ: (e) => this.setState({ q: e.target.value }),
+  catPill: 'width: ' + pw.toFixed(2) + 'px; transform: translateX(' + (cat * pw).toFixed(2) + 'px); transition: transform 380ms cubic-bezier(0.25, 1.04, 0.5, 1);',
+  cats: catLabels.map((l, i) => ({ label: l, on: i === cat ? 'true' : 'false', style: 'font-weight: ' + (i === cat ? 600 : 400) + ';', pick: () => this.setState({ cat: i }) })),
+  isCross,
+  crossA: opts[ca], crossB: opts[cb],
+  crossName: cName,
+  countText: nCount + ' varlık takipte',
+  aLabel: '1. varlık: ' + opts[ca] + ', değiştirmek için dokun',
+  bLabel: '2. varlık: ' + opts[cb] + ', değiştirmek için dokun',
+  crossBtn: 'background: ' + (crossDone[cName] ? '#30D158' : '#0A84FF') + ';',
+  crossBtnText: crossDone[cName] ? 'Eklendi' : 'Ekle',
+  addCross: () => { const n = Object.assign({}, crossDone); if (n[cName]) delete n[cName]; else n[cName] = true; this.setState({ crossDone: n }); },
+  nextA: () => this.setState({ ca: (ca + 1) % opts.length === cb ? (ca + 2) % opts.length : (ca + 1) % opts.length }),
+  nextB: () => this.setState({ cb: (cb + 1) % opts.length === ca ? (cb + 2) % opts.length : (cb + 1) % opts.length }),
+  swap: () => this.setState({ ca: cb, cb: ca, rot: (st.rot || 0) + 180 }),
+  swapRot: 'transform: rotate(' + (st.rot || 0) + 'deg);',
+  empty: list.length === 0,
+  items: list.map((a, i) => {
+    const on = !!added[a.name];
+    return Object.assign({}, a, {
+      sep: i ? 'border-top: 0.5px solid rgba(255,255,255,0.07);' : '',
+      on: on ? 'true' : 'false',
+      aria: on ? a.name + ' takipte, çıkar' : a.name + ' ekle',
+      btn: 'background: ' + (on ? '#30D158' : '#0A84FF') + ';',
+      icon: on ? 'M5 12.5l4.5 4.5L19 7.5' : 'M12 5v14M5 12h14',
+      toggle: () => { const n = Object.assign({}, added); n[a.name] = !on; this.setState({ added: n }); }
+    });
+  })
+};
+}
+}
+</script>
+</body>
+</html>

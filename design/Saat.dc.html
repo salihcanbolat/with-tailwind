@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Saat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+@keyframes svTitA{0%,100%{transform:translateX(0)}12%{transform:translateX(-2.5px)}24%{transform:translateX(2.5px)}36%{transform:translateX(-1.5px)}48%{transform:translateX(1.5px)}60%{transform:translateX(0)}}
+@keyframes svTitB{0%,100%{transform:translateX(0)}12%{transform:translateX(-2.5px)}24%{transform:translateX(2.5px)}36%{transform:translateX(-1.5px)}48%{transform:translateX(1.5px)}60%{transform:translateX(0)}}
+@keyframes svDalA{0%{opacity:0.7;transform:scale(1)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes svDalB{0%{opacity:0.7;transform:scale(1)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes svBarA{0%{opacity:0.35}8%{opacity:1}40%{opacity:1}100%{opacity:0.35}}
+@keyframes svBarB{0%{opacity:0.35}8%{opacity:1}40%{opacity:1}100%{opacity:0.35}}
+@keyframes svEkran{0%{opacity:0;transform:scale(0.94)}100%{opacity:1;transform:scale(1)}}
+.svBas{transition:transform 160ms ease, background 200ms ease}
+.svBas:active{transform:scale(0.95)}
+</style>
+</helmet>
+<div style="position: relative; width: 980px; height: 700px; background: #0B0F14; overflow: hidden; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #F2F4F7">
+
+<div aria-hidden="true" style="position: absolute; left: 150px; top: 0; width: 200px; height: 170px; border-radius: 0 0 40px 40px; background: #161A1F; box-shadow: inset 0 -1px 0 rgba(255,255,255,0.05)"></div>
+<div aria-hidden="true" style="position: absolute; left: 150px; top: 530px; width: 200px; height: 170px; border-radius: 40px 40px 0 0; background: #161A1F"></div>
+
+<div style="position: absolute; left: 70px; top: 170px; width: 360px; height: 360px; {{shake}}">
+<div aria-hidden="true" style="position: absolute; left: 352px; top: 146px; width: 16px; height: 52px; border-radius: 6px; background: #2A2F36; box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.12)"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: #1C2026; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 30px 60px rgba(0,0,0,0.5)"></div>
+<div aria-hidden="true" style="position: absolute; left: 22px; top: 22px; width: 316px; height: 316px; border-radius: 50%; pointer-events: none; {{ripple}}"></div>
+
+<div role="region" aria-label="Saat ekranı: {{screenName}}" style="position: absolute; left: 30px; top: 30px; width: 300px; height: 300px; border-radius: 50%; overflow: hidden; background: #000000">
+
+<sc-if value="{{isFace}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0; animation: svEkran 420ms cubic-bezier(0.32, 0.72, 0, 1) both">
+<span style="position: absolute; left: 0; right: 0; top: 58px; text-align: center; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6)">Sal 27 Ekim</span>
+<span style="position: absolute; left: 0; right: 0; top: 76px; text-align: center; font-size: 66px; font-weight: 300; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums">10:42</span>
+<div style="position: absolute; left: 0; right: 0; top: 162px; display: flex; justify-content: center; align-items: flex-end; gap: 16px">
+<sc-for list="{{faceComps}}" as="c" hint-placeholder-count="3">
+<button type="button" class="svBas" onClick="{{c.open}}" aria-label="{{c.aria}}" style="border: none; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; font: inherit; cursor: pointer">
+<dc-import name="Gosterge" tip="{{c.tip}}" c1="{{c.c1}}" c2="{{c.c2}}" logo="{{c.badge}}" donus="{{c.spin}}" kapali="{{c.kp}}" size="{{c.size}}" hint-size="40px,48px"></dc-import>
+<span style="font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8)">{{c.short}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isTile}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; animation: svEkran 420ms cubic-bezier(0.32, 0.72, 0, 1) both">
+<span style="position: absolute; left: 0; right: 0; top: 44px; display: flex; justify-content: center; align-items: center; gap: 5px; font-size: 13px; font-weight: 700"><svg width="10" height="12" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M12 2.5c3.2 4.3 6.5 8 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.7 3.3-7.4 6.5-11.7z"></path></svg>Damla</span>
+<div style="position: absolute; left: 30px; right: 30px; top: 80px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+<button type="button" class="svBas" onClick="{{a.open}}" aria-label="{{a.aria}}" style="border: none; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; font: inherit; cursor: pointer">
+<dc-import name="Gosterge" tip="{{a.tip}}" c1="{{a.c1}}" c2="{{a.c2}}" logo="{{a.badge}}" donus="{{a.spin}}" kapali="{{a.kp}}" size="50" hint-size="50px,61px"></dc-import>
+<span style="font-size: 12px; font-weight: 700">{{a.short}}</span>
+<span style="font-size: 11px; font-weight: 600; transition: color 400ms ease; {{a.wordStyle}}">{{a.word}}</span>
+</button>
+</sc-for>
+</div>
+<span style="position: absolute; left: 90px; top: 224px; width: 120px; height: 30px; border-radius: 15px; background: #1F2329; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums"><span style="width: 5px; height: 5px; border-radius: 3px; {{liveDot}}"></span>{{fresh}}</span>
+</div>
+</sc-if>
+
+<sc-if value="{{isApp}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; animation: svEkran 420ms cubic-bezier(0.32, 0.72, 0, 1) both">
+<div style="position: absolute; left: 100px; top: 36px"><dc-import name="Gosterge" tip="{{cur.tip}}" c1="{{cur.c1}}" c2="{{cur.c2}}" logo="{{cur.badge}}" donus="{{cur.spin}}" kapali="{{cur.kp}}" size="100" hint-size="100px,121px"></dc-import></div>
+<span style="position: absolute; left: 0; right: 0; top: 164px; text-align: center; font-size: 17px; font-weight: 700">{{cur.name}}</span>
+<span style="position: absolute; left: 0; right: 0; top: 186px; text-align: center; font-size: 13px; font-weight: 600; transition: color 400ms ease; {{cur.wordStyle}}">{{cur.word}}</span>
+<div style="position: absolute; left: 80px; right: 80px; top: 212px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{cur.parts}}" as="p" hint-placeholder-count="3"><span style="display: flex; flex-direction: column; align-items: center; gap: 3px"><span style="width: 100%; height: 5px; border-radius: 3px; transition: background 400ms ease; {{p.bg}}"></span><span style="font-size: 9px; color: rgba(255,255,255,0.55); white-space: nowrap">{{p.label}}</span></span></sc-for>
+</div>
+<div style="position: absolute; left: 0; right: 0; top: 256px; display: flex; justify-content: center; gap: 5px">
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="3"><span style="height: 5px; border-radius: 3px; transition: width 300ms ease, background 300ms ease; {{d.st}}"></span></sc-for>
+</div>
+<button type="button" onClick="{{prev}}" aria-label="Önceki varlık" style="position: absolute; left: 0; top: 60px; width: 70px; height: 180px; border: none; background: transparent; cursor: pointer"></button>
+<button type="button" onClick="{{next}}" aria-label="Sonraki varlık" style="position: absolute; right: 0; top: 60px; width: 70px; height: 180px; border: none; background: transparent; cursor: pointer"></button>
+</div>
+</sc-if>
+
+<sc-if value="{{isAlarm}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; animation: svEkran 360ms cubic-bezier(0.32, 0.72, 0, 1) both">
+<div aria-hidden="true" style="position: absolute; left: 70px; top: 30px; width: 160px; height: 160px; border-radius: 80px; filter: blur(46px); opacity: 0.5; {{alGlow}}"></div>
+<div style="position: absolute; left: 104px; top: 30px"><dc-import name="Gosterge" tip="{{al.tip}}" c1="{{al.c1}}" c2="{{al.c2}}" logo="{{al.badge}}" donus="{{al.spin}}" size="92" hint-size="92px,111px"></dc-import></div>
+<span style="position: absolute; left: 0; right: 0; top: 148px; text-align: center; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6)">{{al.name}}</span>
+<span style="position: absolute; left: 40px; right: 40px; top: 166px; text-align: center; font-size: 18px; font-weight: 700; line-height: 1.2; {{al.msgStyle}}">{{al.msg}}</span>
+<div style="position: absolute; left: 0; right: 0; top: 218px; display: flex; justify-content: center; gap: 14px">
+<button type="button" class="svBas" onClick="{{dismiss}}" aria-label="Tamam" style="width: 46px; height: 46px; border: none; border-radius: 23px; background: #1F2329; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+<button type="button" class="svBas" onClick="{{dismiss}}" aria-label="Telefonda aç" style="width: 46px; height: 46px; border: none; border-radius: 23px; background: #1F2329; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M11 18.5h2"></path></svg></button>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="position: absolute; left: 500px; top: 48px; width: 440px; display: flex; flex-direction: column; gap: 22px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; font-weight: 600; color: rgba(235,235,245,0.55)">Saatte gördüğün yer</span>
+<div role="tablist" aria-label="Saat ekranı" style="display: flex; padding: 3px; border-radius: 12px; background: rgba(255,255,255,0.06)">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.go}}" style="flex: 1 1 0; height: 34px; border: none; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 240ms ease, color 240ms ease; {{tb.st}}">{{tb.label}}</button></sc-for>
+</div>
+<span style="font-size: 12px; line-height: 1.45; color: rgba(235,235,245,0.6)">{{tabHint}}</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; font-weight: 600; color: rgba(235,235,245,0.55)">Bir olay gönder</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="4"><button type="button" class="svBas" onClick="{{e.go}}" style="height: 54px; border: none; border-radius: 14px; background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); color: #F2F4F7; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding: 0 14px; text-align: left"><span style="font-size: 14px; font-weight: 600">{{e.label}}</span><span style="font-size: 11px; color: rgba(235,235,245,0.55)">{{e.sub}}</span></button></sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,0.04); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 12px; font-weight: 600; color: rgba(235,235,245,0.55)">Bileğinde hissettiğin</span><span style="font-size: 13px; font-weight: 700; {{hapColor}}">{{hapName}}</span></div>
+<div role="img" aria-label="{{hapAria}}" style="display: flex; align-items: center; gap: 4px; height: 34px">
+<sc-for list="{{hapBars}}" as="b" hint-placeholder-count="5"><span style="border-radius: 3px; {{b.st}}"></span></sc-for>
+</div>
+<span style="font-size: 12px; line-height: 1.45; color: rgba(235,235,245,0.6)">{{hapDesc}}</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 600; color: rgba(235,235,245,0.55)">Nasıl çalışır</span>
+<sc-for list="{{flow}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; gap: 10px; align-items: flex-start">
+<span style="width: 22px; height: 22px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; transition: background 300ms ease, color 300ms ease; {{f.st}}">{{f.n}}</span>
+<span style="display: flex; flex-direction: column; gap: 1px"><span style="font-size: 13px; font-weight: 600">{{f.t}}</span><span style="font-size: 12px; line-height: 1.4; color: rgba(235,235,245,0.6)">{{f.d}}</span></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":980,"height":700}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+if (!this._svTick) {
+  this._svTick = setInterval(() => {
+    const s0 = this.state || {};
+    if (s0.closed) return;
+    const cur = s0.tk || [{ a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }];
+    const rates = [0.18, 0.12, 0.34];
+    const bias = [0.6, 0.72, 0.3];
+    let changed = false;
+    const nx = cur.map((o, i) => {
+      if (Math.random() < rates[i]) { changed = true; return { a: o.a + (Math.random() < bias[i] ? 360 : -360), t: Date.now() }; }
+      return o;
+    });
+    if (changed) this.setState({ tk: nx, fl: 1 });
+    else this.setState({ fl: (s0.fl || 0) + 1 });
+  }, 500);
+}
+const screen = st.screen || 'face';
+const shown = st.alarm ? 'alarm' : screen;
+const closed = !!st.closed;
+const tk = st.tk || [{ a: 0, t: 0 }, { a: 0, t: 0 }, { a: 0, t: 0 }];
+const idx = st.idx ?? 0;
+const G = '#34C759', Y = '#FFCC00', O = '#FF9500';
+const words = { Y: 'Yükselişte', S: 'Sabit', D: 'Düşüşte', W: 'Dalgalı', K: 'Piyasa kapalı' };
+const bright = { Y: '#30D158', S: '#FFD60A', D: '#FF453A', W: '#FF9F0A', K: '#AEAEB2' };
+const raw = [
+  { name: 'USD/TRY', short: 'USD', badge: '$', tip: st.usdUp ? 'up' : 'flat', c1: Y, c2: G, w: [st.usdUp ? 'Y' : 'S', 'S', 'Y'], borsa: true },
+  { name: 'Gram altın', short: 'Altın', badge: 'Au', tip: 'up', c1: G, c2: Y, w: ['Y', 'Y', 'S'], borsa: true },
+  { name: 'Bitcoin', short: 'BTC', badge: '₿', tip: 'down', c1: O, c2: G, w: ['D', 'W', 'Y'], borsa: false }
+];
+const ease = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const pats = {
+  yukari: { name: 'Yükselişe döndü', c: '#30D158', bars: [[10, 70], [0, 60], [22, 70]], desc: 'İki kısa vuruş, ikincisi daha güçlü: yukarı çıkan bir his. Bakmadan “yükselişe geçti” anlaşılır.' },
+  asagi: { name: 'Düşüşe döndü', c: '#FF453A', bars: [[22, 70], [0, 60], [10, 70]], desc: 'İki kısa vuruş, ikincisi daha zayıf: aşağı inen bir his.' },
+  sakin: { name: 'Sabite döndü', c: '#FFD60A', bars: [[12, 260]], desc: 'Tek, uzun ve yumuşak bir titreşim: “hareket durdu”.' },
+  fiyat: { name: 'Fiyat alarmı', c: '#0A84FF', bars: [[18, 60], [0, 70], [18, 60], [0, 70], [18, 60]], desc: 'Üç eşit kısa vuruş: kendi kurduğun bir hedefe ulaşıldı. Durum değişiminden farklı hissettirir.' },
+  kapandi: { name: 'Piyasa kapandı', c: '#AEAEB2', bars: [[8, 140]], desc: 'Çok hafif tek dokunuş. İstersen ayarlardan tamamen kapatılabilir.' },
+  yok: { name: 'Titreşim yok', c: 'rgba(235,235,245,0.6)', bars: [], desc: 'Yeni fiyatlar sessizce gelir; saat yalnızca damlanın etrafındaki ışık turuyla güncellendiğini gösterir. Bilek yalnızca önemli anlarda titrer.' }
+};
+const hk = st.hap || 'yok';
+const hp = pats[hk];
+const hn = st.hapN || 0;
+const ab = hn % 2 ? 'A' : 'B';
+const fire = (patchFn, hap, n) => {
+  (this._svTo || []).forEach(clearTimeout);
+  this._svTo = [];
+  this.setState({ step: 0 });
+  for (let k = 1; k <= n; k++) this._svTo.push(setTimeout(() => this.setState({ step: k }), k * 260));
+  this._svTo.push(setTimeout(() => this.setState(Object.assign({}, patchFn(), { hap, hapN: ((this.state && this.state.hapN) || 0) + 1 })), n * 260 + 80));
+};
+const mk = (d, i) => {
+  const kp = closed && d.borsa;
+  const k = kp ? 'K' : d.w[0];
+  return {
+    name: d.name, short: d.short, badge: d.badge, tip: d.tip, c1: d.c1, c2: d.c2, kp,
+    spin: (tk[i] && tk[i].a) || 0,
+    word: words[k], wordStyle: 'color: ' + bright[k] + ';',
+    aria: d.name + ', ' + words[k] + '. Ayrıntı için dokun.',
+    open: () => this.setState({ screen: 'app', idx: i }),
+    parts: d.w.map((w, j) => ({ label: ['Damla', 'Üst', 'Alt'][j], bg: 'background: ' + (kp ? bright.K : bright[w]) + ';' }))
+  };
+};
+const assets = raw.map(mk);
+const last = Math.max(...tk.map((o) => o.t || 0));
+const sec = last ? Math.floor((Date.now() - last) / 1000) : 0;
+const alarmData = st.alarm === 'fiyat'
+  ? { name: 'Bitcoin', badge: '₿', tip: 'down', c1: O, c2: G, msg: '[FİYAT] altına indi', c: '#0A84FF' }
+  : { name: 'USD/TRY', badge: '$', tip: st.usdUp ? 'up' : 'flat', c1: Y, c2: G, msg: st.usdUp ? 'Yükselişe döndü' : 'Sabite döndü', c: st.usdUp ? '#30D158' : '#FFD60A' };
+const hints = {
+  face: 'Kadran komplikasyonu: saate her baktığında gördüğün yer. Ortadaki en önemli varlığın. Dokununca ayrıntıyı açar.',
+  tile: 'Kutucuk: kadranı yana kaydırınca açılan sayfa. Üç varlığın tek bakışta özeti.',
+  app: 'Uygulama: bir varlığın ayrıntısı. Gerçek saatte taç döndürülerek, burada ekranın sağına veya soluna dokunarak varlık değişir.'
+};
+const step = st.step || 0;
+return {
+  isFace: shown === 'face', isTile: shown === 'tile', isApp: shown === 'app', isAlarm: shown === 'alarm',
+  screenName: { face: 'kadran', tile: 'kutucuk', app: 'uygulama', alarm: 'uyarı' }[shown],
+  shake: hn && hk !== 'yok' ? 'animation: svTit' + ab + ' 520ms ease both;' : '',
+  ripple: 'box-shadow: 0 0 0 2px ' + hp.c + '; opacity: 0;' + (hn && hk !== 'yok' ? ' animation: svDal' + ab + ' 900ms cubic-bezier(0.2, 0.7, 0.3, 1) both;' : ''),
+  faceComps: [1, 0, 2].map((i) => Object.assign({}, assets[i], { size: i === 0 ? 48 : 36 })),
+  assets,
+  cur: assets[idx],
+  dots: assets.map((a, i) => ({ st: 'width: ' + (i === idx ? 14 : 5) + 'px; background: ' + (i === idx ? '#FFFFFF' : 'rgba(255,255,255,0.3)') + ';' })),
+  prev: () => this.setState({ idx: (idx + 2) % 3 }),
+  next: () => this.setState({ idx: (idx + 1) % 3 }),
+  fresh: closed ? 'kısmen kapalı' : (sec < 2 ? 'şimdi' : sec + ' sn önce'),
+  liveDot: 'background: ' + (closed ? '#AEAEB2' : '#30D158') + ';',
+  al: Object.assign({}, alarmData, { spin: (tk[0] && tk[0].a) || 0, msgStyle: 'color: ' + alarmData.c + ';' }),
+  alGlow: 'background: ' + alarmData.c + ';',
+  dismiss: () => this.setState({ alarm: null }),
+  tabs: [['face', 'Kadran'], ['tile', 'Kutucuk'], ['app', 'Uygulama']].map((p) => ({
+    label: p[1], sel: screen === p[0] && !st.alarm ? 'true' : 'false',
+    go: () => this.setState({ screen: p[0], alarm: null }),
+    st: screen === p[0] && !st.alarm ? 'background: rgba(255,255,255,0.16); color: #FFFFFF;' : 'background: transparent; color: rgba(235,235,245,0.6);'
+  })),
+  tabHint: st.alarm ? 'Uyarı ekranı: saat ne gösteriyor olursa olsun öne gelir, damla yeni durumuna dönüşürken bilek titrer. Tamam ile önceki ekrana dönülür.' : hints[screen],
+  events: [
+    { label: 'Yeni fiyat', sub: 'Sessiz, sadece ışık turu', go: () => fire(() => { const c = (this.state && this.state.tk) || tk; return { tk: c.map((o, i) => (i === 0 ? { a: o.a + 360, t: Date.now() } : o)) }; }, 'yok', 4) },
+    { label: 'Durum değişsin', sub: 'USD/TRY · durum alarmı', go: () => { const up = !(this.state && this.state.usdUp); fire(() => ({ usdUp: up, alarm: 'durum' }), up ? 'yukari' : 'sakin', 4); } },
+    { label: 'Fiyat alarmı', sub: 'Bitcoin hedefe ulaştı', go: () => fire(() => ({ alarm: 'fiyat' }), 'fiyat', 4) },
+    { label: closed ? 'Piyasa açılsın' : 'Piyasa kapansın', sub: 'Döviz ve altın griye döner', go: () => (closed ? fire(() => ({ closed: false }), 'yok', 4) : fire(() => ({ closed: true }), 'kapandi', 4)) }
+  ],
+  hapName: hp.name,
+  hapColor: 'color: ' + hp.c + ';',
+  hapAria: 'Titreşim deseni: ' + hp.name,
+  hapDesc: hp.desc,
+  hapBars: hp.bars.length ? hp.bars.map((b, i) => ({ st: b[0] ? 'width: ' + Math.round(b[1] / 4) + 'px; height: ' + (b[0] + 8) + 'px; background: ' + hp.c + '; animation: svBar' + ab + ' 900ms ease ' + (hp.bars.slice(0, i).reduce((s, x) => s + x[1], 0) * 2) + 'ms both;' : 'width: ' + Math.round(b[1] / 8) + 'px; height: 2px; background: rgba(255,255,255,0.12);' })) : [{ st: 'width: 100%; height: 2px; background: rgba(255,255,255,0.12);' }],
+  flow: [
+    ['Sunucu hesaplar', 'Fiyatlar bizim sunucumuzda toplanır, damla, üst ve alt halkanın durumu orada hesaplanır.'],
+    ['Telefon karar verir', 'Damla uygulaması bir durumun değiştiğini veya alarm koşulunun gerçekleştiğini görür.'],
+    ['Saate iletilir', 'Telefon yakındaysa Bluetooth ile, değilse saat Wi-Fi veya LTE üzerinden doğrudan alır.'],
+    ['Saat günceller', 'Kadran, kutucuk ve uygulama yeni durumu gösterir. Titreşim sadece önemli olaylarda çalar.']
+  ].map((f, i) => ({ n: String(i + 1), t: f[0], d: f[1], st: step > i ? 'background: #FFFFFF; color: #0B0F14;' : 'background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.6);' }))
+};
+}
+}
+</script>
+</body>
+</html>

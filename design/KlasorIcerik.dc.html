@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Widget içeriği</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0A84FF}a:hover{color:#409CFF}
+.dmBas{display:flex;align-items:center;justify-content:center;transition:transform 180ms cubic-bezier(0.3,1.3,0.5,1)}
+.dmBas:active{transform:scale(0.9)}
+@keyframes dmSalla{0%{transform:rotate(-1.8deg)}50%{transform:rotate(1.8deg)}100%{transform:rotate(-1.8deg)}}
+@keyframes dmBelir{0%{transform:scale(0.4);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #0B0F14; padding: 54px 16px 0; overflow: hidden; display: flex; flex-direction: column; gap: 14px; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #F2F4F7">
+
+<div style="position: relative; height: 44px; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{clean}}" hint-placeholder-val="{{ true }}"><a href="Panel.dc.html" style="position: absolute; left: -4px; top: 0; height: 44px; display: flex; align-items: center; gap: 4px; text-decoration: none; font-size: 16px; color: #0A84FF"><svg width="11" height="18" viewBox="0 0 12 20" fill="none" stroke="#0A84FF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2L2 10l8 8"></path></svg>Panel</a></sc-if>
+<sc-if value="{{dirty}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{askLeave}}" style="position: absolute; left: -4px; top: 0; height: 44px; border: none; background: transparent; padding: 0; display: flex; align-items: center; gap: 4px; font: inherit; font-size: 16px; color: #0A84FF; cursor: pointer"><svg width="11" height="18" viewBox="0 0 12 20" fill="none" stroke="#0A84FF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2L2 10l8 8"></path></svg>Panel</button></sc-if>
+<span style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 17px; font-weight: 600">Widget</span><span style="font-size: 11px; font-weight: 600; color: #FF9F0A; transition: opacity 240ms ease; {{unsavedStyle}}">Kaydedilmedi</span></span>
+<button type="button" onClick="{{doSave}}" aria-disabled="{{clean}}" style="position: absolute; right: -4px; top: 0; height: 44px; border: none; background: transparent; padding: 0 4px; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; transition: color 240ms ease; {{navSave}}">Kaydet</button>
+</div>
+
+<div style="position: relative; height: 158px; box-sizing: border-box; padding-bottom: 18px; border-radius: 22px; background: #1F3B4D; display: flex; align-items: center; justify-content: center; gap: 22px; overflow: hidden">
+<div aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<div style="display: flex; align-items: center; gap: 1px; {{boxStyle}}">
+<sc-for list="{{inWidget}}" as="w" hint-placeholder-count="3"><dc-import name="Gosterge" tip="{{w.tip}}" c1="{{w.c1}}" c2="{{w.c2}}" logo="{{w.logo}}" size="20" hint-size="20px,24px"></dc-import></sc-for>
+</div>
+<span style="font-size: 11px; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,0.5)">Damla</span>
+</div>
+<svg aria-hidden="true" width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h19M14 1l6 6-6 6"></path></svg>
+<div style="display: grid; grid-template-columns: repeat(2, 52px); row-gap: 8px; column-gap: 8px; transition: background 300ms ease, padding 300ms ease; {{gridBox}}">
+<sc-for list="{{inOpen}}" as="o" hint-placeholder-count="4">
+<span style="position: relative; display: block; width: 52px; height: 50px; transform-origin: 50% 60%; {{o.jiggle}}">
+<button type="button" onClick="{{o.promote}}" aria-label="{{o.promoteLabel}}" style="width: 52px; height: 50px; border: none; background: transparent; padding: 0; cursor: pointer"><span class="dmBas" style="flex-direction: column; gap: 2px"><dc-import name="Gosterge" tip="{{o.tip}}" c1="{{o.c1}}" c2="{{o.c2}}" logo="{{o.logo}}" size="26" hint-size="26px,31px"></dc-import><span style="font-size: 9px; font-weight: 600; color: #FFFFFF; white-space: nowrap; {{o.inW}} {{lblC}}">{{o.short}}</span></span></button>
+<button type="button" onClick="{{o.remove}}" aria-label="{{o.removeLabel}}" style="position: absolute; left: 0; top: -6px; width: 24px; height: 24px; border: none; background: transparent; padding: 0; cursor: pointer"><span class="dmBas" style="width: 17px; height: 17px; margin: 3px; border-radius: 9px; background: rgba(44,44,48,0.95); box-shadow: 0 0 0 1px rgba(255,255,255,0.28), 0 2px 4px rgba(0,0,0,0.35)"><svg width="7" height="7" viewBox="0 0 10 10" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"></path></svg></span></button>
+</span>
+</sc-for>
+<sc-for list="{{emptySlots}}" as="e" hint-placeholder-count="0">
+<button type="button" onClick="{{e.add}}" aria-label="{{e.label}}" style="width: 52px; height: 50px; box-sizing: border-box; border: 1.5px dashed rgba(255,255,255,0.35); border-radius: 14px; background: rgba(255,255,255,0.04); padding: 0; cursor: pointer; animation: dmBelir 420ms cubic-bezier(0.3, 1.3, 0.5, 1)"><span class="dmBas"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span></button>
+</sc-for>
+</div>
+<span style="position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7)">Dokun: widget'a öne al · ×: kaldır</span>
+</div>
+
+<div style="border-radius: 20px; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); padding: 4px 14px; display: flex; flex-direction: column">
+<sc-for list="{{opts}}" as="g" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; {{g.sep}}">
+<span style="font-size: 15px; width: 64px; flex-shrink: 0">{{g.title}}</span>
+<div style="position: relative; flex-grow: 1; height: 32px; box-sizing: border-box; padding: 2px; border-radius: 10px; background: rgba(255,255,255,0.07)">
+<div aria-hidden="true" style="position: absolute; left: 2px; top: 2px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.16); {{g.pill}}"></div>
+<div role="group" aria-label="{{g.title}}" style="position: relative; display: grid; height: 28px; {{g.cols}}">
+<sc-for list="{{g.items}}" as="c" hint-placeholder-count="3">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="border: none; background: transparent; padding: 0; font: inherit; font-size: 12px; color: #F2F4F7; cursor: pointer; {{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px; padding: 0 6px; font-size: 12px; line-height: 16px; color: rgba(235,235,245,0.6)">
+<sc-for list="{{hints}}" as="h" hint-placeholder-count="3"><span><b style="font-weight: 600; color: rgba(235,235,245,0.85)">{{h.k}}</b> {{h.t}}</span></sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; padding: 0 4px"><span style="font-size: 13px; font-weight: 600; color: rgba(235,235,245,0.6)">Sıralama</span><span style="font-size: 12px; color: rgba(235,235,245,0.5)">{{orderHint}}</span></div>
+<div style="border-radius: 20px; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); overflow: hidden; display: flex; flex-direction: column">
+<sc-for list="{{order}}" as="r" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 6px 0 12px; {{r.sep}}">
+<dc-import name="Gosterge" tip="{{r.tip}}" c1="{{r.c1}}" c2="{{r.c2}}" logo="{{r.logo}}" size="28" hint-size="28px,34px"></dc-import>
+<span style="font-size: 16px; font-weight: 600; flex-grow: 1">{{r.name}}</span>
+<span style="height: 20px; padding: 0 8px; border-radius: 10px; font-size: 11px; font-weight: 600; display: flex; align-items: center; {{r.badgeStyle}}">{{r.badge}}</span>
+<button type="button" onClick="{{r.up}}" aria-label="{{r.upLabel}}" style="width: 40px; height: 40px; border: none; background: transparent; padding: 0; cursor: pointer; {{r.upVis}}"><span class="dmBas" style="height: 40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(235,235,245,0.7)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></span></button>
+</div>
+</sc-for>
+<a href="Ekle.dc.html" style="display: flex; align-items: center; gap: 12px; height: 50px; padding: 0 12px; border-top: 0.5px solid rgba(255,255,255,0.07); text-decoration: none; color: #0A84FF; font-size: 15px; font-weight: 600"><span style="width: 28px; height: 28px; border-radius: 14px; background: rgba(10,132,255,0.18); display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>Varlık ekle</a>
+</div>
+</div>
+
+<div style="position: absolute; left: 16px; right: 16px; bottom: 26px; display: flex; gap: 10px; padding: 8px; border-radius: 22px; background: rgba(30,35,44,0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: 0 12px 32px rgba(0,0,0,0.5), inset 0 0 0 0.5px rgba(255,255,255,0.1); {{barStyle}}">
+<button type="button" onClick="{{discard}}" style="flex: 1 1 0; height: 46px; border: none; border-radius: 15px; background: rgba(255,255,255,0.08); color: #F2F4F7; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Geri al</button>
+<button type="button" onClick="{{doSave}}" style="flex: 2 1 0; height: 46px; border: none; border-radius: 15px; background: #0A84FF; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Kaydet</button>
+</div>
+
+<button type="button" aria-label="Kapat" onClick="{{stay}}" style="position: absolute; inset: 0; border: none; padding: 0; background: rgba(0,0,0,0.55); cursor: default; {{cDim}}"></button>
+<div role="dialog" aria-label="Kaydedilmemiş değişiklikler" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 10px 20px 30px; border-radius: 28px 28px 0 0; background: #161B22; box-shadow: 0 -10px 40px rgba(0,0,0,0.5), inset 0 0.5px 0 rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 10px; {{cSheet}}">
+<div style="align-self: center; width: 36px; height: 5px; border-radius: 3px; background: rgba(235,235,245,0.3)"></div>
+<h2 style="margin: 4px 0 0; font-size: 20px; font-weight: 700">Değişiklikler kaydedilmedi</h2>
+<p style="margin: 0 0 6px; font-size: 14px; line-height: 19px; color: rgba(235,235,245,0.65)">Kaydetmeden çıkarsan ana ekrandaki widget değişmez.</p>
+<a href="Panel.dc.html" onClick="{{saveQuiet}}" style="height: 50px; border-radius: 16px; background: #0A84FF; color: #FFFFFF; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Kaydet ve çık</a>
+<a href="Panel.dc.html" onClick="{{discard}}" style="height: 50px; border-radius: 16px; background: rgba(255,69,58,0.14); color: #FF453A; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Kaydetmeden çık</a>
+<button type="button" onClick="{{stay}}" style="height: 46px; border: none; background: transparent; color: #0A84FF; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Düzenlemeye devam et</button>
+</div>
+
+<div role="status" aria-live="polite" style="position: absolute; left: 50%; bottom: 30px; height: 36px; padding: 0 16px; border-radius: 18px; background: rgba(40,46,56,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 0 0 0.5px rgba(255,255,255,0.12); display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; white-space: nowrap; pointer-events: none; {{toastStyle}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30D158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Widget kaydedildi</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const G = '#34C759', RD = '#FF3B30', Y = '#FFCC00';
+const base = {
+  au: { name: 'Gram altın', short: 'Altın', logo: 'Au', tip: 'up', c1: Y, c2: G },
+  us: { name: 'USD/TRY', short: 'USD', logo: '$', tip: 'flat', c1: Y, c2: G },
+  ag: { name: 'Gümüş', short: 'Gümüş', logo: 'Ag', tip: 'down', c1: RD, c2: Y },
+  bt: { name: 'Bitcoin', short: 'BTC', logo: '₿', tip: 'wave', c1: G, c2: RD }
+};
+const ord = st.ord || ['au', 'us', 'ag', 'bt'];
+const rem = st.rem || [];
+const tn = st.toast || 0;
+const toastOn = tn > 0 && st.toastOff !== tn;
+const save = (o) => this.setState(o);
+const snap = st.snap || { ord: ['au', 'us', 'ag', 'bt'], rem: [], stil: 0, boyut: 0, acilis: 0 };
+const doToast = () => {
+  const n = ((this.state && this.state.toast) || 0) + 1;
+  setTimeout(() => { if ((this.state || {}).toast === n) this.setState({ toastOff: n }); }, 1600);
+  return n;
+};
+const sel = { stil: st.stil ?? 0, boyut: st.boyut ?? 0, acilis: st.acilis ?? 0 };
+const defs = [
+  { key: 'stil', title: 'Stil', items: ['Kutusuz', 'Kutulu'] },
+  { key: 'boyut', title: 'Boyut', items: ['Mini', 'Geniş', 'Tek'] },
+  { key: 'acilis', title: 'Açılış', items: ['Akış', 'Klasör'] }
+];
+const innerW = 358 - 28 - 74 - 4;
+const cur = { ord: ord, rem: rem, stil: sel.stil, boyut: sel.boyut, acilis: sel.acilis };
+const dirty = JSON.stringify(cur) !== JSON.stringify(snap);
+const conf = !!st.confirm && dirty;
+return {
+  dirty, clean: !dirty,
+  orderHint: sel.boyut === 2 ? 'İlk varlık widget\u2019ta görünür' : 'İlk 3 varlık widget\u2019ta görünür',
+  unsavedStyle: 'opacity: ' + (dirty ? 1 : 0) + ';',
+  navSave: 'color: ' + (dirty ? '#0A84FF' : 'rgba(235,235,245,0.3)') + '; pointer-events: ' + (dirty ? 'auto' : 'none') + ';',
+  barStyle: 'opacity: ' + (dirty ? 1 : 0) + '; transform: translateY(' + (dirty ? 0 : 30) + 'px); pointer-events: ' + (dirty ? 'auto' : 'none') + '; transition: opacity 260ms ease, transform 460ms cubic-bezier(0.32, 0.72, 0, 1);',
+  cDim: 'opacity: ' + (conf ? 1 : 0) + '; pointer-events: ' + (conf ? 'auto' : 'none') + '; transition: opacity 300ms ease;',
+  cSheet: 'transform: translateY(' + (conf ? 0 : 110) + '%); transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1);',
+  doSave: () => this.setState({ snap: JSON.parse(JSON.stringify(cur)), confirm: false, toast: doToast() }),
+  saveQuiet: () => this.setState({ snap: JSON.parse(JSON.stringify(cur)), confirm: false }),
+  discard: () => this.setState({ ord: snap.ord.slice(), rem: snap.rem.slice(), stil: snap.stil, boyut: snap.boyut, acilis: snap.acilis, confirm: false }),
+  askLeave: () => this.setState({ confirm: true }),
+  stay: () => this.setState({ confirm: false }),
+  boxStyle: (sel.stil === 1 ? 'background: #FFFFFF; border-radius: 12px; padding: 6px 6px 4px;' : 'padding: 6px 0 4px;') + ' gap: ' + (sel.boyut ? 10 : 1) + 'px; transition: gap 300ms ease, background 300ms ease;',
+  gridBox: sel.acilis === 1 ? 'background: rgba(250,250,252,0.86); border-radius: 18px; padding: 10px;' : 'background: rgba(250,250,252,0); border-radius: 18px; padding: 0;',
+  lblC: sel.acilis === 1 ? 'color: #1C1C1E; text-shadow: none;' : '',
+  toastStyle: 'opacity: ' + (toastOn ? 1 : 0) + '; transform: translate(-50%, ' + (toastOn ? 0 : 12) + 'px) scale(' + (toastOn ? 1 : 0.94) + '); transition: opacity 260ms ease, transform 420ms cubic-bezier(0.3, 1.3, 0.5, 1);',
+  hints: [
+    sel.stil === 0 ? { k: 'Kutusuz:', t: 'damlalar doğrudan ana ekranda, simge gibi durur.' } : { k: 'Kutulu:', t: 'damlalar beyaz bir kutunun içinde durur.' },
+    sel.boyut === 0 ? { k: 'Mini:', t: 'tek uygulama yeri kaplar, üç küçük damla.' } : sel.boyut === 1 ? { k: 'Geniş:', t: 'üç uygulama yeri kaplar, damlalar daha büyük.' } : { k: 'Tek:', t: 'widget\u2019ta sıranın ilk varlığı tek büyük damla olarak durur.' },
+    sel.acilis === 0 ? { k: 'Akış:', t: 'dokununca damlalar yerinde 2×2 açılır.' } : { k: 'Klasör:', t: 'dokununca damlalar cam bir panelde açılır.' }
+  ],
+  inWidget: ord.slice(0, sel.boyut === 2 ? 1 : 3).map((k) => base[k]),
+  inOpen: ord.map((k, i) => Object.assign({}, base[k], {
+    jiggle: 'animation: dmSalla ' + (280 + (i % 2) * 40) + 'ms ease-in-out infinite; animation-delay: -' + (i * 110) + 'ms;',
+    inW: i < 3 ? '' : 'opacity: 0.6;',
+    promoteLabel: base[k].name + ' widget\u2019ta başa al',
+    removeLabel: base[k].name + ' kaldır',
+    promote: () => { const o = ord.filter((x) => x !== k); o.unshift(k); save({ ord: o }); },
+    remove: () => save({ ord: ord.filter((x) => x !== k), rem: rem.concat([k]) })
+  })),
+  emptySlots: Array.from({ length: Math.max(0, 4 - ord.length) }, (_, j) => ({
+    label: rem.length ? base[rem[0]].name + ' geri ekle' : 'Varlık ekle',
+    add: () => { if (!rem.length) return; save({ ord: ord.concat([rem[0]]), rem: rem.slice(1) }); }
+  })),
+  opts: defs.map((d, i) => {
+    const n = d.items.length, cw = innerW / n, cur = sel[d.key];
+    return {
+      title: d.title,
+      sep: i ? 'border-top: 0.5px solid rgba(255,255,255,0.07);' : '',
+      cols: 'grid-template-columns: repeat(' + n + ', minmax(0, 1fr));',
+      pill: 'width: ' + cw.toFixed(2) + 'px; transform: translateX(' + (cur * cw).toFixed(2) + 'px); transition: transform 380ms cubic-bezier(0.25, 1.04, 0.5, 1);',
+      items: d.items.map((l, j) => ({ label: l, on: j === cur ? 'true' : 'false', style: 'font-weight: ' + (j === cur ? 600 : 400) + ';', pick: () => { const o = {}; o[d.key] = j; save(o); } }))
+    };
+  }),
+  order: ord.map((k, i) => Object.assign({}, base[k], {
+    sep: i ? 'border-top: 0.5px solid rgba(255,255,255,0.07);' : '',
+    badge: i < (sel.boyut === 2 ? 1 : 3) ? 'Widget' : 'Açılımda',
+    badgeStyle: i < (sel.boyut === 2 ? 1 : 3) ? 'background: rgba(10,132,255,0.18); color: #64B0FF;' : 'background: rgba(255,255,255,0.08); color: rgba(235,235,245,0.6);',
+    upLabel: base[k].name + ' yukarı taşı',
+    upVis: i === 0 ? 'visibility: hidden;' : '',
+    up: () => { if (!i) return; const o = ord.slice(); const t = o[i - 1]; o[i - 1] = o[i]; o[i] = t; save({ ord: o }); }
+  }))
+};
+}
+}
+</script>
+</body>
+</html>

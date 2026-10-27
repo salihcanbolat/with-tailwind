@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Yeni alarm</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0A84FF}a:hover{color:#409CFF}
+.dmBas{display:flex;align-items:center;justify-content:center;transition:transform 180ms cubic-bezier(0.3,1.3,0.5,1)}
+.dmBas:active{transform:scale(0.95)}
+.dmIn::placeholder{color:rgba(235,235,245,0.35)}
+.dmKay{scrollbar-width:none}.dmKay::-webkit-scrollbar{display:none}
+@keyframes dmKartGel{0%{opacity:0;transform:translateY(14px) scale(0.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #0B0F14; padding-top: 54px; overflow: hidden; display: flex; flex-direction: column; font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; color: #F2F4F7">
+
+<div style="position: relative; height: 44px; flex-shrink: 0; margin: 0 16px; display: flex; align-items: center; justify-content: center">
+<a href="Alarmlar.dc.html" style="position: absolute; left: 0; top: 0; height: 44px; display: flex; align-items: center; text-decoration: none; font-size: 16px; color: #0A84FF">Vazgeç</a>
+<span style="font-size: 17px; font-weight: 600">Yeni alarm</span>
+</div>
+
+<div class="dmKay" style="flex-grow: 1; overflow-y: auto; padding: 10px 16px 170px; display: flex; flex-direction: column; gap: 18px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="padding: 0 4px; font-size: 13px; font-weight: 600; color: rgba(235,235,245,0.6)">Varlık</span>
+<div role="group" aria-label="Varlık seç" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{assetsL}}" as="v" hint-placeholder-count="5">
+<button type="button" onClick="{{v.pick}}" aria-pressed="{{v.on}}" style="height: 72px; border: none; border-radius: 16px; padding: 0; cursor: pointer; transition: background 220ms ease, box-shadow 220ms ease; {{v.style}}"><span class="dmBas" style="flex-direction: column; gap: 4px; height: 72px"><dc-import name="Gosterge" tip="{{v.tip}}" c1="{{v.c1}}" c2="{{v.c2}}" logo="{{v.logo}}" size="28" hint-size="28px,34px"></dc-import><span style="font-size: 11px; font-weight: 600; color: #F2F4F7; white-space: nowrap">{{v.short}}</span></span></button>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; padding: 0 4px"><span style="font-size: 13px; font-weight: 600; color: rgba(235,235,245,0.6)">Koşullar</span><span style="font-size: 12px; color: rgba(235,235,245,0.45)">{{condCount}}</span></div>
+<sc-for list="{{conds}}" as="c" hint-placeholder-count="1">
+<div style="display: flex; flex-direction: column; gap: 8px; animation: dmKartGel 420ms cubic-bezier(0.32, 0.72, 0, 1)">
+<sc-if value="{{c.showJoin}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; justify-content: center">
+<button type="button" onClick="{{c.toggleJoin}}" aria-label="{{c.joinAria}}" style="height: 30px; padding: 0 14px; border: none; border-radius: 15px; font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 240ms ease, color 240ms ease; {{c.joinStyle}}">{{c.joinText}}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"></path></svg></button>
+</div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 22px; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08)">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 15px; font-weight: 600">{{c.title}}</span>
+<sc-if value="{{c.canRemove}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{c.remove}}" aria-label="{{c.removeAria}}" style="width: 32px; height: 32px; border: none; border-radius: 16px; background: rgba(255,255,255,0.07); padding: 0; cursor: pointer"><span class="dmBas" style="height: 32px"><svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="rgba(235,235,245,0.75)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"></path></svg></span></button></sc-if>
+</div>
+
+<div style="position: relative; height: 34px; box-sizing: border-box; padding: 2px; border-radius: 10px; background: rgba(255,255,255,0.07)">
+<div aria-hidden="true" style="position: absolute; left: 2px; top: 2px; width: 81.5px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.16); {{c.typePill}}"></div>
+<div role="group" aria-label="Koşul türü" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); height: 30px">
+<sc-for list="{{c.types}}" as="y" hint-placeholder-count="4"><button type="button" onClick="{{y.pick}}" aria-pressed="{{y.on}}" style="border: none; background: transparent; padding: 0; font: inherit; font-size: 12px; color: #F2F4F7; cursor: pointer; {{y.style}}">{{y.label}}</button></sc-for>
+</div>
+</div>
+
+<sc-if value="{{c.isState}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div role="group" aria-label="Hangi gösterge" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{c.parts}}" as="p" hint-placeholder-count="3">
+<button type="button" onClick="{{p.pick}}" aria-pressed="{{p.on}}" style="height: 38px; border: none; border-radius: 12px; padding: 0 6px; display: flex; align-items: center; justify-content: center; gap: 5px; font: inherit; font-size: 12px; cursor: pointer; transition: background 220ms ease, color 220ms ease; {{p.style}}"><svg width="13" height="16" viewBox="-38 -38 76 92" aria-hidden="true"><path d="M0,-34 C3,-24 11.4,-12.2 19.05,1 A22 22 0 1 1 -19.05,1 C-11.4,-12.2 -3,-24 0,-34 Z" style="{{p.f0}}"></path><path d="M-22.9,32.8 A40 40 0 0 0 22.9,32.8" fill="none" stroke-width="9" stroke-linecap="round" style="{{p.f1}}"></path><path d="M-24,41.6 A48 48 0 0 0 24,41.6" fill="none" stroke-width="9" stroke-linecap="round" style="{{p.f2}}"></path></svg>{{p.label}}</button>
+</sc-for>
+</div>
+<div role="group" aria-label="Hedef durum" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{c.targets}}" as="g" hint-placeholder-count="4">
+<button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="position: relative; height: 70px; border: none; border-radius: 16px; padding: 0; background: rgba(255,255,255,0.05); cursor: pointer; transition: box-shadow 240ms ease, background 240ms ease; {{g.ring}}"><span class="dmBas" style="flex-direction: column; gap: 4px; height: 70px; transition: transform 300ms cubic-bezier(0.3, 1.3, 0.5, 1); {{g.scale}}"><dc-import name="Gosterge" tip="{{g.tip}}" c1="{{g.c}}" c2="{{g.c}}" logo="" size="24" hint-size="24px,29px"></dc-import><span style="font-size: 11px; font-weight: 600; {{g.word}}">{{g.label}}</span></span><span style="position: absolute; right: 4px; top: 4px; height: 14px; padding: 0 5px; border-radius: 7px; background: rgba(255,255,255,0.14); font-size: 9px; font-weight: 700; color: rgba(235,235,245,0.85); align-items: center; {{g.nowStyle}}">şu an</span></button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{c.isValue}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 52px; border-radius: 14px; background: rgba(255,255,255,0.06); display: flex; align-items: center; gap: 6px; padding: 0 14px"><span style="font-size: 20px; font-weight: 700; color: rgba(235,235,245,0.55)">{{c.unit}}</span><input class="dmIn" type="text" inputmode="decimal" aria-label="{{c.valAria}}" placeholder="{{c.ph}}" value="{{c.val}}" onInput="{{c.onVal}}" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font: inherit; font-size: 22px; font-weight: 700; color: #F2F4F7; outline: none; font-variant-numeric: tabular-nums"><span style="font-size: 12px; color: rgba(235,235,245,0.5)">{{c.hintNow}}</span></div>
+<sc-if value="{{c.hasPer}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Süre" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{c.pers}}" as="r" hint-placeholder-count="4"><button type="button" onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="height: 34px; border: none; border-radius: 11px; font: inherit; font-size: 12px; cursor: pointer; transition: background 220ms ease, color 220ms ease; {{r.style}}">{{r.label}}</button></sc-for>
+</div>
+</sc-if>
+<div role="group" aria-label="Yön" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{c.dirs}}" as="r" hint-placeholder-count="3"><button type="button" onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="height: 38px; border: none; border-radius: 12px; font: inherit; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 220ms ease, color 220ms ease; {{r.style}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.icon}}"></path></svg>{{r.label}}</button></sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+
+<sc-if value="{{canAdd}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{addCond}}" style="height: 48px; border: 1.5px dashed rgba(10,132,255,0.5); border-radius: 18px; background: rgba(10,132,255,0.06); color: #0A84FF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><span class="dmBas" style="gap: 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Koşul ekle</span></button>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="padding: 0 4px; font-size: 13px; font-weight: 600; color: rgba(235,235,245,0.6)">Bildirim</span>
+<div style="border-radius: 22px; background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08); padding: 4px 14px; display: flex; flex-direction: column">
+<sc-for list="{{segs}}" as="s" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 0; {{s.sep}}">
+<span style="font-size: 14px; color: rgba(235,235,245,0.85)">{{s.label}}</span>
+<div style="position: relative; height: 32px; box-sizing: border-box; padding: 2px; border-radius: 10px; background: rgba(255,255,255,0.07)">
+<div aria-hidden="true" style="position: absolute; left: 2px; top: 2px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.16); {{s.pill}}"></div>
+<div role="group" aria-label="{{s.label}}" style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 28px">
+<sc-for list="{{s.items}}" as="i" hint-placeholder-count="3"><button type="button" onClick="{{i.pick}}" aria-pressed="{{i.on}}" style="border: none; background: transparent; padding: 0; font: inherit; font-size: 12px; color: #F2F4F7; cursor: pointer; {{i.style}}">{{i.label}}</button></sc-for>
+</div>
+</div>
+</div>
+</sc-for>
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 0.5px solid rgba(255,255,255,0.07)">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 15px">{{t.label}}</span><span style="font-size: 12px; color: rgba(235,235,245,0.5)">{{t.sub}}</span></span>
+<button type="button" onClick="{{t.flip}}" aria-pressed="{{t.on}}" aria-label="{{t.label}}" style="position: relative; width: 50px; height: 30px; flex-shrink: 0; border: none; border-radius: 15px; padding: 0; cursor: pointer; transition: background 240ms ease; {{t.track}}"><span style="position: absolute; left: 2px; top: 2px; width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: transform 280ms cubic-bezier(0.3, 1.3, 0.5, 1); {{t.knob}}"></span></button>
+</div>
+</sc-for>
+</div>
+</div>
+
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 12px 16px 28px; background: rgba(11,15,20,0.92); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 0.5px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: flex-start; gap: 10px"><dc-import name="Gosterge" tip="{{A.tip}}" c1="{{A.c1}}" c2="{{A.c2}}" logo="{{A.logo}}" size="24" hint-size="24px,29px"></dc-import><p style="margin: 0; font-size: 13px; line-height: 18px; color: rgba(235,235,245,0.8)">{{summary}}</p></div>
+<a href="Alarmlar.dc.html" style="display: flex; text-decoration: none"><span class="dmBas" style="flex-grow: 1; height: 52px; border-radius: 16px; background: #0A84FF; color: #FFFFFF; font-size: 17px; font-weight: 600">Alarmı kur</span></a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const G0 = '#34C759', RD0 = '#FF3B30', Y0 = '#FFCC00';
+const assetsData = [
+  { name: 'Gram altın', short: 'Altın', logo: 'Au', tip: 'up', c1: Y0, c2: G0, now: [0, 2, 0], unit: '₺' },
+  { name: 'USD/TRY', short: 'USD', logo: '$', tip: 'flat', c1: Y0, c2: G0, now: [2, 2, 0], unit: '₺' },
+  { name: 'Gümüş', short: 'Gümüş', logo: 'Ag', tip: 'down', c1: RD0, c2: Y0, now: [1, 1, 2], unit: '₺' },
+  { name: 'Bitcoin', short: 'BTC', logo: '₿', tip: 'wave', c1: G0, c2: RD0, now: [3, 0, 1], unit: '$' },
+  { name: 'Altın/Gümüş', short: 'Au/Ag', logo: 'Au', tip: 'up', c1: G0, c2: Y0, now: [0, 0, 2], unit: '×' }
+];
+const ai = st.as ?? 1;
+const A = assetsData[ai];
+const conds = st.conds || [{ type: 0, part: 0, target: 0, val: '', dir: 0, per: 1 }];
+const join = st.join || 'VE';
+const setC = (i, patch) => { const n = conds.map((c, k) => k === i ? Object.assign({}, c, patch) : c); this.setState({ conds: n }); };
+const typeLabels = ['Durum', 'Fiyat', 'Yüzde', 'Dalga'];
+const partLabels = ['Damla', 'Üst halka', 'Alt halka'];
+const partNames = ['damlası', 'üst halkası', 'alt halkası'];
+const tg = [
+  { tip: 'up', label: 'Yükseliş', c: '#34C759', w: '#30D158', dat: 'yükselişe' },
+  { tip: 'down', label: 'Düşüş', c: '#FF3B30', w: '#FF453A', dat: 'düşüşe' },
+  { tip: 'flat', label: 'Sabit', c: '#FFCC00', w: '#FFD60A', dat: 'sabite' },
+  { tip: 'wave', label: 'Dalgalı', c: '#FF9500', w: '#FF9F0A', dat: 'dalgalıya' }
+];
+const perLabels = ['15 dk', '1 saat', '1 gün', '1 hafta'];
+const blue = '#0A84FF', dimC = 'rgba(235,235,245,0.3)';
+const chip = (on) => on ? 'background: rgba(10,132,255,0.2); color: #FFFFFF; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(10,132,255,0.7);' : 'background: rgba(255,255,255,0.06); color: rgba(235,235,245,0.8);';
+const UP = 'M12 19V5M5 12l7-7 7 7', DN = 'M12 5v14M5 12l7 7 7-7', BOTH = 'M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5';
+const phrase = (c) => {
+  const v = c.val || (c.type === 1 ? '[DEĞER]' : '[%]');
+  if (c.type === 0) return partNames[c.part] + ' ' + tg[c.target].dat + ' döndüğünde';
+  if (c.type === 1) return 'fiyatı ' + A.unit + v + (['\u2019in üzerine çıktığında', '\u2019in altına indiğinde', ' seviyesini geçtiğinde'][c.dir]);
+  if (c.type === 2) return perLabels[c.per] + ' içinde %' + v + ([' yükseldiğinde', ' düştüğünde', ' oynadığında'][c.dir]);
+  return perLabels[c.per] + ' içinde %' + v + '\u2019ten fazla iniş çıkış yapıp yerinde kaldığında';
+};
+const rep = st.rep ?? 1, valid = st.valid ?? 2;
+const repT = ['Bir kez çalar', 'Her seferinde çalar', 'Saatte en fazla bir kez çalar'][rep];
+const validT = ['1 gün geçerli', '1 hafta geçerli', 'süresiz'][valid];
+const summary = A.name + ' ' + conds.map(phrase).join(join === 'VE' ? ' ve ' : ' ya da ') + ' haber vereceğim. ' + repT + ', ' + validT + '.';
+const tgl = {
+  quiet: st.quiet ?? false, wait: st.wait ?? true, sound: st.sound ?? true
+};
+const mkTog = (key, label, sub) => ({
+  label, sub, on: tgl[key] ? 'true' : 'false',
+  track: 'background: ' + (tgl[key] ? '#30D158' : 'rgba(120,120,128,0.36)') + ';',
+  knob: 'transform: translateX(' + (tgl[key] ? 20 : 0) + 'px);',
+  flip: () => { const o = {}; o[key] = !tgl[key]; this.setState(o); }
+});
+const segW = (358 - 28 - 4) / 3;
+const mkSeg = (key, label, items, cur, sep) => ({
+  label, sep: sep ? 'border-top: 0.5px solid rgba(255,255,255,0.07);' : '',
+  pill: 'width: ' + segW.toFixed(2) + 'px; transform: translateX(' + (cur * segW).toFixed(2) + 'px); transition: transform 380ms cubic-bezier(0.25, 1.04, 0.5, 1);',
+  items: items.map((l, j) => ({ label: l, on: j === cur ? 'true' : 'false', style: 'font-weight: ' + (j === cur ? 600 : 400) + ';', pick: () => { const o = {}; o[key] = j; this.setState(o); } }))
+});
+return {
+  A,
+  summary,
+  condCount: conds.length + ' / 3',
+  canAdd: conds.length < 3,
+  addCond: () => this.setState({ conds: conds.concat([{ type: 1, part: 0, target: 0, val: '', dir: 0, per: 1 }]) }),
+  assetsL: assetsData.map((x, i) => ({
+    tip: x.tip, c1: x.c1, c2: x.c2, logo: x.logo, short: x.short,
+    on: i === ai ? 'true' : 'false',
+    style: i === ai ? 'background: rgba(10,132,255,0.16); box-shadow: inset 0 0 0 1.5px #0A84FF;' : 'background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08);',
+    pick: () => this.setState({ as: i })
+  })),
+  conds: conds.map((c, i) => {
+    const nowIdx = A.now[c.part];
+    return {
+      title: 'Koşul ' + (i + 1),
+      showJoin: i > 0,
+      joinText: join,
+      joinAria: 'Bağlaç: ' + join + ', değiştirmek için dokun',
+      joinStyle: join === 'VE' ? 'background: rgba(10,132,255,0.2); color: #64B0FF;' : 'background: rgba(255,159,10,0.18); color: #FFB340;',
+      toggleJoin: () => this.setState({ join: join === 'VE' ? 'VEYA' : 'VE' }),
+      canRemove: conds.length > 1,
+      removeAria: 'Koşul ' + (i + 1) + ' kaldır',
+      remove: () => this.setState({ conds: conds.filter((_, k) => k !== i) }),
+      typePill: 'transform: translateX(' + (c.type * 81.5) + 'px); transition: transform 380ms cubic-bezier(0.25, 1.04, 0.5, 1);',
+      types: typeLabels.map((l, j) => ({ label: l, on: j === c.type ? 'true' : 'false', style: 'font-weight: ' + (j === c.type ? 600 : 400) + ';', pick: () => setC(i, { type: j, val: '' }) })),
+      isState: c.type === 0,
+      isValue: c.type !== 0,
+      parts: partLabels.map((l, j) => ({
+        label: l, on: j === c.part ? 'true' : 'false', style: chip(j === c.part),
+        f0: 'fill: ' + (j === 0 ? blue : dimC) + ';', f1: 'stroke: ' + (j === 1 ? blue : dimC) + ';', f2: 'stroke: ' + (j === 2 ? blue : dimC) + ';',
+        pick: () => setC(i, { part: j })
+      })),
+      targets: tg.map((g, j) => ({
+        tip: g.tip, label: g.label, c: g.c,
+        on: j === c.target ? 'true' : 'false',
+        ring: j === c.target ? 'background: rgba(255,255,255,0.09); box-shadow: inset 0 0 0 1.5px ' + g.w + ';' : 'box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.08);',
+        scale: 'transform: scale(' + (j === c.target ? 1.06 : 0.94) + ');',
+        word: 'color: ' + (j === c.target ? g.w : 'rgba(235,235,245,0.6)') + ';',
+        nowStyle: 'display: ' + (j === nowIdx ? 'flex' : 'none') + ';',
+        pick: () => setC(i, { target: j })
+      })),
+      unit: c.type === 1 ? A.unit : '%',
+      ph: c.type === 1 ? '0,00' : '2,5',
+      valAria: c.type === 1 ? 'Hedef değer' : 'Yüzde',
+      hintNow: c.type === 1 ? 'şu an [DEĞER]' : '',
+      val: c.val,
+      onVal: (e) => setC(i, { val: e.target.value }),
+      hasPer: c.type >= 2,
+      pers: perLabels.map((l, j) => ({ label: l, on: j === c.per ? 'true' : 'false', style: chip(j === c.per), pick: () => setC(i, { per: j }) })),
+      dirs: (c.type === 3 ? [] : (c.type === 1 ? ['Üzerine', 'Altına', 'Geçince'] : ['Yükselirse', 'Düşerse', 'İki yön'])).map((l, j) => ({ label: l, icon: [UP, DN, BOTH][j], on: j === c.dir ? 'true' : 'false', style: chip(j === c.dir), pick: () => setC(i, { dir: j }) }))
+    };
+  }),
+  segs: [
+    mkSeg('rep', 'Ne sıklıkla', ['Bir kez', 'Her seferinde', 'Saatte 1'], rep, false),
+    mkSeg('valid', 'Geçerlilik', ['1 gün', '1 hafta', 'Süresiz'], valid, true)
+  ],
+  toggles: [
+    mkTog('sound', 'Sesli uyarı', 'Sessiz moddaysa yalnızca titreşir'),
+    mkTog('quiet', 'Sessiz saatlerde bekle', 'Gece bildirimleri sabaha kalır'),
+    mkTog('wait', 'Piyasa kapalıyken bekle', 'Hafta sonu yanlış alarm çalmaz')
+  ]
+};
+}
+}
+</script>
+</body>
+</html>
