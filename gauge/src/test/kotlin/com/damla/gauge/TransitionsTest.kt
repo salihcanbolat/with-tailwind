@@ -48,4 +48,16 @@ class TransitionsTest {
         assertEquals(100.0, transition.end)
         assertEquals(GaugeColors.DOWN, transition.value(100.0))
     }
+
+    @Test
+    fun `colours fade with premultiplied alpha`() {
+        val linearFade = ColorTransition(0xFFFFFFFF.toInt())
+        linearFade.to(0x00000000, atMs = 0.0, duration = 100.0, curve = linear)
+        val glass = ColorTransition(0xFFFFFFFF.toInt())
+        glass.to(0x80000000.toInt(), atMs = 0.0, duration = 100.0, curve = linear)
+
+        // Fading to transparent keeps the colour; towards half-transparent black it darkens by weight.
+        assertEquals(0x80FFFFFF.toInt(), linearFade.value(50.0))
+        assertEquals(0xC0AAAAAA.toInt(), glass.value(50.0))
+    }
 }

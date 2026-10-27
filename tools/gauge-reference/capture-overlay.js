@@ -40,7 +40,7 @@ const END = 2800, STEP = 20;
       const svg = (tag) => document.createElementNS('http://www.w3.org/2000/svg', tag);
       const el = (tag) => document.createElement(tag);
       const make = (id, node, parent = host) => { node.id = id; parent.appendChild(node); return node; };
-      ['home', 'dim', 'box', 'hero', 'fdDim', 'shDim', 'shBox', 'rng'].forEach((id) => make(id, el('div')));
+      ['home', 'dim', 'box', 'hero', 'fdDim', 'shDim', 'shBox', 'rng', 'wLayer', 'hdr', 'clip'].forEach((id) => make(id, el('div')));
       for (let i = 0; i < 4; i++) { make('cell' + i, el('div')); make('label' + i, el('div')); make('dot' + i, el('span')); }
       for (const n of [0, 2, 3, 4, 5]) make('sec' + n, el('div'));
       for (let j = 0; j < 3; j++) { make('anno' + j, el('div')); make('word' + j, el('span')); }
@@ -57,6 +57,9 @@ const END = 2800, STEP = 20;
         set('home', 'position: absolute; inset: 0; ' + vals.homeStyle);
         set('dim', 'position: absolute; inset: 0; background: rgba(0,0,0,0.3); ' + vals.dimStyle);
         set('box', 'position: absolute; ' + vals.boxStyle);
+        set('wLayer', 'position: absolute; ' + vals.wLayer);
+        set('hdr', 'position: absolute; ' + vals.hdrStyle);
+        set('clip', 'position: absolute; width: 280px; height: ' + vals.cardH + 'px; ' + vals.cardClip);
         vals.assets.forEach((a, i) => { set('cell' + i, a.cellStyle); set('label' + i, a.labelStyle); });
         vals.dots.forEach((o, i) => set('dot' + i, 'display: block; height: 5px; transition: width 300ms cubic-bezier(0.32, 0.72, 0, 1), opacity 300ms ease; ' + o.style));
         set('hero', 'position: absolute; left: 0; top: 0; transform-origin: 0 0; ' + vals.heroStyle);
@@ -98,7 +101,14 @@ const END = 2800, STEP = 20;
         home: { blur: blur(cs('home').filter), scale: matrix('home')[0] },
         dim: Number(cs('dim').opacity),
         detailDim: Number(cs('fdDim').opacity),
-        box: { alpha: Number(cs('box').opacity), scale: matrix('box')[0], origin: cs('box').transformOrigin },
+        box: {
+          alpha: Number(cs('box').opacity), scale: matrix('box')[0], origin: cs('box').transformOrigin,
+          left: parseFloat(cs('box').left), top: parseFloat(cs('box').top), width: parseFloat(cs('box').width), height: parseFloat(cs('box').height),
+          background: nums(cs('box').backgroundColor), shadow: nums(cs('box').boxShadow),
+        },
+        widgetLayer: Number(cs('wLayer').opacity),
+        header: { alpha: Number(cs('hdr').opacity), y: matrix('hdr')[5] },
+        clip: { circle: nums(cs('clip').clipPath), alpha: Number(cs('clip').opacity) },
         cells: [0, 1, 2, 3].map((i) => ({ m: matrix('cell' + i), alpha: Number(cs('cell' + i).opacity), blur: blur(cs('cell' + i).filter), shadow: shadowAlpha(cs('cell' + i).filter), label: Number(cs('label' + i).opacity) })),
         hero: { m: matrix('hero'), alpha: Number(cs('hero').opacity) },
         sections: [0, 2, 3, 4, 5].map((n) => ({ n, alpha: Number(cs('sec' + n).opacity), y: matrix('sec' + n)[5], blur: blur(cs('sec' + n).filter) })),

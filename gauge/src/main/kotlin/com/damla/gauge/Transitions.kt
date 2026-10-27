@@ -1,5 +1,7 @@
 package com.damla.gauge
 
+import kotlin.math.roundToInt
+
 /**
  * A CSS transition of one number: when the target changes, it eases from wherever it is at that moment
  * towards the new target, after an optional delay. Before the delay ends it holds its start value; a zero
@@ -25,11 +27,11 @@ public class NumberTransition(
     ): Unit = transition.to(value, atMs, duration, delay, curve)
 }
 
-/** A CSS colour transition, interpolated per channel in sRGB. */
+/** A CSS colour transition, interpolated per channel in sRGB with premultiplied alpha. */
 public class ColorTransition(
     initial: Int,
 ) {
-    private val transition = Transition(initial, GaugeColors::lerp)
+    private val transition = Transition(initial, ::lerpPremultiplied)
 
     public val end: Double get() = transition.end
 
@@ -42,6 +44,26 @@ public class ColorTransition(
         delay: Double = 0.0,
         curve: CubicBezier = Curves.ease,
     ): Unit = transition.to(value, atMs, duration, delay, curve)
+}
+
+/** CSS interpolates colours with premultiplied alpha, so a fading colour keeps its hue. */
+internal fun lerpPremultiplied(
+    from: Int,
+    to: Int,
+    fraction: Double,
+): Int {
+    val fromAlpha = (from ushr 24) / 255.0
+    val toAlpha = (to ushr 24) / 255.0
+    if (fromAlpha == 1.0 && toAlpha == 1.0) return GaugeColors.lerp(from, to, fraction)
+    val alpha = fromAlpha + (toAlpha - fromAlpha) * fraction
+    if (alpha <= 0.0) return 0
+
+    fun channel(shift: Int): Int {
+        val a = ((from ushr shift) and 0xFF) * fromAlpha
+        val b = ((to ushr shift) and 0xFF) * toAlpha
+        return ((a + (b - a) * fraction) / alpha).roundToInt().coerceIn(0, 255) shl shift
+    }
+    return ((alpha * 255).roundToInt() shl 24) or channel(16) or channel(8) or channel(0)
 }
 
 private class Transition<T>(

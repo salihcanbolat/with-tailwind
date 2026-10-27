@@ -13,6 +13,7 @@ package com.damla.gauge
 public data class OverlayGeometry(
     val right: Boolean,
     val screenWidth: Double,
+    val screenHeight: Double,
     val widgetLeft: Double,
     val widgetTop: Double,
     val widgetWidth: Double,
@@ -28,21 +29,38 @@ public data class OverlayGeometry(
 
     internal val widgetMiddle: Pair<Double, Double> get() = widgetLeft + widgetWidth / 2 to widgetTop + widgetHeight / 2
 
-    /** Left of the glass folder (Klasör), 176 wide. */
-    internal val folderLeft: Double get() = if (right) rightEdge - FOLDER_WIDTH else leftEdge
+    /** Bottom limit of scenes. */
+    private val bottomEdge: Double get() = screenHeight - MARGIN
+
+    /**
+     * The glass folder (Klasör), 176 x 216: its edge on the widget's side lines up with the widget, and its
+     * top with the widget's top unless that would leave the screen.
+     */
+    internal val folderLeft: Double
+        get() =
+            if (right) {
+                (minOf(widgetLeft + widgetWidth, rightEdge) - FOLDER_WIDTH).coerceAtLeast(leftEdge)
+            } else {
+                widgetLeft.coerceIn(leftEdge, rightEdge - FOLDER_WIDTH)
+            }
+    internal val folderTop: Double get() = minOf(widgetTop, bottomEdge - FOLDER_HEIGHT)
 
     /** Drop centre of cell [i] in the 2 x 2 folder grid. */
-    internal fun folderCell(i: Int): Pair<Double, Double> = folderLeft + 10 + 78 * (i % 2) + 39 to widgetTop + 66 + 85 * (i / 2)
+    internal fun folderCell(i: Int): Pair<Double, Double> = folderLeft + 10 + 78 * (i % 2) + 39 to folderTop + 66 + 85 * (i / 2)
 
-    /** Drop centre of cell [i] in the flow: a tight 2 x 2 grid leaning on the widget's edge (70 x 80). */
+    /**
+     * Drop centre of cell [i] in the flow: a tight 2 x 2 grid leaning on the widget's edge (70 x 80). Its
+     * first row stays on the widget's row; the second goes below, or above when there is no room below.
+     */
     internal fun flowCell(i: Int): Pair<Double, Double> {
         val x = if (right) edgeColumnX - FLOW_STEP_X * (1 - i % 2) else edgeColumnX + FLOW_STEP_X * (i % 2)
-        return x to dropY + FLOW_STEP_Y * (i / 2)
+        val down = dropY + FLOW_STEP_Y + FLOW_CELL_BELOW <= bottomEdge
+        return x to dropY + FLOW_STEP_Y * (i / 2) * (if (down) 1 else -1)
     }
 
     /** Left and top of the detail scene (260 x 380, scaled by 0.86 from its top corner on the widget's side). */
     internal val detailLeft: Double get() = if (right) rightEdge - DETAIL_WIDTH else leftEdge
-    internal val detailTop: Double get() = widgetTop + 10
+    internal val detailTop: Double get() = minOf(widgetTop + 10, bottomEdge - DETAIL_HEIGHT * DETAIL_SCALE)
 
     public companion object {
         internal const val MARGIN = 10.0
@@ -50,6 +68,9 @@ public data class OverlayGeometry(
         internal const val FOLDER_HEIGHT = 216.0
         internal const val FLOW_STEP_X = 70.0
         internal const val FLOW_STEP_Y = 80.0
+
+        /** How far a flow cell reaches below its drop centre: the rest of the drop and two label lines. */
+        internal const val FLOW_CELL_BELOW = 56.0
         public const val DETAIL_WIDTH: Double = 260.0
         public const val DETAIL_HEIGHT: Double = 380.0
         public const val DETAIL_SCALE: Double = 0.86
@@ -96,6 +117,7 @@ public data class OverlayGeometry(
             return OverlayGeometry(
                 right = right,
                 screenWidth = 390.0,
+                screenHeight = 844.0,
                 widgetLeft = firstColumn * 97.5 + 10,
                 widgetTop = 122.0,
                 widgetWidth = width,

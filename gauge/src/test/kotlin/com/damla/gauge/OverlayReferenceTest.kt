@@ -115,8 +115,45 @@ class OverlayReferenceTest {
                 check("home.scale", num(obj("home"), "scale"), frame.homeScale)
                 check("dim", sample.getValue("dim").jsonPrimitive.double, frame.dimAlpha)
                 check("detailDim", sample.getValue("detailDim").jsonPrimitive.double, frame.detailDimAlpha)
-                check("box.alpha", num(obj("box"), "alpha"), frame.boxAlpha)
-                check("box.scale", num(obj("box"), "scale"), frame.boxScale)
+                val box = obj("box")
+                check("box.alpha", num(box, "alpha"), frame.boxAlpha)
+                check("box.scale", num(box, "scale"), frame.boxScale)
+                val origin =
+                    box
+                        .getValue("origin")
+                        .jsonPrimitive.content
+                        .split(" ")
+                        .map { it.removeSuffix("px").toDouble() }
+                check("box.originX", origin[0], frame.boxOriginX)
+                check("box.originY", origin[1], frame.boxOriginY)
+                // Chromium lays boxes out in 1/64 px steps; a size can be off by one step at each edge.
+                check("box.left", num(box, "left"), frame.boxLeft, LAYOUT_UNIT)
+                check("box.top", num(box, "top"), frame.boxTop, LAYOUT_UNIT)
+                check("box.width", num(box, "width"), frame.boxWidth, 2 * LAYOUT_UNIT)
+                check("box.height", num(box, "height"), frame.boxHeight, 2 * LAYOUT_UNIT)
+                val background = box.getValue("background").jsonArray.map { it.jsonPrimitive.double }
+                val backgroundAlpha = background.getOrElse(3) { 1.0 }
+                check("box.background.alpha", backgroundAlpha, (frame.boxBackground ushr 24) / 255.0, COLOR_ALPHA)
+                // Chromium writes any fully transparent colour as rgba(0, 0, 0, 0).
+                if (backgroundAlpha > 0) {
+                    checkColor("box.background", JsonArray(box.getValue("background").jsonArray.take(3)), frame.boxBackground)
+                }
+                val shadow = box.getValue("shadow").jsonArray.map { it.jsonPrimitive.double }
+                check("box.shadow.alpha", shadow[3], frame.boxShadowAlpha, COLOR_ALPHA)
+                check("box.shadow.y", shadow[5], frame.boxShadowY, 0.01)
+                check("box.shadow.blur", shadow[6], frame.boxShadowBlur, 0.01)
+                check("box.inset.alpha", shadow[11], frame.boxInsetAlpha, COLOR_ALPHA)
+                check("widgetLayer", sample.getValue("widgetLayer").jsonPrimitive.double, frame.widgetLayerAlpha)
+                check("header.alpha", num(obj("header"), "alpha"), frame.headerAlpha)
+                check("header.y", num(obj("header"), "y"), frame.headerOffset, 0.01)
+                val clip = obj("clip")
+                val circle = clip.getValue("circle").jsonArray.map { it.jsonPrimitive.double }
+                // The prototype places the circle in a card whose top-left corner is (100, 122) or (10, 122).
+                val cardLeft = if (geometry.right) 100.0 else 10.0
+                check("clip.radius", circle[0], frame.detailClipRadius, 0.01)
+                check("clip.x", circle[1] + cardLeft, frame.detailClipX, 0.01)
+                check("clip.y", circle[2] + 122, frame.detailClipY, 0.01)
+                check("clip.alpha", num(clip, "alpha"), frame.detailClipAlpha)
                 sample.getValue("cells").jsonArray.forEachIndexed { i, element ->
                     val cell = element.jsonObject
                     val m = matrix(cell)
@@ -176,5 +213,12 @@ class OverlayReferenceTest {
             fail("${failures.size} of $checked values differ: $byKind\n" + failures.take(40).joinToString("\n"))
         }
         println("Checked $checked overlay values against the prototype")
+    }
+
+    private companion object {
+        const val LAYOUT_UNIT = 1.0 / 64
+
+        /** Chromium keeps colour alpha in 8 bits. */
+        const val COLOR_ALPHA = 1.3 / 255
     }
 }

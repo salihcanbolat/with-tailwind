@@ -68,4 +68,43 @@ class OverlaySceneTest {
     fun `the chart always has every point`() {
         assertFailsWith<IllegalArgumentException> { scene().setChart(listOf(1.0, 2.0), GaugeColors.UP, emptyList(), 0.0) }
     }
+
+    @Test
+    fun `nothing moves after it has settled`() {
+        val scene = scene()
+        scene.show(OverlayStage.FLOW, 0.0)
+        scene.show(OverlayStage.DETAIL, 300.0, selected = 1)
+
+        val settled = scene.settledAt()
+
+        assertTrue(settled > 300.0)
+        assertEquals(scene.frame(settled), scene.frame(settled + 5000.0))
+    }
+
+    @Test
+    fun `scenes stay on screen when the widget sits low or away from the edges`() {
+        val low =
+            OverlayGeometry(
+                right = true,
+                screenWidth = 400.0,
+                screenHeight = 700.0,
+                widgetLeft = 100.0,
+                widgetTop = 600.0,
+                widgetWidth = 80.0,
+                widgetHeight = 90.0,
+                widgetDrops = listOf(140.0 to 634.0),
+                dropSize = 46.0,
+                edgeColumnX = 140.0,
+                dropY = 634.0,
+            )
+        val leftLow = low.copy(right = false, widgetLeft = 300.0)
+
+        assertEquals(10.0, low.folderLeft)
+        assertEquals(330.0 - 176, low.copy(widgetLeft = 250.0).folderLeft)
+        assertEquals(400.0 - 10 - 176, leftLow.folderLeft)
+        assertEquals(50.0, leftLow.copy(widgetLeft = 50.0).folderLeft)
+        assertEquals(700.0 - 10 - 216, low.folderTop)
+        assertEquals(634.0 - 80, low.flowCell(2).second)
+        assertEquals(700.0 - 10 - 380 * 0.86, low.detailTop, absoluteTolerance = 1e-9)
+    }
 }

@@ -37,11 +37,32 @@ public data class OverlayFrame(
     val boxScale: Double,
     val boxOriginX: Double,
     val boxOriginY: Double,
+    /** The box: the widget's card, or the glass folder it grows into ("Klasör"). Corner radius [BOX_RADIUS]. */
+    val boxLeft: Double,
+    val boxTop: Double,
+    val boxWidth: Double,
+    val boxHeight: Double,
+    val boxBackground: Int,
+    /** Its drop shadow (0, [boxShadowY], blur [boxShadowBlur], black at [boxShadowAlpha]) and 0.5 white inner line. */
+    val boxShadowY: Double,
+    val boxShadowBlur: Double,
+    val boxShadowAlpha: Double,
+    val boxInsetAlpha: Double,
+    /** The widget's own labels and badges on the card. */
+    val widgetLayerAlpha: Double,
+    /** The folder's header (title, settings, collapse). */
+    val headerAlpha: Double,
+    val headerOffset: Double,
     val cells: List<CellFrame>,
     val heroX: Double,
     val heroY: Double,
     val heroScale: Double,
     val heroAlpha: Double,
+    /** The detail opens as a circle growing from the chosen cell (docs/06): centre, radius and alpha. */
+    val detailClipX: Double,
+    val detailClipY: Double,
+    val detailClipRadius: Double,
+    val detailClipAlpha: Double,
     /** Detail sections 0 (title), 2 (price), 3 (chart), 4 (range picker), 5 (buttons); index 1 is unused. */
     val sections: List<Reveal>,
     val annotations: List<Reveal>,
@@ -101,6 +122,22 @@ public class OverlayScene(
     private val detailDim = NumberTransition(0.0)
     private val boxAlpha = NumberTransition(1.0)
     private val boxScale = NumberTransition(1.0)
+    private val boxLeft = NumberTransition(geometry.widgetLeft)
+    private val boxTop = NumberTransition(geometry.widgetTop)
+    private val boxWidth = NumberTransition(geometry.widgetWidth)
+    private val boxHeight = NumberTransition(geometry.widgetHeight)
+    private val boxBackground = ColorTransition(boxLook().background)
+    private val boxShadowY = NumberTransition(0.0)
+    private val boxShadowBlur = NumberTransition(0.0)
+    private val boxShadowAlpha = NumberTransition(0.0)
+    private val boxInsetAlpha = NumberTransition(0.0)
+    private val widgetLayer = NumberTransition(1.0)
+    private val headerAlpha = NumberTransition(0.0)
+    private val headerOffset = NumberTransition(HEADER_OFFSET)
+    private val clipX = NumberTransition(0.0)
+    private val clipY = NumberTransition(0.0)
+    private val clipRadius = NumberTransition(CLIP_CLOSED)
+    private val clipAlpha = NumberTransition(0.0)
     private val cells = List(assetCount) { CellMotion() }
     private val heroX = NumberTransition(0.0)
     private val heroY = NumberTransition(0.0)
@@ -192,11 +229,27 @@ public class OverlayScene(
             boxScale = boxScale.value(atMs),
             boxOriginX = box.first,
             boxOriginY = box.second,
+            boxLeft = boxLeft.value(atMs),
+            boxTop = boxTop.value(atMs),
+            boxWidth = boxWidth.value(atMs),
+            boxHeight = boxHeight.value(atMs),
+            boxBackground = boxBackground.value(atMs),
+            boxShadowY = boxShadowY.value(atMs),
+            boxShadowBlur = boxShadowBlur.value(atMs),
+            boxShadowAlpha = boxShadowAlpha.value(atMs),
+            boxInsetAlpha = boxInsetAlpha.value(atMs),
+            widgetLayerAlpha = widgetLayer.value(atMs),
+            headerAlpha = headerAlpha.value(atMs),
+            headerOffset = headerOffset.value(atMs),
             cells = cells.mapIndexed { i, cell -> cell.frame(i, atMs) },
             heroX = heroX.value(atMs),
             heroY = heroY.value(atMs),
             heroScale = heroScale.value(atMs),
             heroAlpha = heroAlpha.value(atMs),
+            detailClipX = clipX.value(atMs),
+            detailClipY = clipY.value(atMs),
+            detailClipRadius = clipRadius.value(atMs),
+            detailClipAlpha = clipAlpha.value(atMs),
             sections = sections.map { it.frame(atMs) },
             annotations = annotations.map { it.frame(atMs) },
             annotationColors = annotationColors.map { it.value(atMs) },
@@ -245,6 +298,26 @@ public class OverlayScene(
         detailDim.to(if (detail) 1.0 else 0.0, atMs, ms(420))
         boxAlpha.to(if (detail) 0.0 else 1.0, atMs, ms(260))
         boxScale.to(if (detail) DETAIL_BOX_SCALE else 1.0, atMs, ms(600), curve = Curves.easeStandard)
+        val folder = open && !flow
+        val look = boxLook()
+        boxLeft.to(if (folder) geometry.folderLeft else geometry.widgetLeft, atMs, ms(540), curve = Curves.easeStandard)
+        boxTop.to(if (folder) geometry.folderTop else geometry.widgetTop, atMs, ms(540), curve = Curves.easeStandard)
+        boxWidth.to(if (folder) OverlayGeometry.FOLDER_WIDTH else geometry.widgetWidth, atMs, ms(540), curve = Curves.easeStandard)
+        boxHeight.to(if (folder) OverlayGeometry.FOLDER_HEIGHT else geometry.widgetHeight, atMs, ms(540), curve = Curves.easeStandard)
+        boxBackground.to(look.background, atMs, ms(300))
+        boxShadowY.to(look.shadowY, atMs, ms(540))
+        boxShadowBlur.to(look.shadowBlur, atMs, ms(540))
+        boxShadowAlpha.to(look.shadowAlpha, atMs, ms(540))
+        boxInsetAlpha.to(look.insetAlpha, atMs, ms(540))
+        if (open) widgetLayer.to(0.0, atMs, ms(100)) else widgetLayer.to(1.0, atMs, ms(220), delay = ms(360))
+        val header = stage == OverlayStage.FLOW && !flow
+        headerAlpha.to(
+            if (header) 1.0 else 0.0,
+            atMs,
+            ms(if (stage == OverlayStage.FLOW) 260 else 110),
+            delay = if (stage == OverlayStage.FLOW && from == OverlayStage.WIDGET) ms(180) else 0.0,
+        )
+        headerOffset.to(if (header) 0.0 else HEADER_OFFSET, atMs, ms(420), curve = Curves.easeStandard)
 
         val chosen = position(selected)
         for ((i, cell) in cells.withIndex()) cell.apply(i, chosen, atMs, ::ms)
@@ -262,6 +335,18 @@ public class OverlayScene(
             heroY.to(round1(chosen.second - HERO_HALF_HEIGHT * small), atMs, ms(440), curve = Curves.easeStandard)
             heroScale.to(small, atMs, ms(440), curve = Curves.easeStandard)
             heroAlpha.to(0.0, atMs, ms(90), delay = ms(380))
+        }
+        val centre = clipCentre(chosen)
+        if (detail) {
+            clipX.to(centre.first, atMs, ms(600), curve = Curves.easeStandard)
+            clipY.to(centre.second, atMs, ms(600), curve = Curves.easeStandard)
+            clipRadius.to(CLIP_OPEN, atMs, ms(600), curve = Curves.easeStandard)
+            clipAlpha.to(1.0, atMs, ms(1))
+        } else {
+            clipX.to(centre.first, atMs, ms(440), curve = Curves.easeExit)
+            clipY.to(centre.second, atMs, ms(440), curve = Curves.easeExit)
+            clipRadius.to(CLIP_CLOSED, atMs, ms(440), curve = Curves.easeExit)
+            clipAlpha.to(0.0, atMs, ms(110), delay = ms(350))
         }
 
         for ((n, section) in sections.withIndex()) {
@@ -308,14 +393,82 @@ public class OverlayScene(
     /** Where cell [i] sits in the open stages: the flow grid or the folder grid. */
     private fun position(i: Int): Pair<Double, Double> = if (flow) geometry.flowCell(i) else geometry.folderCell(i)
 
-    /** The box (widget, or folder) scales from the chosen cell's centre, rounded like the prototype. */
+    /**
+     * The box (widget, or folder) scales from the chosen cell's centre, rounded like the prototype. Relative
+     * to the box's top-left corner, wherever its transition has taken it.
+     */
     private fun boxOrigin(): Pair<Double, Double> {
         val (x, y) = position(selected)
-        val left = if (stage != OverlayStage.WIDGET && !flow) geometry.folderLeft else geometry.widgetLeft
-        return left + (x - left).roundToInt() to geometry.widgetTop + (y - geometry.widgetTop).roundToInt()
+        val folder = stage != OverlayStage.WIDGET && !flow
+        val left = if (folder) geometry.folderLeft else geometry.widgetLeft
+        val top = if (folder) geometry.folderTop else geometry.widgetTop
+        return (x - left).roundToInt().toDouble() to (y - top).roundToInt().toDouble()
     }
 
     private fun ms(base: Int): Double = (base * speed).roundToInt().toDouble()
+
+    /** The detail's circle starts on the chosen cell, rounded to whole pixels like the prototype. */
+    private fun clipCentre(chosen: Pair<Double, Double>): Pair<Double, Double> =
+        chosen.first.roundToInt().toDouble() to chosen.second.roundToInt().toDouble()
+
+    private class BoxLook(
+        val background: Int,
+        val shadowY: Double,
+        val shadowBlur: Double,
+        val shadowAlpha: Double,
+        val insetAlpha: Double,
+    )
+
+    private fun boxLook(): BoxLook =
+        when {
+            stage != OverlayStage.WIDGET && !flow -> BoxLook(FOLDER_GLASS, 16.0, 44.0, 0.32, 0.7)
+            bare -> BoxLook(BARE_CARD, 0.0, 0.0, 0.0, 0.0)
+            else -> BoxLook(BOXED_CARD, 2.0, 10.0, 0.15, 0.0)
+        }
+
+    /** When every transition has finished; nothing moves after this until the next change. */
+    public fun settledAt(): Double {
+        val numbers =
+            listOf(
+                homeBlur,
+                homeScale,
+                dim,
+                detailDim,
+                boxAlpha,
+                boxScale,
+                boxLeft,
+                boxTop,
+                boxWidth,
+                boxHeight,
+                boxShadowY,
+                boxShadowBlur,
+                boxShadowAlpha,
+                boxInsetAlpha,
+                widgetLayer,
+                headerAlpha,
+                headerOffset,
+                heroX,
+                heroY,
+                heroScale,
+                heroAlpha,
+                clipX,
+                clipY,
+                clipRadius,
+                clipAlpha,
+                chartLine,
+                chartArea,
+                chartEnd,
+                rangePill,
+                shareDim,
+                shareAlpha,
+                shareY,
+                shareScale,
+            ) + annotationLines + annotationDots + chart + dotWidths + dotAlphas
+        val colors = listOf(boxBackground, chartColorTween, chartEndColor) + annotationColors
+        val ends =
+            numbers.map { it.end } + colors.map { it.end } + cells.map { it.settledAt() } + (sections + annotations).map { it.settledAt() }
+        return ends.fold(0.0, ::maxOf)
+    }
 
     private inner class CellMotion {
         private val x = NumberTransition(0.0)
@@ -423,6 +576,8 @@ public class OverlayScene(
             small = stage == OverlayStage.WIDGET && mini
         }
 
+        fun settledAt() = listOf(x, y, scale, alpha, blur, shadow, label).fold(0.0) { latest, it -> maxOf(latest, it.end) }
+
         fun frame(
             i: Int,
             atMs: Double,
@@ -471,6 +626,8 @@ public class OverlayScene(
             sharpness.to(blur, atMs, focus)
         }
 
+        fun settledAt() = maxOf(alpha.end, offset.end, sharpness.end)
+
         fun frame(atMs: Double) = Reveal(alpha.value(atMs), offset.value(atMs), sharpness.value(atMs))
     }
 
@@ -513,6 +670,13 @@ public class OverlayScene(
         internal const val PUSH_AWAY = 14.0
         internal const val SHARE_OFFSET = 24.0
         internal const val SHARE_SCALE = 0.92
+        internal const val HEADER_OFFSET = -5.0
+        internal const val CLIP_OPEN = 560.0
+        internal const val CLIP_CLOSED = 24.0
+        public const val BOX_RADIUS: Double = 22.0
+        internal const val FOLDER_GLASS = 0xCCFAFAFC.toInt()
+        internal const val BARE_CARD = 0x00FAFAFC
+        internal const val BOXED_CARD = 0xFFFFFFFF.toInt()
 
         /** Where the detail gauge's body centre sits in the 260-wide scene, and half its 80 x 97 box. */
         internal const val HERO_LEFT = 44.0
