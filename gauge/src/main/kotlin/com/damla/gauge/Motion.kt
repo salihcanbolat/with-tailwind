@@ -83,19 +83,19 @@ public class GaugeMotion(
         private set
 
     private val pose = Geometry.dropPose(initial.shape)
-    private val dropTranslateY = Tween(pose.translateY)
-    private val dropRotation = Tween(pose.rotation)
-    private val dropScale = Tween(pose.scale)
-    private val dropAlpha = Tween(dropAlphaOf(initial.shape))
-    private val circleScale = Tween(circleScaleOf(initial.shape))
-    private val circleAlpha = Tween(1 - dropAlphaOf(initial.shape))
-    private val logoX = Tween(Geometry.badgeCentre(initial.shape).first)
-    private val logoY = Tween(Geometry.badgeCentre(initial.shape).second)
-    private val bodyColor = ColorTween(bodyColorOf(initial))
-    private val upperColor = ColorTween(ringColorOf(initial.upperRing, initial.closed))
-    private val lowerColor = ColorTween(ringColorOf(initial.lowerRing, initial.closed))
-    private val logoColor = ColorTween(logoColorOf(initial))
-    private val lightRotation = Tween(360.0 * initial.pulseTurns)
+    private val dropTranslateY = NumberTransition(pose.translateY)
+    private val dropRotation = NumberTransition(pose.rotation)
+    private val dropScale = NumberTransition(pose.scale)
+    private val dropAlpha = NumberTransition(dropAlphaOf(initial.shape))
+    private val circleScale = NumberTransition(circleScaleOf(initial.shape))
+    private val circleAlpha = NumberTransition(1 - dropAlphaOf(initial.shape))
+    private val logoX = NumberTransition(Geometry.badgeCentre(initial.shape).first)
+    private val logoY = NumberTransition(Geometry.badgeCentre(initial.shape).second)
+    private val bodyColor = ColorTransition(bodyColorOf(initial))
+    private val upperColor = ColorTransition(ringColorOf(initial.upperRing, initial.closed))
+    private val lowerColor = ColorTransition(ringColorOf(initial.lowerRing, initial.closed))
+    private val logoColor = ColorTransition(logoColorOf(initial))
+    private val lightRotation = NumberTransition(360.0 * initial.pulseTurns)
 
     private var shapeChangedAt: Double? = null
     private var upperRedrawAt: Double? = null
@@ -269,73 +269,4 @@ internal fun keyframes(
     val end = offsets[segment + 1]
     val local = curve.transform((progress - start) / (end - start))
     return values[segment] + (values[segment + 1] - values[segment]) * local
-}
-
-/** A CSS transition of one number: eases from where it is towards a new target. */
-private class Tween(
-    initial: Double,
-) {
-    private var from = initial
-    private var target = initial
-    private var start = 0.0
-    private var delay = 0.0
-    private var duration = 0.0
-    private var curve = Curves.ease
-
-    val end: Double get() = start + delay + duration
-
-    fun value(atMs: Double): Double {
-        val elapsed = atMs - start - delay
-        val p = if (duration <= 0.0) (if (elapsed >= 0.0) 1.0 else 0.0) else (elapsed / duration).coerceIn(0.0, 1.0)
-        return from + (target - from) * curve.transform(p)
-    }
-
-    fun to(
-        value: Double,
-        atMs: Double,
-        duration: Double,
-        delay: Double = 0.0,
-        curve: CubicBezier,
-    ) {
-        if (value == target) return
-        from = value(atMs)
-        target = value
-        start = atMs
-        this.delay = delay
-        this.duration = duration
-        this.curve = curve
-    }
-}
-
-/** A CSS colour transition with `ease`, interpolated per channel in sRGB. */
-private class ColorTween(
-    initial: Int,
-) {
-    private var from = initial
-    private var target = initial
-    private var start = 0.0
-    private var delay = 0.0
-    private var duration = 0.0
-
-    val end: Double get() = start + delay + duration
-
-    fun value(atMs: Double): Int {
-        val elapsed = atMs - start - delay
-        val p = if (duration <= 0.0) (if (elapsed >= 0.0) 1.0 else 0.0) else (elapsed / duration).coerceIn(0.0, 1.0)
-        return GaugeColors.lerp(from, target, Curves.ease.transform(p))
-    }
-
-    fun to(
-        value: Int,
-        atMs: Double,
-        duration: Double,
-        delay: Double = 0.0,
-    ) {
-        if (value == target) return
-        from = value(atMs)
-        target = value
-        start = atMs
-        this.delay = delay
-        this.duration = duration
-    }
 }
