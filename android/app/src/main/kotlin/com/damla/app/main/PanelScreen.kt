@@ -52,6 +52,7 @@ import com.damla.core.WidgetOpening
 import com.damla.core.WidgetSize
 import com.damla.core.shape
 import com.damla.gauge.Shape
+import java.time.Instant
 
 /** The main panel (design/Panel.dc.html): mood strip, widget card and the watch list. */
 @Composable
@@ -86,6 +87,8 @@ fun PanelScreen(
                     stringResource(R.string.state_offline),
                     action = stringResource(R.string.state_retry),
                 ) { model.refresh() }
+            } else if (!model.syncing && sourceDown(rows)) {
+                StatusBanner(stringResource(R.string.state_source_error))
             }
             if (rows.isNotEmpty()) Mood(rows, Modifier.enter(60, reduceMotion))
             WidgetCard(model, widget, settings, rows) { navigator.push(Route.Widget) }
@@ -408,4 +411,16 @@ private fun HowToRead(
         Label(stringResource(R.string.how_note), text(12f, color = DamlaColors.secondaryText, lineHeight = 16f))
         PrimaryButton(stringResource(R.string.how_ok), onClick = onClose)
     }
+}
+
+/**
+ * "Kaynak hatası" (docs/07): the backend answers, yet every asset whose market is open is late. One late
+ * asset is shown on its row; all of them at once means the source is down.
+ */
+@Composable
+private fun sourceDown(rows: List<AssetSnapshot>): Boolean {
+    val context = LocalContext.current
+    val now = Instant.now()
+    val open = rows.filter { it.marketOpen }
+    return open.isNotEmpty() && open.all { Formats.freshness(context, it, now).stale }
 }

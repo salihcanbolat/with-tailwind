@@ -40,11 +40,6 @@ class MainActivity : ComponentActivity() {
         open(intent)
     }
 
-    override fun onStart() {
-        super.onStart()
-        app.model.refresh()
-    }
-
     private fun open(intent: Intent) {
         val navigator = app.navigator
         val asset = intent.getStringExtra(EXTRA_ASSET)

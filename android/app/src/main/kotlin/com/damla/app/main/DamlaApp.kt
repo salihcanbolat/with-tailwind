@@ -5,13 +5,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.damla.app.alarms.AlarmEditScreen
 import com.damla.app.alarms.AlarmsScreen
 import com.damla.app.ui.DamlaColors
+import kotlinx.coroutines.delay
 
 /** The app's screens (docs/07): the first start, the three tabs and the screens pushed on them. */
 @Composable
@@ -20,6 +25,17 @@ fun DamlaApp(
     navigator: Navigator,
 ) {
     val onboarded by model.onboarded.collectAsState()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(lifecycle) {
+        // On each return a full sync (registration too), then a fresh snapshot every minute until hidden.
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            model.refresh()
+            while (true) {
+                delay(POLL_MILLIS)
+                model.poll()
+            }
+        }
+    }
     Box(
         Modifier
             .fillMaxSize()
@@ -58,3 +74,5 @@ fun DamlaApp(
 }
 
 private val TABS = setOf(Route.Panel, Route.Alarms, Route.Settings)
+
+private const val POLL_MILLIS = 60_000L

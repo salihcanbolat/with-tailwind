@@ -172,7 +172,7 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - **Piksel yaslama:** Tarayıcı, tek sayılı rozet çaplarında rozeti tam piksele yaslıyor (en fazla 0,5 px). Bu taklit edilmedi.
 - **Yazı tipi:** Metin logoları sistem sans-serif yazı tipiyle, 800 kalınlıkta çiziliyor. Android 9 öncesinde kalın (bold) kullanılıyor.
 - **Animasyonları azalt:** Varsayılan olarak sistemin animasyon ayarından (`ValueAnimator.areAnimatorsEnabled`) okunuyor. Açıkken geçişler anlık olur; esneme, ışık, halka çizimi ve parıltı oynamaz.
-- **Önizleme ekranı:** Faz 5'e kadar uygulamanın açılış ekranı.
+- **Önizleme ekranı:** Faz 5'te uygulama ekranları geldiği için açılıştan kalktı; kodu geliştirme aracı olarak duruyor.
 
 ## Widget ve kaplama (Faz 4, 2026-10-27)
 - **Yapı (değişiklik):** Hilt ve Room kullanılmadı.
@@ -228,7 +228,31 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Kart ekranın ortasına yerleşir; prototipte 844 px'lik ekranda üstten 150 px'teydi.
   - Paylaş düğmesi kartı gölgesiz PNG olarak paylaşım sayfasına verir.
 - **Detayda varlık değiştirme:** Kaydırınca yeni varlığın göstergesi doğrudan gösterilir, durum değişimi efekti oynamaz.
-- **Düğmeler:** "Alarm kur", "Uygulamada aç" ve klasör ayarı uygulamayı açar; ilgili ekranlar Faz 5'te gelir.
+- **Düğmeler:** "Alarm kur" yeni alarm ekranını, "Uygulamada aç" varlık ayarlarını, klasör ayarı widget ayarlarını açar.
+
+## Uygulama ekranları ve alarmlar (Faz 5, 2026-10-27)
+- **Ekranlar:** Panel, Varlık ayarları, Varlık ekle, Çapraz kur, Widget ayarları, Alarmlar, Yeni alarm ve Ayarlar Compose ile yazıldı. Sekmeler Panel / Alarmlar / Ayarlar.
+  - Ekranlar arası geçişte efekt yok; tasarımda tanımlı değil. Yeni efekt eklemeden önce sorulacak.
+  - Yazılar sp ile verilir, sistem yazı boyutuna uyar. Ölçüler tasarımdaki px değerlerinin dp karşılığıdır.
+  - Panel açıkken anlık görüntü dakikada bir yenilenir; uygulamaya her dönüşte cihaz kaydı da gönderilir.
+- **Kaydetme:** Her değişiklik önce cihaza kaydedilir, 600 ms sonra backend'e gönderilir. İnternet yokken ekranlar çalışır, sonraki eşitleme gönderir.
+- **Widget ayarı:** Tüm Damla widget'ları tek bir ayarı paylaşır (stil, boyut, açılış, sıra). Widget başına ayrı ayar sonraki sürüme kaldı.
+- **Yeni varlık aralıkları:** Varsayılan Damla 1 saat, Üst halka 1 gün, Alt halka 1 hafta (tasarımdaki başlangıç seçimi).
+- **Tema:** Seçim kaydedilir ama yalnızca koyu tema tasarlandığı için uygulama koyu kalır (docs/07, docs/09).
+- **Alarmlar:**
+  - Backend alarmı değerlendirir ve yalnızca hangi alarmın, hangi koşullarla çaldığını gönderir. Bildirim cümlesini cihaz, kendi kayıtlı alarmından Türkçe yazar. Böylece metin tek yerde (`:alarms`) üretilir ve test edilir.
+  - Alarm kartındaki kısa satır ("Fiyat ₺4.300'ün üzerine çıkınca") ve tür adı ("Fiyat alarmı", karışık koşullarda "Birleşik alarm") da aynı modülde üretilir.
+  - "Sesli uyarı" kapalıysa bildirim sessiz kanaldan gelir. Kanallar: "Alarmlar" ve "Sessiz alarmlar".
+  - "Sessiz saatlerde bekle": 23.00–08.00 arası gelen bildirim sabah 08.00'de gösterilir. Aynı gece aynı alarm yeniden çalarsa yalnızca sonuncusu bekler. Saatler geçici; tasarımda tanımlı değil.
+  - Bildirime dokununca Alarmlar sekmesi açılır; çalan her alarm Geçmiş'e yazılır (en çok 50).
+  - Bildirim izni (Android 13+) ilk alarm kaydedilirken istenir.
+- **Tasarlanmamış durumlar (öneri, onaya sunulur):**
+  - **İlk açılış:** Kısa tanıtım, üç adımlık widget ekleme rehberi ve başlatıcı destekliyorsa "Widget'ı ana ekrana ekle" düğmesi (`requestPinAppWidget`). Widget'tan gelen kullanıcıya gösterilmez.
+  - **İnternet yok:** Turuncu çerçeveli şerit, "Tekrar dene" bağlantısı; son veriler gösterilmeye devam eder.
+  - **Veri gelmedi:** Satırda "Veri bekleniyor", gösterge yeri boş kalır (durum uydurulmaz).
+  - **Veri gecikiyor:** Satırda "veri gecikiyor", gösterge %60 opaklıkta.
+  - **Kaynak hatası:** Backend yanıt veriyor ama piyasası açık tüm varlıklar gecikmişse şerit "Veri kaynağına ulaşılamıyor" der.
+  - **Takip listesi boş / alarm yok:** Gri yuvarlak damla, kısa cümle ve "Varlık ekle" ya da yeni alarm düğmesiyle boş kart.
 
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
@@ -242,6 +266,9 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Nabız ayarının süre değerleri (şimdilik geçici değerler var).
   - Akış'ta hangi varlıkların gösterileceği (şimdilik widget sırasındaki ilk dört varlık).
   - Detayda varlık kaydırınca çapraz geçiş yapılıp yapılmayacağı (şimdilik doğrudan geçiş).
+- **Faz 5:**
+  - Sessiz saatlerin aralığı (şimdilik 23.00–08.00).
+  - Tasarlanmamış durumlar için önerilerin onayı (yukarıda).
 - **Genel:**
   - Canlı canvas'taki pakette olmayan artboard'ların durumu.
   - Repo adı.

@@ -70,6 +70,14 @@ class AppModel(
         }
     }
 
+    /** A fresh snapshot alone, each minute while the app is on screen (prices are 1 minute candles). */
+    fun poll() {
+        scope.launch {
+            online = runCatching { repository.refresh() }.isSuccess
+            WidgetUpdates.redraw(context)
+        }
+    }
+
     /** Loads the catalogue and a snapshot of everything in it with the default settings, for the gauges. */
     fun loadCatalog(extra: List<String> = emptyList()) {
         scope.launch {

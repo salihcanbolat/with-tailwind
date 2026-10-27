@@ -370,7 +370,7 @@
     <string name="settings_pulse_normal">Normal</string>
     <string name="settings_pulse_fast">Hızlı</string>
     <string name="settings_pulse_off">Kapalı</string>
-    <string name="settings_vibration">Fiyat gelince titreşim</string>
+    <string name="settings_vibration">Titreşim</string>
     <string name="settings_gray">Piyasa kapalıyken gri göster</string>
     <string name="settings_look">Görünüm</string>
     <string name="settings_theme">Tema</string>
