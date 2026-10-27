@@ -57,13 +57,19 @@ function render(state: DesktopState): void {
   }
 }
 
+let sized = { width: -1, height: -1 };
+
 async function size(): Promise<void> {
   const box = strip.getBoundingClientRect();
-  const position = await win.outerPosition();
   if (placed) {
+    // Only when the capsule's size changes (new words); otherwise prices would resize it every second.
+    if (sized.width === box.width && sized.height === box.height) return;
+    sized = { width: box.width, height: box.height };
+    const position = await win.outerPosition();
     await place(box.width + 2 * MARGIN.side, box.height + MARGIN.top + MARGIN.bottom, position.x, position.y);
     return;
   }
+  sized = { width: box.width, height: box.height };
   // First time: where it was last left, else the bottom left corner like the design.
   const area = await workArea();
   const scale = await win.scaleFactor();

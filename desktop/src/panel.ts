@@ -25,21 +25,24 @@ panel.className = 'panel';
 panel.setAttribute('role', 'dialog');
 panel.setAttribute('aria-label', T.panelLabel);
 document.body.append(panel);
+
+// The header stays put, so the live dot's 2 s ring keeps its rhythm; only the freshness text changes.
+const header = el('div', 'head');
+const freshText = document.createTextNode('');
+const fresh = el('span', 'fresh');
+fresh.append(el('span', 'live'), freshText);
+header.append(dropIcon(), text('span', 'title', T.appName), el('span', 'grow'), fresh);
+const body = el('div', 'panel-body');
+panel.append(header, body);
+let fitted = { height: -1, x: 0, y: 0 };
 document.body.style.padding = `${MARGIN.top}px ${MARGIN.side}px ${MARGIN.bottom}px`;
 if (reduceMotion()) document.body.classList.add('still');
 
 function render(entering: boolean): void {
   if (state == null) return;
   const s = state;
-  const now = Date.now();
-  panel.replaceChildren();
-
-  const header = el('div', 'head');
-  header.append(dropIcon(), text('span', 'title', T.appName), el('span', 'grow'));
-  const fresh = el('span', 'fresh');
-  fresh.append(el('span', 'live'), document.createTextNode(freshness(s, now)));
-  header.append(fresh);
-  panel.append(header);
+  freshText.textContent = freshness(s, Date.now());
+  body.replaceChildren();
 
   // Mood: how many drops rise, rest, fall and wave (design: 5 tall bars, 3 apart).
   const counts = ['UP', 'FLAT', 'DOWN', 'WAVE'].map((k) => s.assets.filter((a) => shape(a.asset.drop) === k).length);
@@ -58,7 +61,7 @@ function render(entering: boolean): void {
     words.append(count);
   });
   mood.append(bars, words);
-  panel.append(mood);
+  body.append(mood);
 
   const rows = el('div', 'rows');
   s.assets.forEach((item, i) => {
@@ -87,7 +90,7 @@ function render(entering: boolean): void {
     row.append(view.element, names, side);
     rows.append(row);
   });
-  panel.append(rows);
+  body.append(rows);
 
   const switchRow = el('div', 'switch-row');
   switchRow.append(text('span', 'grow', T.stripSwitch));
@@ -99,9 +102,9 @@ function render(entering: boolean): void {
   toggle.append(el('span', 'knob'));
   toggle.onclick = () => void emit(EVENTS.strip, !s.stripOn);
   switchRow.append(toggle);
-  panel.append(switchRow);
+  body.append(switchRow);
 
-  panel.append(pairing ? pairForm(s) : syncLine(s));
+  body.append(pairing ? pairForm(s) : syncLine(s));
   void fit();
 }
 
@@ -161,6 +164,8 @@ async function fit(): Promise<void> {
   const right = Math.min(area.x + area.width - 8 * scale, Math.max(area.x + (WIDTH + 8) * scale, tray.x + tray.width));
   const x = right - (WIDTH + MARGIN.side) * scale;
   const y = top ? tray.y + tray.height + 6 * scale - MARGIN.top * scale : area.y + area.height - 10 * scale - (height + MARGIN.top) * scale;
+  if (fitted.height === height && fitted.x === x && fitted.y === y) return;
+  fitted = { height, x, y };
   await place(WIDTH + 2 * MARGIN.side, height + MARGIN.top + MARGIN.bottom, x, y);
 }
 
@@ -212,7 +217,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') void hide();
 });
 setInterval(() => {
-  if (open && !pairing) render(false);
+  if (open && state != null) freshText.textContent = freshness(state, Date.now());
 }, 1000);
 void emit(EVENTS.hello);
 

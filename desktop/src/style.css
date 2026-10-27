@@ -57,6 +57,7 @@ button { font: inherit; color: inherit; }
 body.from-top .panel { transform: scale(0.96) translateY(-6px); transform-origin: top right; }
 body.open .panel { opacity: 1; transform: scale(1) translateY(0); }
 
+.panel-body { display: flex; flex-direction: column; gap: 10px; }
 .head { display: flex; align-items: center; gap: 8px; padding: 0 8px; }
 .title { font-size: 14px; font-weight: 700; }
 .grow { flex: 1 1 auto; }
