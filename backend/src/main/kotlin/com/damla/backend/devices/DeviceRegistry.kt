@@ -19,6 +19,7 @@ class DeviceRegistry(
         val token: String?,
         val groups: Map<String, GroupKey>,
         val alarms: List<Alarm> = emptyList(),
+        val settings: DeviceSettings = DeviceSettings(),
     )
 
     /** Loads stored devices and returns every group they follow. Stored settings are re-validated. */
@@ -27,7 +28,7 @@ class DeviceRegistry(
         return mutex.withLock {
             for ((id, settings) in loaded) {
                 val result = SettingsResolver.resolve(settings)
-                if (result is SettingsResolver.Result.Valid) devices[id] = Device(id, settings.fcmToken, result.groups, settings.alarms)
+                if (result is SettingsResolver.Result.Valid) devices[id] = device(id, settings, result)
             }
             devices.values.flatMap { it.groups.values }.toSet()
         }
@@ -42,12 +43,18 @@ class DeviceRegistry(
         val result = SettingsResolver.resolve(settings)
         if (result is SettingsResolver.Result.Valid) {
             store.save(id, settings, now)
-            mutex.withLock { devices[id] = Device(id, settings.fcmToken, result.groups, settings.alarms) }
+            mutex.withLock { devices[id] = device(id, settings, result) }
         }
         return result
     }
 
     suspend fun get(id: String): Device? = mutex.withLock { devices[id] }
+
+    private fun device(
+        id: String,
+        settings: DeviceSettings,
+        result: SettingsResolver.Result.Valid,
+    ) = Device(id, settings.fcmToken, result.groups, settings.alarms, settings.copy(fcmToken = null))
 
     /** Devices that can be told about their alarms: a push token and at least one alarm. */
     suspend fun withAlarms(): List<Device> = mutex.withLock { devices.values.filter { it.token != null && it.alarms.isNotEmpty() } }

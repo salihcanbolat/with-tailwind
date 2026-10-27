@@ -1,0 +1,143 @@
+/* The desktop companion's look (design/Masaustu.dc.html). Windows are transparent; each page draws its
+   glass card with the design's tint. A transparent window cannot blur the desktop behind it, so the
+   design's backdrop blur is left out (docs/kararlar.md). */
+:root {
+  --text: #F2F4F7;
+  --text-60: rgba(235, 235, 245, 0.6);
+  --text-55: rgba(235, 235, 245, 0.55);
+  --text-50: rgba(235, 235, 245, 0.5);
+  --green: #30D158;
+  --link: #4DA3FF;
+  --standard: cubic-bezier(0.32, 0.72, 0, 1);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, system-ui, sans-serif;
+  user-select: none;
+  overflow: hidden;
+}
+
+button { font: inherit; color: inherit; }
+
+.gauge { display: inline-flex; flex-shrink: 0; line-height: 0; }
+.gauge svg { overflow: visible; }
+
+@keyframes dmCanli {
+  0% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.55); }
+  70% { box-shadow: 0 0 0 5px rgba(48, 209, 88, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0); }
+}
+
+@keyframes msGel {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Panel: 340 wide, corner 18. */
+.panel {
+  width: 340px;
+  border-radius: 18px;
+  background: rgba(24, 28, 35, 0.82);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.14), 0 24px 60px rgba(0, 0, 0, 0.55);
+  padding: 14px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: scale(0.96) translateY(6px);
+  transform-origin: bottom right;
+  transition: opacity 220ms ease, transform 360ms var(--standard);
+}
+body.from-top .panel { transform: scale(0.96) translateY(-6px); transform-origin: top right; }
+body.open .panel { opacity: 1; transform: scale(1) translateY(0); }
+
+.head { display: flex; align-items: center; gap: 8px; padding: 0 8px; }
+.title { font-size: 14px; font-weight: 700; }
+.grow { flex: 1 1 auto; }
+.fresh { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-60); font-variant-numeric: tabular-nums; }
+.live { width: 5px; height: 5px; border-radius: 3px; background: var(--green); animation: dmCanli 2s ease-out infinite; }
+
+.mood { display: flex; flex-direction: column; gap: 6px; padding: 0 8px; }
+.bars { display: flex; height: 5px; gap: 3px; }
+.bar { border-radius: 3px; }
+.counts { display: flex; gap: 12px; font-size: 11px; color: var(--text-60); }
+.counts b { color: var(--text); }
+
+.rows { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; gap: 12px; padding: 7px 8px; border-radius: 10px; }
+.row:hover { background: rgba(255, 255, 255, 0.06); }
+.names { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.name { font-size: 13px; font-weight: 600; }
+.price { font-size: 11px; color: var(--text-55); font-variant-numeric: tabular-nums; }
+.side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.word { font-size: 12px; font-weight: 600; transition: color 400ms ease; }
+.parts { display: flex; gap: 3px; }
+.part { width: 14px; height: 4px; border-radius: 2px; transition: background 400ms ease; }
+
+.switch-row { display: flex; align-items: center; gap: 10px; padding: 10px 8px 4px; border-top: 0.5px solid rgba(255, 255, 255, 0.08); font-size: 13px; }
+.switch { width: 38px; height: 22px; border: none; border-radius: 11px; padding: 0; position: relative; cursor: pointer; background: rgba(255, 255, 255, 0.18); transition: background 240ms ease; }
+.switch.on { background: var(--green); }
+.knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 9px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); transition: left 260ms var(--standard); }
+.switch.on .knob { left: 18px; }
+
+.sync { display: flex; align-items: center; gap: 6px; padding: 2px 8px 4px; font-size: 11px; color: var(--text-50); }
+.link { border: none; background: none; padding: 0; color: var(--link); font-size: 11px; cursor: pointer; }
+
+.pair { display: flex; flex-direction: column; gap: 8px; padding: 2px 8px 6px; font-size: 11px; color: var(--text-60); }
+.pair-line { display: flex; gap: 8px; }
+.code { flex: 1 1 auto; height: 32px; border-radius: 10px; border: none; padding: 0 10px; background: rgba(255, 255, 255, 0.08); color: var(--text); font: inherit; font-size: 15px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; outline: none; }
+.code:focus { box-shadow: inset 0 0 0 1px var(--link); }
+.pair-button { height: 32px; border: none; border-radius: 10px; padding: 0 14px; background: #0A84FF; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; }
+.error { color: #FF453A; }
+
+/* Mini strip: capsule, corner 22. */
+.strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px 8px 10px;
+  border-radius: 22px;
+  background: rgba(22, 26, 33, 0.72);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.16), 0 16px 40px rgba(0, 0, 0, 0.45);
+  touch-action: none;
+  cursor: grab;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 260ms ease, transform 300ms var(--standard);
+}
+body.on .strip { opacity: 1; transform: scale(1); }
+body.on.dragging .strip { transform: scale(1.03); cursor: grabbing; transition: transform 200ms ease; }
+.grip { display: grid; grid-template-columns: repeat(2, 3px); gap: 3px; opacity: 0.35; }
+.grip span { width: 3px; height: 3px; border-radius: 2px; background: #FFFFFF; }
+.cell { display: flex; align-items: center; gap: 8px; }
+.texts { display: flex; flex-direction: column; }
+.short { font-size: 12px; font-weight: 700; }
+.cell .word { font-size: 11px; }
+
+/* Toast: 340 wide, corner 16. */
+.toast {
+  width: 340px;
+  border-radius: 16px;
+  background: rgba(28, 32, 40, 0.88);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.14), 0 20px 50px rgba(0, 0, 0, 0.5);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 300ms ease, transform 520ms var(--standard);
+}
+body.on .toast { opacity: 1; transform: translateX(0); }
+.toast .texts { flex: 1 1 auto; gap: 1px; }
+.from { font-size: 11px; color: var(--text-55); }
+.line { font-size: 14px; font-weight: 700; }
+
+/* "Animasyonları azalt": no live ring, no entrances or slides (CLAUDE.md). */
+body.still *, body.still *::before, body.still *::after { animation: none !important; transition: none !important; }

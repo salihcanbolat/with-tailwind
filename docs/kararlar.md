@@ -292,6 +292,26 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Çift bildirim önlemi:** Telefondaki alarm bildirimi etiketlidir ve saat uygulaması bu etiketi saate köprülemez; kalıcı bildirim hiç köprülenmez.
 - **Kabul:** Gerçek saat ve telefonla denenmesi gerekiyor (Data Layer eşleşmesi aynı imzayı ister).
 
+## Bilgisayar eşlikçisi (Faz 8, 2026-10-27)
+- **Teknoloji:** Tauri 2.12 (crate 2.12.5, CLI ve API 2.12.4), ön yüz TypeScript + Vite. Kod `desktop/` altında.
+- **Damla çizimi:** Masaüstü için ayrı çizici yazılmadı. `:gauge` modülündeki Kotlin çizici `:gauge-js` modülüyle JavaScript'e derlenir; böylece damlayı her yüzeyde aynı kod çizer. 42 referans vakanın 42'sinde JS çizimi JVM çizimiyle aynı; CI her derlemede bunu denetler.
+- **Eşitleme (tasarlanmamış, öneri):** Hesap sistemi henüz yok.
+  - Telefon Ayarlar → "Bilgisayarla eşitle" ile 10 dakika geçerli, tek kullanımlık 6 karakterlik bir kod alır.
+  - Masaüstü panelde "Telefonla eşitle" ile kodu yazar. Kod telefonun cihaz kimliğine çözülür; masaüstü bundan sonra telefonun takip listesini, widget sırasını ve özel adları okur.
+  - Eşitlenmeden önce tasarımdaki varsayılan liste gösterilir.
+  - Backend'e eklenenler: `GET /v1/devices/{id}` (push token'ı olmadan), `POST /v1/devices/{id}/pairing`, `POST /v1/pairings/{code}`, cihaz ayarlarında `order` (widget sırası). Masaüstü web görünümünden çağırabilsin diye API'ye CORS eklendi (API'de çerez ya da kimlik bilgisi yok).
+- **Görünenler:**
+  - Tepside her varlık için bir simge, en çok 3; her biri logosuz damla, ipucu "Altın, yükselişte". Windows tepsi simgeleri kare olduğu için tasarımdaki tek düğmedeki üç damla üç ayrı simgeye bölündü.
+  - Panel 4 varlık gösterir (widget'ın Akış'ı gibi); tepsi ve şerit ilk üçü.
+  - Fiyat nabzı "Nabız: Normal" değeriyle sınırlı (1,8 sn); telefonun nabız ayarı backend'de tutulmadığı için. "Piyasa kapalıyken gri göster" de aynı nedenle varsayılan (açık).
+- **Tasarımdan sapmalar:**
+  - Saydam pencere arkasındaki masaüstünü bulanıklaştıramaz; `backdrop-filter` bulanıklığı yok. Tasarımdaki yarı saydam tonlar ve gölgeler aynen kullanıldı.
+  - Bildirimdeki "Telefonda ve saatte de bildirildi" satırı yalnızca telefonla eşitliyken görünür (o zaman telefon aynı push'u almıştır). Saatin gerçekten bildirdiği masaüstünden doğrulanamaz.
+  - Durum değişimi, art arda iki anlık görüntü (dakikada bir) karşılaştırılarak bulunur; telefondaki push'tan en çok bir dakika sonra gelebilir.
+- **Uygulama simgesi (tasarlanmamış):** Paylaşılan çiziciyle çizilmiş, logosuz yükseliş damlası.
+- **Derleme:** CI Windows'ta uygulamayı (`tauri build --no-bundle`) derler. macOS derlemesi bir Mac'te `npx tauri build` ile yapılır; CI'da macOS işi yok (maliyet).
+- **Gerçek cihazda denenmesi gerekenler:** Bildirim penceresinin odak çalmadığı, tepsi tıklamasında panelin konumu, şeridin kenara yaslanması.
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
   - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.
@@ -312,6 +332,9 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Desenlerin ayırt edilebilirliği gerçek cihazda denenmeli (kabul kriteri).
 - **Faz 7:**
   - Saatin telefon yokken de uyarı alması için kendi push kaydı gerekip gerekmediği.
+- **Faz 8:**
+  - Hesap sistemi gelince kodla eşitlemenin yerini ne alacak.
+  - Masaüstünde alarm bildirimi istenip istenmediği ("alarmlar ortak" yazıyor ama masaüstü alarm göstermiyor).
 - **Genel:**
   - Canlı canvas'taki pakette olmayan artboard'ların durumu.
   - Repo adı.

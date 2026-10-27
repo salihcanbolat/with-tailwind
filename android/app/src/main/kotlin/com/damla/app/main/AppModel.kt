@@ -8,6 +8,7 @@ import com.damla.api.Alarm
 import com.damla.api.AssetSettings
 import com.damla.api.AssetSnapshot
 import com.damla.api.AssetsResponse
+import com.damla.api.PairingCode
 import com.damla.api.SnapshotResponse
 import com.damla.core.AppSettings
 import com.damla.core.DamlaRepository
@@ -166,6 +167,17 @@ class AppModel(
             syncSoon()
         }
     }
+
+    /** A code for "Bilgisayarla eşitle"; null when the backend cannot be reached. */
+    suspend fun pairingCode(): PairingCode? =
+        try {
+            repository.pairingCode().also { online = true }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            online = false
+            null
+        }
 
     fun saveStatus(config: StatusConfig) {
         scope.launch { store.setStatus(config) }

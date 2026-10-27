@@ -1,0 +1,17 @@
+[package]
+name = "damla-desktop"
+version = "0.1.0"
+description = "Damla: the direction of currencies, metals and crypto in the tray (docs/08)"
+edition = "2021"
+rust-version = "1.80"
+
+[lib]
+name = "damla_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+tauri = { version = "2.12.5", features = ["tray-icon", "macos-private-api"] }
+serde = { version = "1", features = ["derive"] }

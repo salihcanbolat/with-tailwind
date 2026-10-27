@@ -3,6 +3,7 @@ package com.damla.core
 import com.damla.api.Alarm
 import com.damla.api.AssetSettings
 import com.damla.api.DeviceSettings
+import com.damla.api.PairingCode
 import com.damla.api.SnapshotResponse
 import kotlinx.coroutines.flow.first
 
@@ -27,7 +28,8 @@ class DamlaRepository(
 
     /** Sends the push token, watch list and alarms (docs/03, `PUT /v1/devices/{id}`). */
     suspend fun registerDevice() {
-        api.putDevice(store.deviceId(), DeviceSettings(store.fcmToken(), store.watchlist.first(), store.alarms.first()))
+        val settings = DeviceSettings(store.fcmToken(), store.watchlist.first(), store.alarms.first(), store.widgetConfig.first().order)
+        api.putDevice(store.deviceId(), settings)
     }
 
     /** Saves the watch list locally, then tells the backend and refreshes; offline, the next sync sends it. */
@@ -39,6 +41,12 @@ class DamlaRepository(
     suspend fun saveAlarms(alarms: List<Alarm>) {
         store.setAlarms(alarms)
         sync()
+    }
+
+    /** A code a computer types to follow this phone (docs/08); registers first so the backend knows it. */
+    suspend fun pairingCode(): PairingCode {
+        registerDevice()
+        return api.pairing(store.deviceId())
     }
 
     /** Best effort: registration and a fresh snapshot. Returns false when the backend could not be reached. */

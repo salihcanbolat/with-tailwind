@@ -7,6 +7,7 @@ import com.damla.backend.config.AppConfig
 import com.damla.backend.devices.DeviceRegistry
 import com.damla.backend.devices.DeviceStore
 import com.damla.backend.devices.InMemoryDeviceStore
+import com.damla.backend.devices.Pairings
 import com.damla.backend.devices.PostgresDeviceStore
 import com.damla.backend.market.MarketCalendar
 import com.damla.backend.prices.MarketData
@@ -67,6 +68,7 @@ class Services(
         )
     val runner = StateRunner(GaugeEngine(), market, calendar, states)
     val devices = DeviceRegistry(deviceStore)
+    val pairings = Pairings(clock)
     val dispatcher = PushDispatcher(sender, devices)
     val alarms = AlarmRunner(devices, runner, sender)
     val ingestion = Ingestion(sources, market, candles, clock, config.memory)

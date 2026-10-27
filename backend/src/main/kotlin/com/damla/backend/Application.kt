@@ -3,6 +3,8 @@ package com.damla.backend
 import com.damla.api.ErrorResponse
 import com.damla.backend.api.api
 import com.damla.backend.config.AppConfig
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -12,6 +14,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -35,6 +38,13 @@ fun Application.damla(services: Services) {
         json(Json { ignoreUnknownKeys = true })
     }
     install(SSE)
+    // The desktop companion calls the API from its web view (docs/08). The API has no cookies or
+    // credentials, so any origin may read it.
+    install(CORS) {
+        anyHost()
+        allowMethod(HttpMethod.Post)
+        allowHeader(HttpHeaders.ContentType)
+    }
     install(StatusPages) {
         exception<BadRequestException> { call, cause ->
             val message = generateSequence<Throwable>(cause) { it.cause }.last().message ?: "bad request"

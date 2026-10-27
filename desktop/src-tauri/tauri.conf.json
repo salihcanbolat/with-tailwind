@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Damla",
+  "version": "0.1.0",
+  "identifier": "com.damla.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http: https:; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'"
+    },
+    "windows": [
+      {
+        "label": "core",
+        "url": "index.html",
+        "visible": false,
+        "skipTaskbar": true,
+        "decorations": false,
+        "width": 10,
+        "height": 10
+      },
+      {
+        "label": "panel",
+        "url": "panel.html",
+        "visible": false,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "resizable": false,
+        "width": 436,
+        "height": 520
+      },
+      {
+        "label": "strip",
+        "url": "strip.html",
+        "visible": false,
+        "focus": false,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "resizable": false,
+        "width": 480,
+        "height": 140
+      },
+      {
+        "label": "toast",
+        "url": "toast.html",
+        "visible": false,
+        "focus": false,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "resizable": false,
+        "width": 420,
+        "height": 160
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+  }
+}

@@ -1,8 +1,11 @@
 package com.damla.backend
 
 import com.damla.api.AssetsResponse
+import com.damla.api.DeviceSettings
 import com.damla.api.ErrorResponse
 import com.damla.api.HistoryResponse
+import com.damla.api.PairedDevice
+import com.damla.api.PairingCode
 import com.damla.api.PriceEvent
 import com.damla.api.SnapshotResponse
 import com.damla.backend.api.priceEvents
@@ -12,11 +15,14 @@ import com.damla.backend.state.GroupKey
 import com.damla.engine.Candle
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
@@ -54,6 +60,13 @@ class ApiTest {
         asset: String,
         price: Double,
     ) = services.market.load(asset, flatCandles(WEDNESDAY_NOON, count = 2 * 24 * 60, price = price))
+
+    @Test
+    fun `the desktop's web view may call the API`() =
+        api { client ->
+            val response = client.get("/v1/assets") { header(HttpHeaders.Origin, "http://tauri.localhost") }
+            assertEquals("*", response.headers[HttpHeaders.AccessControlAllowOrigin])
+        }
 
     @Test
     fun `health check`() =
@@ -170,6 +183,27 @@ class ApiTest {
                     .drop
                     ?.interval,
             )
+        }
+
+    @Test
+    fun `a computer pairs with a phone by code and reads its settings`() =
+        api { client ->
+            assertEquals(HttpStatusCode.NotFound, client.post("/v1/devices/device-0001/pairing").status)
+            assertEquals(HttpStatusCode.NotFound, client.get("/v1/devices/device-0001").status)
+            client.put("/v1/devices/device-0001") {
+                contentType(ContentType.Application.Json)
+                setBody("""{"fcmToken":"token-1","assets":[{"id":"usdtry","drop":"1h"}],"order":["usdtry"]}""")
+            }
+
+            val code = client.post("/v1/devices/device-0001/pairing").decode<PairingCode>()
+            val paired = client.post("/v1/pairings/${code.code}")
+            assertEquals(PairedDevice("device-0001"), paired.decode<PairedDevice>())
+            assertEquals(HttpStatusCode.NotFound, client.post("/v1/pairings/${code.code}").status)
+
+            val settings = client.get("/v1/devices/device-0001").decode<DeviceSettings>()
+            assertNull(settings.fcmToken)
+            assertEquals(listOf("usdtry"), settings.order)
+            assertEquals("1h", settings.assets.single().drop)
         }
 
     @Test

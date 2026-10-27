@@ -40,6 +40,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - name: Build, test, verify coverage
         run: ./gradlew build koverVerify
+      - name: The JavaScript gauge draws like the JVM one
+        run: |
+          ./gradlew :gauge:renderReference :gauge-js:jsProductionLibraryCompileSync
+          node tools/gauge-reference/compare-js.mjs gauge-js/build/compileSync/js/main/productionLibrary/kotlin tools/gauge-reference/render-cases.json gauge/build/reference-render
 
   android:
     name: Android
@@ -53,3 +57,26 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - name: Assemble debug
         run: ./gradlew -p android assembleDebug
+
+  desktop:
+    name: Desktop (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Install
+        working-directory: desktop
+        run: npm ci
+      - name: Gauge as JavaScript
+        working-directory: desktop
+        run: npm run gauge
+      - name: Build the app (no installer)
+        working-directory: desktop
+        run: npx tauri build --no-bundle

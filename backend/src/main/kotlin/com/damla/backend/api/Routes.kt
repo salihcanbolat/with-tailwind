@@ -7,6 +7,8 @@ import com.damla.api.DeviceSettings
 import com.damla.api.ErrorResponse
 import com.damla.api.HistoryPoint
 import com.damla.api.HistoryResponse
+import com.damla.api.PairedDevice
+import com.damla.api.PairingCode
 import com.damla.api.PartSnapshot
 import com.damla.api.SnapshotResponse
 import com.damla.backend.Services
@@ -25,6 +27,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.sse.sse
 import io.ktor.sse.ServerSentEvent
@@ -87,6 +90,35 @@ fun Route.api(services: Services) {
         services.runner.register(keys, services.clock.now())
         priceEvents(services.runner, services.clock, keys, STREAM_CHECK_EVERY).collect { event ->
             send(ServerSentEvent(data = Json.encodeToString(event), event = "price"))
+        }
+    }
+
+    // A paired computer reads the phone's watch list, order and alarms; the push token stays private.
+    get("/v1/devices/{id}") {
+        val device = services.devices.get(call.parameters["id"].orEmpty())
+        if (device == null) {
+            call.respond(HttpStatusCode.NotFound, ErrorResponse(listOf("unknown device")))
+        } else {
+            call.respond(device.settings)
+        }
+    }
+
+    post("/v1/devices/{id}/pairing") {
+        val id = call.parameters["id"].orEmpty()
+        if (services.devices.get(id) == null) {
+            call.respond(HttpStatusCode.NotFound, ErrorResponse(listOf("unknown device")))
+        } else {
+            val (code, expiresAt) = services.pairings.create(id)
+            call.respond(PairingCode(code, expiresAt.toString()))
+        }
+    }
+
+    post("/v1/pairings/{code}") {
+        val deviceId = services.pairings.claim(call.parameters["code"].orEmpty())
+        if (deviceId == null) {
+            call.respond(HttpStatusCode.NotFound, ErrorResponse(listOf("unknown or expired code")))
+        } else {
+            call.respond(PairedDevice(deviceId))
         }
     }
 

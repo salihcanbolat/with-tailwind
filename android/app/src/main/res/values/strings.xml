@@ -425,4 +425,14 @@
     <string name="settings_status_widget">Widget\'takiler</string>
     <string name="settings_status_change">Bildirimdeki varlıklar: %1$s, değiştir</string>
     <string name="settings_status_done">Tamam</string>
+
+    <!-- Ayarlar: bilgisayarla eşitleme (tasarlanmamış, öneri; docs/08) -->
+    <string name="settings_computer">Bilgisayar</string>
+    <string name="settings_pair">Bilgisayarla eşitle</string>
+    <string name="pair_title">Bilgisayarla eşitle</string>
+    <string name="pair_hint">Damla\'yı bilgisayarında aç, panelde "Telefonla eşitle"ye tıkla ve bu kodu yaz. Takip listen ve sıralaman bilgisayarda da görünür.</string>
+    <string name="pair_expires">Kod %1$s saatine kadar geçerli, bir kez kullanılır.</string>
+    <string name="pair_waiting">Kod alınıyor…</string>
+    <string name="pair_failed">Kod alınamadı. İnternet bağlantını kontrol edip tekrar dene.</string>
+    <string name="pair_code_description">Eşitleme kodu: %1$s</string>
 </resources>

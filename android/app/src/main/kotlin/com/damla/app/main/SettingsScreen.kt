@@ -38,7 +38,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.damla.api.PairingCode
 import com.damla.app.R
 import com.damla.app.ui.BottomSheet
 import com.damla.app.ui.Chip
@@ -76,6 +78,7 @@ fun SettingsScreen(model: AppModel) {
     val status by model.status.collectAsState()
     val widget by model.widget.collectAsState()
     var picking by remember { mutableStateOf(false) }
+    var pairing by remember { mutableStateOf(false) }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     var saved by remember { mutableIntStateOf(0) }
     val toast = rememberToast(saved)
@@ -148,6 +151,18 @@ fun SettingsScreen(model: AppModel) {
                     }
                 }
             }
+            // docs/08: the computer follows the phone's list; not in the designs, a proposal.
+            Section(R.string.settings_computer) {
+                Row(
+                    Modifier
+                        .heightIn(min = 46.dp)
+                        .tap { pairing = true },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Label(stringResource(R.string.settings_pair), text(15f), Modifier.weight(1f))
+                    Chevron()
+                }
+            }
             Section(R.string.settings_look) {
                 Row(
                     Modifier.heightIn(min = 46.dp),
@@ -207,6 +222,7 @@ fun SettingsScreen(model: AppModel) {
         }
         Toast(toast, stringResource(R.string.saved), Modifier.align(Alignment.BottomCenter).padding(bottom = 98.dp))
         StatusAssetsSheet(model, picking, status) { picking = false }
+        PairingSheet(model, pairing) { pairing = false }
     }
 }
 
@@ -395,3 +411,60 @@ private val LONG =
         "1w" to R.string.settings_long_1w,
         "1mo" to R.string.settings_long_1mo,
     )
+
+/** A fresh code each time the sheet opens, shown large and spaced so it reads well across a desk. */
+@Composable
+private fun PairingSheet(
+    model: AppModel,
+    open: Boolean,
+    onClose: () -> Unit,
+) {
+    var code by remember { mutableStateOf<PairingCode?>(null) }
+    var failed by remember { mutableStateOf(false) }
+    LaunchedEffect(open) {
+        if (!open) return@LaunchedEffect
+        code = null
+        failed = false
+        code = model.pairingCode()
+        failed = code == null
+    }
+    BottomSheet(open, stringResource(R.string.action_close), onClose) {
+        Label(stringResource(R.string.pair_title), text(20f, FontWeight.Bold))
+        Label(stringResource(R.string.pair_hint), text(13f, color = DamlaColors.secondaryText, lineHeight = 18f))
+        val current = code
+        when {
+            current != null -> {
+                val spaced = current.code.chunked(3).joinToString(" ")
+                val description = stringResource(R.string.pair_code_description, current.code.toList().joinToString(" "))
+                GlassCard(Modifier.fillMaxWidth(), radius = 20.dp) {
+                    Label(
+                        spaced,
+                        text(34f, FontWeight.Bold, letterSpacing = 4f, align = TextAlign.Center),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 18.dp)
+                            .semantics { contentDescription = description },
+                    )
+                }
+                val until =
+                    java.time.Instant
+                        .parse(current.expiresAt)
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalTime()
+                        .format(
+                            java.time.format.DateTimeFormatter
+                                .ofPattern("HH:mm"),
+                        )
+                Label(stringResource(R.string.pair_expires, until), text(13f, color = DamlaColors.text50))
+            }
+
+            failed -> {
+                StatusBanner(stringResource(R.string.pair_failed))
+            }
+
+            else -> {
+                Label(stringResource(R.string.pair_waiting), text(15f, color = DamlaColors.secondaryText))
+            }
+        }
+    }
+}

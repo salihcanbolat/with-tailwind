@@ -3,6 +3,7 @@ package com.damla.core
 import com.damla.api.AssetsResponse
 import com.damla.api.DeviceSettings
 import com.damla.api.HistoryResponse
+import com.damla.api.PairingCode
 import com.damla.api.PriceEvent
 import com.damla.api.SnapshotResponse
 import io.ktor.client.HttpClient
@@ -14,6 +15,7 @@ import io.ktor.client.plugins.sse.SSE
 import io.ktor.client.plugins.sse.sse
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -61,6 +63,9 @@ class DamlaApi(
             setBody(settings)
         }
     }
+
+    /** A pairing code for a computer (docs/08), valid ten minutes. */
+    suspend fun pairing(deviceId: String): PairingCode = client.post("$baseUrl/v1/devices/$deviceId/pairing").body()
 
     /** Live price events while collected; the connection closes when collection stops. */
     fun stream(ids: List<String>): Flow<PriceEvent> =
