@@ -161,6 +161,7 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Eğri her keyframe aralığına ayrı uygulanır.
   - Geçiş yarıda değişirse o anki değerden devam edilir.
   - CSS'in geri dönüşte süreyi kısaltma kuralı (reversing shortening) uygulanmadı. Durum değişimleri en az 60 sn arayla geldiği için pratikte oluşmaz.
+  - 2026-10-27 (Faz 4): Kural artık uygulanıyor. Kaplamada açılıp hemen kapanan öğelerde gerekli oldu; göstergede de aynı kod kullanılıyor.
 - **Bulanıklık:** Işık yayılımı ve yansıma, bulanıklaştırılmış dairenin tam profilini izleyen radyal gradyanla çiziliyor. Böylece API 26'dan itibaren aynı görünüyor ve RenderEffect gerekmiyor.
 - **Prototip davranışları, olduğu gibi uygulananlar:**
   - **Yansıma rozetin üstünde:** Yansıma `position: absolute` olduğu için CSS onu rozetin üstüne boyar.
@@ -173,6 +174,62 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Animasyonları azalt:** Varsayılan olarak sistemin animasyon ayarından (`ValueAnimator.areAnimatorsEnabled`) okunuyor. Açıkken geçişler anlık olur; esneme, ışık, halka çizimi ve parıltı oynamaz.
 - **Önizleme ekranı:** Faz 5'e kadar uygulamanın açılış ekranı.
 
+## Widget ve kaplama (Faz 4, 2026-10-27)
+- **Yapı (değişiklik):** Hilt ve Room kullanılmadı.
+  - Uygulamanın birkaç uzun ömürlü nesnesi `DamlaServices` içinde tutuluyor.
+  - Cihazdaki her şey (kimlik, izleme listesi, ayarlar, widget ayarları, son snapshot) DataStore'da duruyor.
+  - Uygulama büyüdükçe ihtiyaç doğarsa eklenir.
+- **Widget yerleşimi:** Damlalar prototipin sabit bloğuna oturur (`WidgetArrangement`).
+  - Blok yüksekliği kutusuzda 90, kutuluda 76 dp; blok widget'ın içinde dikey ortalanır.
+  - Damla merkezi bloğun üstünden 34 dp (kutusuz) / 47 dp (kutulu); mini widget'ta 32 / 46 dp.
+  - Etiket üstü 68 dp (kutusuz, damlanın altında) / 7 dp (kutulu, damlanın üstünde).
+  - Geniş widget eşit sütunlara bölünür: 130 dp'den 2, 200 dp'den itibaren 3 sütun. Tek hücrede "Tek varlık" seçilmediyse mini düzen gösterilir.
+  - Kaplama aynı hesabı kullanır, böylece animasyon damlanın tam üstünden başlar.
+- **Ölçüler (değişiklik):** Tek varlık kutulu düzende damla 38 dp, köşe 22 dp. Önceki 42 dp ve 20 dp prototipin seçeneklerde olmayan "1×1" modundan alınmıştı.
+- **Widget gölgesi (düzeltme):** `drop-shadow(0 2px 3px)` Chromium'da standart sapması 3 px olan bulanıklıkla çiziliyor (ölçüldü). `box-shadow` ve `text-shadow`'da bulanıklık değeri standart sapmanın iki katıdır. Önceki çizim daha keskindi.
+- **Kaplamanın konumu:**
+  - Widget'ın ekrandaki yeri `Intent.getSourceBounds` ile alınır. Taraf, widget'ın ortasının ekranın hangi yarısında olduğuna göre seçilir.
+  - Akış widget'ın en dış sütununa yaslanır.
+  - Klasör, widget'ın o taraftaki kenarına hizalanır.
+  - Detay sahnesi ekranın o tarafındaki kenarına yaslanır.
+  - Widget ekranın altındaysa sahneler ekranda kalacak şekilde yukarı alınır. Akış'ın ikinci satırı altta yer yoksa üste açılır.
+- **Detay açılışı (belge esas):** docs/06'daki dairesel açılım uygulandı: 24 → 560 px, 600 ms `easeStandard`; kapanış 440 ms `easeExit`.
+  - Prototipin betiğinde bu değerler `cardClip` olarak var, ama işaretlemeye bağlanmamış.
+  - Bölümlerin sırayla belirmesi de prototipteki gibi korunuyor. Açık sorudaki "dairesel mi, bölüm bölüm mü" ikisi birlikte uygulandı.
+- **Prototiple doğrulama:**
+  - 14 senaryoda 279.600 değer karşılaştırılıyor: hücreler, kahraman damla, bölümler, etiketler, grafik, aralık seçici, noktalar, paylaşım kartı, klasör kutusu, başlık ve dairesel açılım.
+  - Kalan farklar Chromium'un yerleşimi 1/64 px'e, renk saydamlığını 8 bite yuvarlamasından geliyor.
+  - JS `toFixed` yuvarlaması ve renklerde önceden çarpılmış saydamlıkla ara değer birebir uygulandı.
+- **Platform sınırları:**
+  - Ana ekranın küçülmesi (0,985) uygulanamaz, çünkü başka uygulamanın penceresi ölçeklenemez.
+  - Ana ekran bulanıklığı Android 12+'da pencere arkası bulanıklığıyla yapılır; yarıçap 6 px'lik CSS bulanıklığının karşılığıdır. Daha eski sürümlerde ya da cihaz kapattıysa yalnızca karartma kalır.
+  - Klasörün cam bulanıklığı (`backdrop-filter`) ayrıca çizilmez; arkadaki pencere zaten bulanık.
+  - Hücre bulanıklığı ve damla gölgesi Android 12+'da RenderEffect ile çizilir. Eski sürümlerde bu iki efekt yoktur.
+  - Kutusuz widget'ta gerçek widget kaplamanın altında kalır. Damlalar kalkarken eski yerlerinde karartılmış ve bulanık izleri görünür. Cihazda değerlendirilecek.
+- **Metin renkleri:**
+  - Koyu zeminde (Akış, detay, paylaşım kartı) docs/01'in parlak tonları kullanılır.
+  - Açık cam klasörde prototipin koyu tonları kullanılır (#1E7B34, #C4271C, #7A5F00, #B25E00), çünkü parlak tonlar açık zeminde okunmuyor.
+  - Piyasa kapalıyken metin koyu zeminde #AEAEB2, açık zeminde #8E8E93.
+- **Grafik:**
+  - FLAT rengi tasarım dosyasındaki #E0B000.
+  - Noktalar `/v1/history`'den gelir (24 dilim); en düşük fiyat yüksekliğin %94'üne, en yüksek %6'sına oturur.
+  - Parmağın altındaki noktada saat (1 gün), gün ve saat (1 hafta), tarih (1 ay) ya da ay ve yıl (1 yıl) ile fiyat yazar.
+- **Yazı boyutu:** Kaplama sabit bir sahne olduğu için yazılar dp ile verilir ve sistem yazı boyutuyla büyümez. Uygulama ekranları sistem yazı boyutuna uyar.
+- **Tazelik:**
+  - "canlı · şimdi" 2 sn'ye kadar, sonra "N sn önce", 1 dk'dan sonra "N dk önce" yazar.
+  - 2 dk'dan eski veride "veri gecikiyor" yazar ve gösterge %60 opaklığa iner. Fiyatlar dakikada en az bir kez beklendiği için bu süre beklenenin iki katı. Geçici; widget soluklaşma süresi kararlaşınca güncellenecek.
+  - Piyasa kapalıyken "piyasa kapalı" yazar.
+- **Nabız:**
+  - Yalnızca göstergenin ışık dönüşü oynar; prototipteki fiyat parlaması, ▲/▼ ve grafik uç halkası eklenmedi (önceki karar).
+  - İki nabız arası en az: Sakin 4 sn, Normal 1,8 sn, Hareketli 0,8 sn. Prototipin ortalama nabız sıklığından türetildi; geçici değerler.
+- **Fiyat ve yüzde biçimi:** "₺4.215,30", "+%0,12".
+  - Döviz ve çapraz kurlar 4, diğerleri 2 ondalıkla gösterilir; 1'in altındaki fiyatlar 4 ondalıkla.
+- **Paylaşım kartı:**
+  - Kart ekranın ortasına yerleşir; prototipte 844 px'lik ekranda üstten 150 px'teydi.
+  - Paylaş düğmesi kartı gölgesiz PNG olarak paylaşım sayfasına verir.
+- **Detayda varlık değiştirme:** Kaydırınca yeni varlığın göstergesi doğrudan gösterilir, durum değişimi efekti oynamaz.
+- **Düğmeler:** "Alarm kur", "Uygulamada aç" ve klasör ayarı uygulamayı açar; ilgili ekranlar Faz 5'te gelir.
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
   - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.
@@ -182,11 +239,9 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Widget'ın kaç dakika sonra soluklaşacağı.
   - Grafik geçmişinin kaynağı (1 yıllık serbest piyasa altını).
 - **Faz 3–4:**
-  - Grafikte FLAT rengi: #E0B000 mi, #FFCC00 mı?
-  - Detay açılışı: dairesel açılım mı, bölüm bölüm açılış mı?
-  - Nabız ayarının süre değerleri.
-  - Akış'ta hangi varlıkların gösterileceği.
-  - Detayda varlık kaydırınca çapraz geçiş yapılıp yapılmayacağı.
+  - Nabız ayarının süre değerleri (şimdilik geçici değerler var).
+  - Akış'ta hangi varlıkların gösterileceği (şimdilik widget sırasındaki ilk dört varlık).
+  - Detayda varlık kaydırınca çapraz geçiş yapılıp yapılmayacağı (şimdilik doğrudan geçiş).
 - **Genel:**
   - Canlı canvas'taki pakette olmayan artboard'ların durumu.
   - Repo adı.

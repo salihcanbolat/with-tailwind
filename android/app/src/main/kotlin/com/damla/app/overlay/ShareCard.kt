@@ -234,7 +234,12 @@ private fun ShareCard(
             )
             Spacer(Modifier.weight(1f))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                val names = listOf(R.string.part_drop, R.string.part_upper_ring, R.string.part_lower_ring)
+                val names =
+                    listOf(
+                        com.damla.core.R.string.part_drop,
+                        com.damla.core.R.string.part_upper_ring,
+                        com.damla.core.R.string.part_lower_ring,
+                    )
                 OverlayModel.parts(asset).forEachIndexed { j, part ->
                     Column(
                         Modifier
