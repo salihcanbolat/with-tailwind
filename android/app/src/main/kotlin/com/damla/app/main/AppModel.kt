@@ -12,6 +12,7 @@ import com.damla.api.SnapshotResponse
 import com.damla.core.AppSettings
 import com.damla.core.DamlaRepository
 import com.damla.core.FiredAlarm
+import com.damla.core.StatusConfig
 import com.damla.core.WidgetConfig
 import com.damla.widget.WidgetUpdates
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +41,7 @@ class AppModel(
     val history: StateFlow<List<FiredAlarm>> = store.alarmHistory.stateIn(scope, SharingStarted.Eagerly, emptyList())
     val settings: StateFlow<AppSettings> = store.settings.stateIn(scope, SharingStarted.Eagerly, AppSettings())
     val widget: StateFlow<WidgetConfig> = store.widgetConfig.stateIn(scope, SharingStarted.Eagerly, WidgetConfig())
+    val status: StateFlow<StatusConfig> = store.status.stateIn(scope, SharingStarted.Eagerly, StatusConfig())
     val onboarded: StateFlow<Boolean?> = store.onboarded.stateIn(scope, SharingStarted.Eagerly, null)
 
     /** False after a failed sync: the screens say "İnternet yok" and keep showing the last data. */
@@ -163,6 +165,10 @@ class AppModel(
             WidgetUpdates.redraw(context)
             syncSoon()
         }
+    }
+
+    fun saveStatus(config: StatusConfig) {
+        scope.launch { store.setStatus(config) }
     }
 
     fun finishOnboarding() {

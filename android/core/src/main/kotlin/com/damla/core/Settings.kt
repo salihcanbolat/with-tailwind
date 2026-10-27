@@ -68,6 +68,25 @@ data class AppSettings(
     val newAssetIntervals: List<String> = listOf("1h", "1d", "1w"),
 )
 
+/**
+ * The ongoing notification (docs/08, design/Bildirim.dc.html): off until the user turns it on in Ayarlar.
+ * [assets] are the three it shows, in order; empty follows the widget's first three. [paused] freezes it
+ * ("Duraklat").
+ */
+@Serializable
+data class StatusConfig(
+    val enabled: Boolean = false,
+    val paused: Boolean = false,
+    val assets: List<String> = emptyList(),
+) {
+    /** The assets shown: the chosen ones, or the widget's first three. */
+    fun shown(widget: WidgetConfig): List<String> = assets.ifEmpty { widget.order }.take(MAX_ASSETS)
+
+    companion object {
+        const val MAX_ASSETS = 3
+    }
+}
+
 /** The interval choices of the designs ("15 dk", "1 sa", "4 sa", "1 gün", "1 hf", "1 ay"), as sent to the API. */
 val INTERVAL_CHOICES = listOf("15m", "1h", "4h", "1d", "1w", "1mo")
 

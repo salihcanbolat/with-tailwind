@@ -58,8 +58,14 @@ class PushTest {
             "lowerRing",
             PushDispatcher.payload("usdtry", RingStateChanged("usdtry", Ring.LOWER, State.FLAT, State.UP, at))["part"],
         )
-        assertEquals(mapOf("type" to "refresh"), PushDispatcher.payload("usdtry", MarketClosed("usdtry", at)))
-        assertEquals(mapOf("type" to "refresh"), PushDispatcher.payload("usdtry", MarketOpened("usdtry", at)))
+        assertEquals(
+            mapOf("type" to "refresh", "asset" to "usdtry", "market" to "closed"),
+            PushDispatcher.payload("usdtry", MarketClosed("usdtry", at)),
+        )
+        assertEquals(
+            mapOf("type" to "refresh", "asset" to "usdtry", "market" to "open"),
+            PushDispatcher.payload("usdtry", MarketOpened("usdtry", at)),
+        )
     }
 
     @Test
@@ -76,7 +82,17 @@ class PushTest {
                 listOf(MarketOpened("usdtry", WEDNESDAY_NOON), MarketClosed("usdtry", WEDNESDAY_NOON)),
             )
 
-            assertEquals(listOf(PushMessage("token-1", mapOf("type" to "refresh"), PushMessage.Priority.NORMAL, 3_600)), sender.sent)
+            assertEquals(
+                listOf("open", "closed").map { market ->
+                    PushMessage(
+                        "token-1",
+                        mapOf("type" to "refresh", "asset" to "usdtry", "market" to market),
+                        PushMessage.Priority.NORMAL,
+                        3_600,
+                    )
+                },
+                sender.sent,
+            )
         }
 
     @Test

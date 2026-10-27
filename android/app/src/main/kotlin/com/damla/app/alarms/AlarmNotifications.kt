@@ -17,15 +17,16 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.damla.alarms.alarmHaptic
 import com.damla.app.MainActivity
 import com.damla.app.R
 import com.damla.core.DamlaServices
 import com.damla.core.FiredAlarm
+import com.damla.core.Haptics
+import com.damla.core.QuietHours
 import kotlinx.coroutines.flow.first
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 /**
@@ -36,16 +37,16 @@ object AlarmNotifications {
     private const val CHANNEL = "alarms"
     private const val CHANNEL_SILENT = "alarms_silent"
 
-    /** "Sessiz saatlerde bekle": night notifications wait for the morning (design/AlarmKur.dc.html). */
-    val QUIET_FROM: LocalTime = LocalTime.of(23, 0)
-    val QUIET_UNTIL: LocalTime = LocalTime.of(8, 0)
-
     fun createChannels(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java)
         val description = context.getString(R.string.channel_alarms_description)
+        // The channels do not vibrate: the alarm plays its own rhythm (docs/05) through [Haptics].
         val loud =
             NotificationChannel(CHANNEL, context.getString(R.string.channel_alarms), NotificationManager.IMPORTANCE_HIGH)
-                .apply { this.description = description }
+                .apply {
+                    this.description = description
+                    enableVibration(false)
+                }
         val silent =
             NotificationChannel(CHANNEL_SILENT, context.getString(R.string.channel_alarms_silent), NotificationManager.IMPORTANCE_LOW)
                 .apply {
@@ -67,10 +68,10 @@ object AlarmNotifications {
                 .first()
                 .firstOrNull { it.id == alarmId } ?: return
         val now = LocalDateTime.now()
-        if (alarm.waitQuietHours && isQuiet(now.toLocalTime())) {
+        if (alarm.waitQuietHours && QuietHours.isQuiet(now.toLocalTime())) {
             val request =
                 OneTimeWorkRequestBuilder<MorningWorker>()
-                    .setInitialDelay(untilMorning(now).toMillis(), TimeUnit.MILLISECONDS)
+                    .setInitialDelay(QuietHours.untilMorning(now).toMillis(), TimeUnit.MILLISECONDS)
                     .setInputData(Data.Builder().putAll(data).build())
                     .build()
             // One waiting notification per alarm: a later firing in the same night replaces the earlier one.
@@ -78,14 +79,6 @@ object AlarmNotifications {
             return
         }
         show(context, data)
-    }
-
-    fun isQuiet(time: LocalTime): Boolean = time >= QUIET_FROM || time < QUIET_UNTIL
-
-    fun untilMorning(now: LocalDateTime): Duration {
-        val today = now.toLocalDate().atTime(QUIET_UNTIL)
-        val morning = if (now < today) today else today.plusDays(1)
-        return Duration.between(now, morning)
     }
 
     /** Writes the sentence, keeps it in the alarm history and posts the notification. */
@@ -140,7 +133,9 @@ object AlarmNotifications {
             NotificationManagerCompat.from(context).notify(alarm.id.hashCode(), notification)
         } catch (_: SecurityException) {
             // The permission was taken back between the check and the post; the history still has it.
+            return
         }
+        Haptics.play(context, alarmHaptic(alarm, met))
     }
 
     private fun allowed(context: Context): Boolean {

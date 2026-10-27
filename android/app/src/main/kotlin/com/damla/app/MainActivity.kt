@@ -20,6 +20,9 @@ class MainActivity : ComponentActivity() {
 
         /** Opened from an alarm notification: the alarms tab, where the history lists it. */
         const val EXTRA_OPEN_ALARMS = "com.damla.app.OPEN_ALARMS"
+
+        /** The ongoing notification's "Düzenle": Ayarlar, where its assets are chosen (docs/08). */
+        const val EXTRA_OPEN_STATUS_SETTINGS = "com.damla.app.OPEN_STATUS_SETTINGS"
     }
 
     private val app get() = application as DamlaApplication
@@ -65,6 +68,10 @@ class MainActivity : ComponentActivity() {
 
             intent.getBooleanExtra(EXTRA_OPEN_ALARMS, false) -> {
                 navigator.selectTab(Route.Alarms)
+            }
+
+            intent.getBooleanExtra(EXTRA_OPEN_STATUS_SETTINGS, false) -> {
+                navigator.selectTab(Route.Settings)
             }
         }
     }

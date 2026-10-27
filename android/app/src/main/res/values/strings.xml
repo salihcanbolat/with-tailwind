@@ -400,4 +400,29 @@
     <string name="channel_alarms">Alarmlar</string>
     <string name="channel_alarms_silent">Sessiz alarmlar</string>
     <string name="channel_alarms_description">Kurduğun koşullar gerçekleşince haber verir.</string>
+
+    <!-- Kalıcı bildirim (docs/08, design/Bildirim.dc.html) -->
+    <string name="channel_status">Kalıcı bildirim</string>
+    <string name="channel_status_description">Seçtiğin üç varlığın yönünü bildirim çubuğunda gösterir.</string>
+    <string name="status_live">canlı</string>
+    <string name="status_paused">duraklatıldı</string>
+    <string name="status_closed">piyasa kapalı</string>
+    <string name="status_late">veri gecikiyor</string>
+    <string name="status_open">Uygulamayı aç</string>
+    <string name="status_edit">Düzenle</string>
+    <string name="status_pause">Duraklat</string>
+    <string name="status_resume">Sürdür</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_parts">Damla: %1$s, Üst halka: %2$s, Alt halka: %3$s</string>
+    <string name="status_hidden">Varlık %1$d: %2$s</string>
+
+    <!-- Ayarlar: kalıcı bildirim (tasarlanmamış, öneri) -->
+    <string name="settings_status">Kalıcı bildirim</string>
+    <string name="settings_status_show">Bildirim çubuğunda göster</string>
+    <string name="settings_status_assets">Varlıklar</string>
+    <string name="settings_status_pick">Bildirimde görünecek varlıklar</string>
+    <string name="settings_status_pick_hint">En fazla üç varlık seç; seçim sırası bildirimdeki sıradır. Hiçbirini seçmezsen widget\'ın ilk üç varlığı görünür.</string>
+    <string name="settings_status_widget">Widget\'takiler</string>
+    <string name="settings_status_change">Bildirimdeki varlıklar: %1$s, değiştir</string>
+    <string name="settings_status_done">Tamam</string>
 </resources>

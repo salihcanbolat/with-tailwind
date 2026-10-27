@@ -77,8 +77,13 @@ class PushDispatcher(
                     stateChange(target, part, event.from.name, event.to.name, event.at.toString())
                 }
 
-                is MarketClosed, is MarketOpened -> {
-                    mapOf("type" to "refresh")
+                // Every part changes at once, so the device refreshes; "market" lets it feel the close (docs/05).
+                is MarketClosed -> {
+                    mapOf("type" to "refresh", "asset" to target, "market" to "closed")
+                }
+
+                is MarketOpened -> {
+                    mapOf("type" to "refresh", "asset" to target, "market" to "open")
                 }
             }
 

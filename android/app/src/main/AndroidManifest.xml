@@ -41,6 +41,11 @@
                 android:resource="@xml/share_paths" />
         </provider>
 
+        <!-- The ongoing notification's pause button and its dismissal (docs/08). -->
+        <receiver
+            android:name=".status.StatusReceiver"
+            android:exported="false" />
+
         <service
             android:name=".push.DamlaMessagingService"
             android:exported="false">

@@ -254,6 +254,29 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - **Kaynak hatası:** Backend yanıt veriyor ama piyasası açık tüm varlıklar gecikmişse şerit "Veri kaynağına ulaşılamıyor" der.
   - **Takip listesi boş / alarm yok:** Gri yuvarlak damla, kısa cümle ve "Varlık ekle" ya da yeni alarm düğmesiyle boş kart.
 
+## Kalıcı bildirim ve dokunsal dil (Faz 6, 2026-10-27)
+- **Kalıcı bildirim:** `DecoratedCustomViewStyle` ile özel içerik; foreground service yok (Platform kararları).
+  - Başlığı sistem çizer: Damla simgesi, "Damla", tazelik ("canlı", "veri gecikiyor", "piyasa kapalı", "duraklatıldı") ve son güncelleme saati. Tasarımdaki canlı nokta, 460 ms açılma geçişi ve 180° dönen ok sistemin kendi davranışıdır; uygulama bunları değiştiremez.
+  - Daraltılmış: 3 varlık yan yana (30 dp damla, kısa ad, renkli durum kelimesi). Genişletilmiş: her varlık bir satır (40 dp damla, ad, fiyat · durum, üç parçanın 22×6 renkli çizgisi).
+  - "Uygulamayı aç / Düzenle / Duraklat" düğmeleri bildirim eylemleridir; sistemin düğme stilini alır.
+  - Ad ve fiyat metinleri sistem bildirim temasının renklerini kullanır, açık ve koyu panelde okunur. Durum kelimeleri parlak tonlardadır; açık panelde sarının kontrastı düşüktür (bilinen sınır).
+  - Durum çubuğu simgesi ilk varlığın damla şeklidir: yukarı, aşağı, yuvarlak, yatay.
+  - Kilit ekranında içerik gizliyse yalnızca logosuz şekiller görünür.
+  - Cihazdaki anlık görüntü değişince yeniden çizilir (push, 15 dk'lık eşitleme, açık uygulamanın dakikalık yenilemesi).
+  - "Duraklat" bildirimi o anki haliyle dondurur; başlıkta "duraklatıldı" yazar.
+  - Android 14+ kullanıcıya kalıcı bildirimi kaydırıp kapatma hakkı verir; kapatılınca ayar da kapanır.
+- **Ayarlar'da "Kalıcı bildirim" bölümü (tasarlanmamış, öneri):**
+  - "Bildirim çubuğunda göster" anahtarı; varsayılan kapalı. Açılırken bildirim izni istenir.
+  - "Varlıklar" satırı alttan açılan listeyle en fazla üç varlık seçtirir; seçim sırası bildirimdeki sıradır. Hiçbiri seçilmezse widget'ın ilk üç varlığı görünür.
+- **Çelişki:** Tasarımda "Düzenle" widget ayarlarını (`KlasorIcerik`) açıyor; belge varlıkların Ayarlar'dan seçildiğini söylüyor. Belge esas alındı: "Düzenle" Ayarlar'ı açar.
+- **Dokunsal dil:**
+  - Desenler `docs/05`'teki milisaniye ve genlik değerleriyle `:gauge` modülündedir (`Haptic`); saat de aynılarını kullanacak.
+  - Genlik kontrolü olmayan cihazlarda yedek ritim: yükseliş kısa-uzun (20/60 ms), düşüş uzun-kısa (60/20 ms); diğerleri aynı süreler.
+  - Titreşen olaylar: damla durum değişimi (halkalar titremez), piyasa kapanışı ve alarmlar. Durum alarmı hedef durumun ritmiyle, fiyat ve yüzde alarmı üç kısa vuruşla, dalga alarmı tek uzun vuruşla titrer. "Sesli uyarı" kapalı alarm titremez.
+  - Hiçbiri çalmaz: Titreşim kapalıyken, 23.00–08.00 arası ve Rahatsız Etme açıkken. Aynı anda gelen olaylar için 1,5 sn içinde tek ritim çalar.
+  - Android, arka plandaki uygulamanın titreşimini yalnızca bildirim, zil ya da alarm kullanımıyla çalar (resmi `VibratorManager` belgesi). Titreşimler bildirim kullanımıyla çalınır; alarm kanalları kendi titreşimini kapatır, ritim uygulamadan gelir.
+  - Piyasa kapanışını cihazın bilebilmesi için backend'in `refresh` mesajına `asset` ve `market` (`open` / `closed`) alanları eklendi (`docs/03` sözleşmesine ek).
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
   - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.
@@ -269,6 +292,9 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Faz 5:**
   - Sessiz saatlerin aralığı (şimdilik 23.00–08.00).
   - Tasarlanmamış durumlar için önerilerin onayı (yukarıda).
+- **Faz 6:**
+  - "Piyasa kapandı" titreşimi şimdilik genel Titreşim anahtarına bağlı; `docs/05` ayrı bir anahtar ima ediyor. Ayrı anahtar istenirse eklenir.
+  - Desenlerin ayırt edilebilirliği gerçek cihazda denenmeli (kabul kriteri).
 - **Genel:**
   - Canlı canvas'taki pakette olmayan artboard'ların durumu.
   - Repo adı.

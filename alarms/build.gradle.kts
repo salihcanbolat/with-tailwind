@@ -24,6 +24,7 @@ kotlin {
 dependencies {
     api(project(":api-model"))
     api(project(":engine"))
+    api(project(":gauge"))
     testImplementation(kotlin("test"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

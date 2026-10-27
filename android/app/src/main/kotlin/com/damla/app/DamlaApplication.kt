@@ -5,11 +5,15 @@ import com.damla.app.alarms.AlarmNotifications
 import com.damla.app.main.AppModel
 import com.damla.app.main.Navigator
 import com.damla.app.push.Push
+import com.damla.app.status.StatusNotification
 import com.damla.core.DamlaServices
 import com.damla.widget.WidgetUpdates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 class DamlaApplication : Application() {
     /** The app screens' model: its saves finish even when the screen is closed mid-way. */
@@ -23,7 +27,29 @@ class DamlaApplication : Application() {
         super.onCreate()
         DamlaServices.init(this, BuildConfig.API_BASE_URL)
         AlarmNotifications.createChannels(this)
+        StatusNotification.createChannel(this)
         Push.init(this)
         WidgetUpdates.schedulePeriodic(this)
+        followStatus()
+    }
+
+    /**
+     * Redraws the ongoing notification whenever what it shows changes on the device: a push or the
+     * periodic sync stores a new snapshot, or the user changes a setting.
+     */
+    private fun followStatus() {
+        val store = DamlaServices.repository.store
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            combine(
+                store.snapshot,
+                store.settings,
+                store.status,
+                store.widgetConfig,
+                store.watchlist,
+            ) { snapshot, settings, status, widget, watchlist ->
+                StatusNotification.Input(snapshot, settings, status, widget, watchlist)
+            }.distinctUntilChanged()
+                .collect { StatusNotification.update(this@DamlaApplication, it) }
+        }
     }
 }

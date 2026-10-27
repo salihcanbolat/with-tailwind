@@ -86,6 +86,17 @@ class DamlaStore(
         data.edit { it[WIDGET] = json.encodeToString(config) }
     }
 
+    val status: Flow<StatusConfig> = data.data.map { decode(it[STATUS]) ?: StatusConfig() }
+
+    suspend fun setStatus(config: StatusConfig) {
+        data.edit { it[STATUS] = json.encodeToString(config) }
+    }
+
+    /** Changes the ongoing notification's settings in one step (its buttons run while the app is closed). */
+    suspend fun updateStatus(change: (StatusConfig) -> StatusConfig) {
+        data.edit { prefs -> prefs[STATUS] = json.encodeToString(change(decode(prefs[STATUS]) ?: StatusConfig())) }
+    }
+
     /** First launch shows the introduction (docs/07, "İlk açılış tanıtımı"). */
     val onboarded: Flow<Boolean> = data.data.map { it[ONBOARDED] ?: false }
 
@@ -105,6 +116,7 @@ class DamlaStore(
         private val SNAPSHOT = stringPreferencesKey("snapshot")
         private val WIDGET = stringPreferencesKey("widget")
         private val ONBOARDED = booleanPreferencesKey("onboarded")
+        private val STATUS = stringPreferencesKey("status_notification")
         private const val HISTORY_SIZE = 50
 
         /** New installs start with the assets of the designs; intervals and thresholds use the defaults. */
