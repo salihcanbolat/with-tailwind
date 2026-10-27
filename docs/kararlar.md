@@ -106,9 +106,54 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Wear OS:** Üç ayrı komplikasyon veri kaynağı (SMALL_IMAGE + ortam görüntüsü, MONOCHROMATIC_IMAGE yedeği). Uyarı ekranı standart bildirimdir; dokununca uygulamadaki uyarı ekranı açılır.
 - **Kaplama:** Pencere arkası bulanıklığı yalnızca Android 12+ ve destekleyen cihazlarda kullanılır. Ana ekran küçültülmez.
 
+## Backend (Faz 2, 2026-10-27)
+- **Veritabanı (değişiklik):** TimescaleDB eklentisi kullanılmıyor, düz PostgreSQL yeterli.
+  - Gerekçe: Barındırma henüz belli değil ve birçok yönetilen PostgreSQL hizmeti bu eklentiyi sunmuyor.
+  - 1 dk mumlar tek tabloda 400 gün saklanır. Geçmiş grafikleri SQL ile dilimlenir.
+  - Motor için son 31 gün bellekte tutulur.
+- **Redis (değişiklik):** v1'de yok. Tek sunucu örneğinde son durum bellekte tutulur; motor hafızası (`group_states`) Postgres'e yazılır. Hafıza olay anında ve 30 sn'de bir kaydedilir. Yatay ölçeklemeye geçilince Redis eklenir.
+- **Binance:**
+  - Yalnızca piyasa verisine ayrılmış uç noktalar kullanılır: `data-api.binance.vision` ve `data-stream.binance.vision`.
+  - Canlı veri `kline_1m` akışından gelir; geçmiş `GET /api/v3/klines` ile çekilir.
+  - Bağlantı 23 saatte bir ve `serverShutdown` olayında yenilenir.
+  - 429/418 yanıtında `Retry-After` kadar beklenir.
+  - Biçimler resmi belgeden (GitHub: binance-spot-api-docs) doğrulandı.
+- **Kaynak seçimi:**
+  - Kaynaklar `DAMLA_SOURCES` sırasıyla tercih edilir.
+  - Birincil kaynak sessiz kalırsa (Binance 30 sn, test 10 sn) yedeğe geçilir; birincil kaynak geri gelince ona dönülür.
+  - Hiçbir kaynak veri vermiyorsa son seçim korunur, gecikmeyi istemci tazelikten görür.
+- **Kripto fiyat birimi:** USDT çiftleri tasarımdaki gibi "USD" olarak etiketlenir ("Kripto · USD").
+- **Çapraz kur para birimi:** Taraflar farklı birimdeyse ikisi de USD/TRY ile TRY'ye çevrilir. USD/TRY de bileşen sayılır; kapalıysa çapraz kur CLOSED olur (docs/02 kuralı). Türk lirası sabit 1 fiyatlı bir taraftır.
+- **Grup anahtarı:** `hedef|damla|üst halka|alt halka|s|d`. Üç parça birlikte değerlendirildiği için üç aralık da anahtarda yer alır.
+- **Değerlendirme:** Tüm gruplar 2 sn'de bir değerlendirilir.
+- **Varsayılan ayarlar ve sınırlar:**
+  - Varsayılan aralıklar 15 dk / 4 sa / 1 gün (docs/01 örnekleri).
+  - Aralıklar en fazla 1 ay olabilir.
+  - Bir cihaz en fazla 50 varlık izleyebilir.
+- **Cihaz:**
+  - Cihaz kimliği anonimdir (8–64 karakter) ve kimlik doğrulama yoktur (v1).
+  - Bilinen risk: Çok sayıda farklı ayarla grup sayısı şişirilebilir. Hız sınırı ve kimlik doğrulama, barındırma netleşince eklenecek.
+- **Push:**
+  - Biçim: FCM HTTP v1. Doğrulama resmi Firebase Admin SDK (Java) kaynağından yapıldı.
+  - Bütün mesajlar şimdilik normal öncelikli ve 1 saat ömürlü.
+  - Piyasa açılış ve kapanışı `refresh` mesajı olarak gider.
+  - `UNREGISTERED` dönen token silinir.
+- **Piyasa takvimi:**
+  - FX ve maden: New York saatiyle Pazar 17:00 – Cuma 17:00 (küresel döviz piyasası alışkanlığı). Tatil listesi boş.
+  - Kaynakların gerçek davranışıyla doğrulanmalı; örneğin Trunçgil hafta sonu güncelliyor mu?
+- **API eklemeleri (docs/03'e ek):**
+  - Snapshot'ta `source` alanı.
+  - Çapraz kur için `kind: "cross"`; çapraz kurda `currency` null.
+  - Snapshot'ta isteğe bağlı `device` parametresi.
+  - `/v1/history`: `range` değerleri 1d/1w/1mo/1y; `points` varsayılan 24 (2–500).
+- **Test kaynağı:** `DAMLA_SOURCES=test` sentetik fiyat üretir (100 civarı). Gerçek veri değildir ve `source: "test"` olarak etiketlenir.
+- **EVDS:** Anahtar gelince eklenecek.
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
-  - Backend'in barındırılacağı yer ve Firebase projesi.
+  - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.
+  - Yedek kaynaklar: kripto ve döviz/maden için hangi bağımsız kaynaklar kullanılacak?
+  - Backend'in barındırılacağı yer ve Firebase projesi (gerçek cihaza push kriteri buna bağlı).
   - Kaynakların ticari kullanım koşulları.
   - Widget'ın kaç dakika sonra soluklaşacağı.
   - Grafik geçmişinin kaynağı (1 yıllık serbest piyasa altını).

@@ -1,0 +1,14 @@
+{
+  "fx": {
+    "zone": "America/New_York",
+    "opens": "SUNDAY 17:00",
+    "closes": "FRIDAY 17:00",
+    "closedDates": []
+  },
+  "metal": {
+    "zone": "America/New_York",
+    "opens": "SUNDAY 17:00",
+    "closes": "FRIDAY 17:00",
+    "closedDates": []
+  }
+}
