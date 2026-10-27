@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status bar icon: the first asset's round drop, steady (design/Bildirim.dc.html, r 24 of 76). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="76"
+    android:viewportHeight="76">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M14,38 A24,24 0 1,1 62,38 A24,24 0 1,1 14,38 Z" />
+</vector>

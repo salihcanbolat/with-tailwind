@@ -56,6 +56,8 @@ dependencies {
     implementation(project(":widget"))
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+    implementation(libs.play.services.wearable)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation("com.damla:engine")

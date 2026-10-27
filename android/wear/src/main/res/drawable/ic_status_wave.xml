@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status bar icon: the first asset's drop lying with its tip to the right (waves) (design/Bildirim.dc.html; white, as Android asks). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="76"
+    android:viewportHeight="76">
+    <group
+        android:translateX="38"
+        android:translateY="38"
+        android:rotation="90">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M0,-34 C3,-24 11.4,-12.2 19.05,1 A22,22 0 1,1 -19.05,1 C-11.4,-12.2 -3,-24 0,-34 Z" />
+    </group>
+</vector>

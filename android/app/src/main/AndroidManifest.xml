@@ -19,6 +19,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- "Telefonda aç" on the watch (design/Saat.dc.html). -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="damla" />
+            </intent-filter>
         </activity>
 
         <!-- Opens over the home screen from the widget (docs/06). Its own task, so closing it returns to

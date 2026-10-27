@@ -1,7 +1,9 @@
 package com.damla.app.push
 
 import com.damla.app.alarms.AlarmNotifications
+import com.damla.app.wear.WearSync
 import com.damla.core.Haptics
+import com.damla.core.WearEvent
 import com.damla.gauge.Haptic
 import com.damla.gauge.Shape
 import com.damla.widget.WidgetUpdates
@@ -20,7 +22,14 @@ class DamlaMessagingService : FirebaseMessagingService() {
                 WidgetUpdates.refreshSoon(this)
                 // A turn of the drop is felt (docs/02 `DropStateChanged`, docs/05); rings only redraw.
                 val shape = Shape.entries.firstOrNull { it.name == data["to"] }
-                if (data["part"] == "drop" && shape != null) runBlocking { Haptics.play(applicationContext, Haptic.turnedTo(shape)) }
+                if (data["part"] == "drop" && shape != null) {
+                    runBlocking {
+                        Haptics.play(applicationContext, Haptic.turnedTo(shape))
+                        // The watch alerts too (docs/02 `DropStateChanged` → saat uyarısı).
+                        val event = WearEvent(WearEvent.Kind.STATE, data["asset"].orEmpty(), shape.name, at = data["at"].orEmpty())
+                        WearSync.send(applicationContext, event)
+                    }
+                }
             }
 
             "refresh" -> {

@@ -6,7 +6,9 @@ import com.damla.app.main.AppModel
 import com.damla.app.main.Navigator
 import com.damla.app.push.Push
 import com.damla.app.status.StatusNotification
+import com.damla.app.wear.WearSync
 import com.damla.core.DamlaServices
+import com.damla.core.WearState
 import com.damla.widget.WidgetUpdates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,8 +36,8 @@ class DamlaApplication : Application() {
     }
 
     /**
-     * Redraws the ongoing notification whenever what it shows changes on the device: a push or the
-     * periodic sync stores a new snapshot, or the user changes a setting.
+     * Redraws the ongoing notification and updates the watch whenever what they show changes on the
+     * device: a push or the periodic sync stores a new snapshot, or the user changes a setting.
      */
     private fun followStatus() {
         val store = DamlaServices.repository.store
@@ -49,7 +51,11 @@ class DamlaApplication : Application() {
             ) { snapshot, settings, status, widget, watchlist ->
                 StatusNotification.Input(snapshot, settings, status, widget, watchlist)
             }.distinctUntilChanged()
-                .collect { StatusNotification.update(this@DamlaApplication, it) }
+                .collect { input ->
+                    StatusNotification.update(this@DamlaApplication, input)
+                    val assets = input.status.shown(input.widget)
+                    WearSync.publish(this@DamlaApplication, WearState(input.watchlist, input.settings, input.snapshot, assets))
+                }
         }
     }
 }

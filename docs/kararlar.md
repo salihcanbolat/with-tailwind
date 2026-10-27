@@ -277,6 +277,21 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Android, arka plandaki uygulamanın titreşimini yalnızca bildirim, zil ya da alarm kullanımıyla çalar (resmi `VibratorManager` belgesi). Titreşimler bildirim kullanımıyla çalınır; alarm kanalları kendi titreşimini kapatır, ritim uygulamadan gelir.
   - Piyasa kapanışını cihazın bilebilmesi için backend'in `refresh` mesajına `asset` ve `market` (`open` / `closed`) alanları eklendi (`docs/03` sözleşmesine ek).
 
+## Wear OS (Faz 7, 2026-10-27)
+- **Modül:** `android/wear`, telefonla aynı `applicationId` (Data Layer API bunu ister). Telefonun cihaz deposunu, API istemcisini ve gösterge çizimini paylaşır. Bağımsız çalışabilir (`standalone`): telefon yokken varsayılan liste ya da telefonun en son gönderdiği liste kullanılır.
+- **Sürümler** resmi sürüm sayfalarından: Tiles 1.6.2, ProtoLayout 1.4.2, Watchface (komplikasyon) 1.3.0, Wearable SDK 20.0.1, wear-phone-interactions 1.1.1, wear-remote-interactions 1.2.0.
+- **Saatin üç varlığı:** Kalıcı bildirimin seçimi; seçim yoksa widget'ın ilk üçü. Saatte bu üçlü cihaz deposunun widget sırası alanında tutulur (saatte widget yok).
+- **Veri akışı:**
+  - Telefon, gösterdiği durumu (liste, ayarlar, anlık görüntü, üç varlık) her değişimde bir Data Layer veri öğesi olarak yazar; Google Play hizmetleri saate ulaşınca teslim eder.
+  - Damla durum değişimi ve alarmlar saate mesaj olarak gider (yalnızca Damla uygulaması kurulu, erişilebilir saatlere).
+  - Saat, telefon yokken 15 dakikada bir ve uygulama açılınca anlık görüntüyü doğrudan backend'den alır (Wi-Fi/LTE). Olaylar (titreşim, uyarı) için telefon gerekir; saatin kendi push kaydı sonraki iş.
+- **Kadran komplikasyonları:** "1., 2., 3. varlık" adlı üç ayrı kaynak. SMALL_IMAGE göstergenin kendisini, ortam (ambient) modunda beyaz şekli verir; yalnızca MONOCHROMATIC_IMAGE alan kadranlara şekil gider. İlk varlık 48, diğerleri 36 dp çizilir. Dokununca saat uygulaması o varlıkta açılır. Kadran düzenleyicisindeki önizleme logosuz, verisiz bir damladır.
+- **Kutucuk:** Tasarımdaki 300 px'lik yerleşim ekran genişliğine ölçeklenir. Göstergeler PNG olarak gömülür. Tazelik etiketi dakikada bir yenilenir; bir piyasa kapalıysa "kısmen kapalı" yazar. Durum kelimesinin 600 kalınlığı ProtoLayout'ta olmadığı için 500 (medium) kullanıldı.
+- **Uygulama:** Tek varlık; taç ya da ekranın sağına/soluna dokunma varlığı değiştirir. Açılış 420 ms, nokta ve renk geçişleri tasarımdaki sürelerle.
+- **Uyarı:** Standart bildirim (Platform kararları), olayın ritmiyle titrer; dokununca uyarı ekranı açılır. "Telefonda aç" telefonda varlığı ya da Alarmlar'ı açar (`damla://asset/{id}`, `damla://alarms`). Arka plandaki renkli ışık Android 12 öncesi saatlerde (API 30) bulanıklaşmaz.
+- **Çift bildirim önlemi:** Telefondaki alarm bildirimi etiketlidir ve saat uygulaması bu etiketi saate köprülemez; kalıcı bildirim hiç köprülenmez.
+- **Kabul:** Gerçek saat ve telefonla denenmesi gerekiyor (Data Layer eşleşmesi aynı imzayı ister).
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
   - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.
@@ -295,6 +310,8 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Faz 6:**
   - "Piyasa kapandı" titreşimi şimdilik genel Titreşim anahtarına bağlı; `docs/05` ayrı bir anahtar ima ediyor. Ayrı anahtar istenirse eklenir.
   - Desenlerin ayırt edilebilirliği gerçek cihazda denenmeli (kabul kriteri).
+- **Faz 7:**
+  - Saatin telefon yokken de uyarı alması için kendi push kaydı gerekip gerekmediği.
 - **Genel:**
   - Canlı canvas'taki pakette olmayan artboard'ların durumu.
   - Repo adı.

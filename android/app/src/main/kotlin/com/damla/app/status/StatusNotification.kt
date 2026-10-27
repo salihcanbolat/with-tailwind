@@ -122,6 +122,8 @@ object StatusNotification {
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setSilent(true)
+                // The watch has its own tile and complications.
+                .setLocalOnly(true)
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(open)

@@ -47,6 +47,18 @@ class MainActivity : ComponentActivity() {
         val navigator = app.navigator
         val asset = intent.getStringExtra(EXTRA_ASSET)
         val alarmAsset = intent.getStringExtra(EXTRA_ALARM_ASSET)
+        // "Telefonda aç" on the watch: damla://asset/{id} or damla://alarms.
+        val link = intent.data?.takeIf { it.scheme == "damla" }
+        if (link?.host == "alarms") {
+            navigator.selectTab(Route.Alarms)
+            return
+        }
+        val linkAsset = link?.takeIf { it.host == "asset" }?.lastPathSegment
+        if (linkAsset != null) {
+            navigator.selectTab(Route.Panel)
+            navigator.push(Route.Asset(linkAsset))
+            return
+        }
         val fromWidget = asset != null || alarmAsset != null || intent.hasExtra(EXTRA_WIDGET_ID)
         // Whoever comes from the widget has placed it already; the first-start guide would only be in the way.
         if (fromWidget) app.model.finishOnboarding()

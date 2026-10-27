@@ -18,12 +18,17 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.damla.alarms.alarmHaptic
+import com.damla.api.Alarm
+import com.damla.api.ConditionType
 import com.damla.app.MainActivity
 import com.damla.app.R
+import com.damla.app.wear.WearSync
 import com.damla.core.DamlaServices
 import com.damla.core.FiredAlarm
 import com.damla.core.Haptics
 import com.damla.core.QuietHours
+import com.damla.core.WearContract
+import com.damla.core.WearEvent
 import kotlinx.coroutines.flow.first
 import java.time.Instant
 import java.time.LocalDateTime
@@ -128,6 +133,8 @@ object AlarmNotifications {
                 .setSilent(!alarm.sound)
                 .setAutoCancel(true)
                 .setContentIntent(open)
+                // A watch with Damla shows its own alert instead of this copy (docs/08).
+                .extend(NotificationCompat.WearableExtender().setBridgeTag(WearContract.ALARM_BRIDGE_TAG))
                 .build()
         try {
             NotificationManagerCompat.from(context).notify(alarm.id.hashCode(), notification)
@@ -135,7 +142,18 @@ object AlarmNotifications {
             // The permission was taken back between the check and the post; the history still has it.
             return
         }
-        Haptics.play(context, alarmHaptic(alarm, met))
+        val haptic = alarmHaptic(alarm, met)
+        if (alarm.sound) Haptics.play(context, haptic)
+        WearSync.send(context, WearEvent(WearEvent.Kind.ALARM, alarm.assetId, stateTarget(alarm, met), text, haptic.name, at.toString()))
+    }
+
+    /** The state a state alarm waited for, which colours the watch's alert; null for other alarms. */
+    private fun stateTarget(
+        alarm: Alarm,
+        met: List<Int>,
+    ): String? {
+        val condition = met.firstNotNullOfOrNull { alarm.conditions.getOrNull(it) } ?: alarm.conditions.firstOrNull()
+        return condition?.takeIf { it.type == ConditionType.STATE }?.target
     }
 
     private fun allowed(context: Context): Boolean {

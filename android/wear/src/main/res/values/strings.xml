@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Damla</string>
+    <string name="complication_first">Damla: 1. varlık</string>
+    <string name="complication_second">Damla: 2. varlık</string>
+    <string name="complication_third">Damla: 3. varlık</string>
+
+    <!-- Uygulama (design/Saat.dc.html) -->
+    <string name="watch_previous">Önceki varlık</string>
+    <string name="watch_next">Sonraki varlık</string>
+    <string name="watch_part_drop">Damla</string>
+    <string name="watch_part_upper">Üst</string>
+    <string name="watch_part_lower">Alt</string>
+    <string name="watch_waiting">Veri bekleniyor</string>
+    <string name="watch_open_detail">%1$s. Ayrıntı için dokun.</string>
+
+    <!-- Kutucuk -->
+    <string name="tile_partly_closed">kısmen kapalı</string>
+    <string name="tile_now">şimdi</string>
+    <string name="tile_seconds">%1$d sn önce</string>
+    <string name="tile_minutes">%1$d dk önce</string>
+
+    <!-- Uyarı ekranı -->
+    <string name="channel_alerts">Uyarılar</string>
+    <string name="channel_alerts_description">Durum değişimleri ve alarmlar.</string>
+    <string name="alert_up">Yükselişe döndü</string>
+    <string name="alert_down">Düşüşe döndü</string>
+    <string name="alert_flat">Sabite döndü</string>
+    <string name="alert_wave">Dalgalıya döndü</string>
+    <string name="alert_ok">Tamam</string>
+    <string name="alert_phone">Telefonda aç</string>
+</resources>
