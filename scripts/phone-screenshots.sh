@@ -85,14 +85,30 @@ adb shell cmd uimode night yes
 # -g grants the notification permission up front.
 timeout 180 adb install -r -g "$APK"
 
+# Right after boot the launcher is still loading and drops requests to place a widget.
+input keyevent KEYCODE_HOME
+sleep 40
+
 log "first start: the guide places the widget through the launcher's own dialog"
 start
 shot 01-ilk-acilis 8
 input tap $PIN_BUTTON
 shot 02-widget-ekle-onayi 4
-tap "^(Add to home screen|Add automatically|ADD AUTOMATICALLY)$" || input tap $ADD_TO_HOME
-sleep 8
-input keyevent KEYCODE_HOME
+for attempt in 1 2 3; do
+  tap "^(Add to home screen|Add automatically|ADD AUTOMATICALLY)$" || input tap $ADD_TO_HOME
+  sleep 8
+  input keyevent KEYCODE_HOME
+  sleep 4
+  widget_bounds > /dev/null && break
+  log "the widget is not on the home screen (attempt $attempt): the guide again"
+  timeout 30 adb shell pm clear "$APP" > /dev/null
+  timeout 10 adb shell pm grant "$APP" android.permission.POST_NOTIFICATIONS
+  sleep 15
+  start
+  sleep 8
+  input tap $PIN_BUTTON
+  sleep 4
+done
 shot 03-ana-ekran-mini 8
 
 log "the flow and a detail over the home screen"
@@ -123,7 +139,8 @@ log "the boxed style, saved in the widget's settings"
 start --ei "$APP.WIDGET_ID" 1
 sleep 4
 tap "^Kutulu$" && sleep 1 && tap "^Kaydet$"
-sleep 4
+sleep 3
+back
 input keyevent KEYCODE_HOME
 shot 08-ana-ekran-kutulu 8
 if tap "^Damla: "; then

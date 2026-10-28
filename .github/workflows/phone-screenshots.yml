@@ -53,8 +53,8 @@ jobs:
           # drawing (four runs). Off, the app draws as with "animasyonları azalt": the same shapes, at rest.
           disable-animations: true
           emulator-options: -no-window -gpu swangle_indirect -noaudio -no-boot-anim -camera-back none
-          # Whatever happens on the emulator, the screenshots taken so far are kept after 15 minutes.
-          script: timeout 900 bash scripts/phone-screenshots.sh android/app/build/outputs/apk/debug/app-debug.apk screenshots/phone
+          # Whatever happens on the emulator, the screenshots taken so far are kept after 20 minutes.
+          script: timeout 1200 bash scripts/phone-screenshots.sh android/app/build/outputs/apk/debug/app-debug.apk screenshots/phone
       - uses: actions/upload-artifact@v7.0.2
         if: always()
         with:
