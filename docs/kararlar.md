@@ -196,6 +196,7 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Etiket üstü 68 dp (kutusuz, damlanın altında) / 7 dp (kutulu, damlanın üstünde).
   - Geniş widget eşit sütunlara bölünür: 130 dp'den 2, 200 dp'den itibaren 3 sütun. Tek hücrede "Tek varlık" seçilmediyse mini düzen gösterilir.
   - Kaplama aynı hesabı kullanır, böylece animasyon damlanın tam üstünden başlar.
+- **Kutulu kart (değişiklik, 2026-10-28):** Beyaz kart artık widget'ın tamamını kaplamıyor; prototipteki gibi blok kadar yüksek (76 dp) ve hücre kenarlarından 10 dp içeride, widget'ın ortasında. Kaplama da bu dikdörtgenden başlar. Kart hücreyi doldurunca Akış'ın ilk satırının beyaz yazıları kartın üstüne düşüyordu (karar: kullanıcı).
 - **Ölçüler (değişiklik):** Tek varlık kutulu düzende damla 38 dp, köşe 22 dp. Önceki 42 dp ve 20 dp prototipin seçeneklerde olmayan "1×1" modundan alınmıştı.
 - **Widget gölgesi (düzeltme):** `drop-shadow(0 2px 3px)` Chromium'da standart sapması 3 px olan bulanıklıkla çiziliyor (ölçüldü). `box-shadow` ve `text-shadow`'da bulanıklık değeri standart sapmanın iki katıdır. Önceki çizim daha keskindi.
 - **Kaplamanın konumu:**

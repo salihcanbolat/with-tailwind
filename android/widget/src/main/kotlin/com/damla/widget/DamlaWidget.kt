@@ -55,6 +55,7 @@ import com.damla.core.shownAssets
 import com.damla.core.stateWordLower
 import com.damla.core.visual
 import com.damla.gauge.Geometry
+import com.damla.gauge.OverlayGeometry
 import com.damla.gauge.WidgetArrangement
 import com.damla.gauge.android.GaugeBitmaps
 import kotlinx.coroutines.flow.first
@@ -120,14 +121,11 @@ private fun WidgetContent(
             available = assets.size,
         )
     val shown = assets.take(arrangement.drops)
-    val root =
-        GlanceModifier
-            .fillMaxSize()
-            .let { if (bare) it else it.background(Color.White).cornerRadius(BOX_RADIUS.dp) }
     val area = clickArea(context, widgetId, description(context, shown, settings))
-    Box(root) {
+    Box(GlanceModifier.fillMaxSize()) {
         AndroidRemoteViews(area, R.id.click_area, GlanceModifier.fillMaxSize()) {
             Box(GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (!bare) Card(arrangement)
                 if (shown.isEmpty()) {
                     Label(context.getString(R.string.widget_waiting), bare)
                 } else {
@@ -135,6 +133,18 @@ private fun WidgetContent(
                 }
             }
         }
+    }
+}
+
+/**
+ * The boxed style's white card, as in the prototype: as tall as the block (76) and 10 in from the cell's
+ * sides, centred in the widget. The overlay starts from the same rectangle (OverlayGeometry.forWidget).
+ */
+@Composable
+private fun Card(arrangement: WidgetArrangement) {
+    val inset = OverlayGeometry.CARD_INSET.toFloat().dp
+    Box(GlanceModifier.fillMaxWidth().height(arrangement.blockHeight.toFloat().dp).padding(horizontal = inset)) {
+        Box(GlanceModifier.fillMaxSize().background(Color.White).cornerRadius(BOX_RADIUS.dp)) {}
     }
 }
 

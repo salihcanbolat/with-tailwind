@@ -5,6 +5,8 @@ package com.damla.gauge
  * 390-wide phone with the widget's top at 122; these values generalise its formulas to any widget position.
  *
  * @property right the widget is on the right half of the screen, so scenes lean right ("taraf: sağ").
+ * @property widgetLeft the widget as the prototype draws it, with [widgetTop], [widgetWidth] and
+ *   [widgetHeight]: its block, 10 in from the home-screen cells' sides. The boxed style's card fills it.
  * @property widgetDrops centres of the drops shown in the widget, in order.
  * @property dropSize width of those drops.
  * @property edgeColumnX centre of the widget's outermost cell on its side; the flow is anchored there.
@@ -64,6 +66,9 @@ public data class OverlayGeometry(
 
     public companion object {
         internal const val MARGIN = 10.0
+
+        /** The prototype's widgets are 20 narrower than their cells (`nSlot * 97.5 - 20`), centred. */
+        public const val CARD_INSET: Double = 10.0
         public const val FOLDER_WIDTH: Double = 176.0
         public const val FOLDER_HEIGHT: Double = 216.0
         internal const val FLOW_STEP_X = 70.0
@@ -84,7 +89,8 @@ public data class OverlayGeometry(
         /**
          * The geometry around a widget whose bounds on a [screenWidth] x [screenHeight] screen are [left], [top],
          * [width], [height] (Android's `Intent.getSourceBounds`, in dp). The widget's side is the half of the
-         * screen its centre is on.
+         * screen its centre is on. The widget's own rectangle is its block, centred in those bounds, as in the
+         * prototype; drops and columns are placed in the full bounds, as the Glance widget places them.
          */
         public fun forWidget(
             screenWidth: Double,
@@ -100,10 +106,10 @@ public data class OverlayGeometry(
                 right = right,
                 screenWidth = screenWidth,
                 screenHeight = screenHeight,
-                widgetLeft = left,
-                widgetTop = top,
-                widgetWidth = width,
-                widgetHeight = height,
+                widgetLeft = left + CARD_INSET,
+                widgetTop = top + (height - arrangement.blockHeight) / 2,
+                widgetWidth = width - 2 * CARD_INSET,
+                widgetHeight = arrangement.blockHeight,
                 widgetDrops = arrangement.dropCentres(width, height).map { (x, y) -> left + x to top + y },
                 dropSize = arrangement.dropSize,
                 edgeColumnX = left + arrangement.edgeColumnX(width, right),

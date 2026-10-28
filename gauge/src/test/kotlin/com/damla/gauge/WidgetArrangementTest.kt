@@ -72,6 +72,8 @@ class WidgetArrangementTest {
         assertEquals(46.0, geometry.dropSize)
         assertEquals(335.0, geometry.edgeColumnX)
         assertEquals(144.0, geometry.dropY)
+        // The widget itself is its 90-tall block, 10 in from the sides of its cells.
+        assertEquals(listOf(210.0, 110.0, 160.0, 90.0), with(geometry) { listOf(widgetLeft, widgetTop, widgetWidth, widgetHeight) })
         assertEquals(false, OverlayGeometry.forWidget(400.0, 800.0, 10.0, 100.0, 180.0, 110.0, arrangement).right)
     }
 }
