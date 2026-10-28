@@ -1,0 +1,38 @@
+name: Source samples
+
+# Saves real responses of price sources the development container cannot reach (backend/README.md, "Kaynak
+# örnekleri"): on demand, or when a branch under samples/ is pushed. The responses are committed back to that
+# branch under samples/. Only downloads; nothing is built.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['samples/**']
+
+permissions:
+  contents: write
+
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Trunçgil, four times a minute apart
+        run: |
+          mkdir -p samples
+          cd samples
+          for i in 1 2 3 4; do
+            date -u +%FT%TZ > "truncgil-v4-$i.time"
+            curl -sS -m 30 -D "truncgil-v4-$i.headers" "https://finans.truncgil.com/v4/today.json" -o "truncgil-v4-$i.json" || true
+            [ "$i" = 4 ] || sleep 60
+          done
+          curl -sS -m 30 -D truncgil-v3.headers "https://finans.truncgil.com/today.json" -o truncgil-v3.json || true
+          ls -l
+      - name: Commit the samples to this branch
+        if: always() && startsWith(github.ref, 'refs/heads/samples/')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add samples
+          git commit -m "Add source samples" || exit 0
+          git push
