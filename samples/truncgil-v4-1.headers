@@ -1,0 +1,16 @@
+HTTP/2 200 
+server: nginx
+date: Wed, 28 Oct 2026 16:35:33 GMT
+content-type: application/json
+content-length: 6801
+last-modified: Wed, 28 Oct 2026 16:35:02 GMT
+vary: Accept-Encoding
+etag: "6ae22436-1a91"
+expires: Thu, 31 Dec 2037 23:55:55 GMT
+cache-control: max-age=315360000
+access-control-allow-origin: *
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-headers: Content-Type, Authorization, X-Requested-With, X-CSRF-Token
+access-control-expose-headers: Content-Length, Content-Type
+accept-ranges: bytes
+
