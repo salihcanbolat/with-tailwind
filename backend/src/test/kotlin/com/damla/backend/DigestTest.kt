@@ -4,6 +4,7 @@ import com.damla.api.AssetSettings
 import com.damla.api.DeviceSettings
 import com.damla.api.DigestMoment
 import com.damla.api.DigestSettings
+import com.damla.backend.config.AppConfig
 import com.damla.backend.devices.DeviceRegistry
 import com.damla.backend.devices.InMemoryDeviceStore
 import com.damla.backend.devices.SettingsResolver
@@ -171,6 +172,12 @@ class DigestTest {
         assertIs<SettingsResolver.Result.Valid>(
             SettingsResolver.resolve(DeviceSettings(digest = DigestSettings(at = "07:30", zone = "UTC"))),
         )
+    }
+
+    @Test
+    fun `Claude writes the sentence only when switched on`() {
+        assertEquals(false, AppConfig.fromEnv(mapOf("ANTHROPIC_API_KEY" to "key")).digestAi)
+        assertEquals(true, AppConfig.fromEnv(mapOf("ANTHROPIC_API_KEY" to "key", "DAMLA_DIGEST_AI" to "on")).digestAi)
     }
 
     @Test

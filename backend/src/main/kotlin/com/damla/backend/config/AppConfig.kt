@@ -18,7 +18,11 @@ data class AppConfig(
     val sources: List<String> = listOf("binance", "truncgil"),
     val fcmProjectId: String? = null,
     val fcmCredentialsFile: String? = null,
-    /** Lets Claude write the evening summary's sentence; without it the phone writes its own. */
+    /**
+     * Claude writes the evening summary's sentence only when [digestAi] is on and [anthropicApiKey] is set.
+     * Off for now (docs/kararlar.md): the phone writes the sentence from its own template.
+     */
+    val digestAi: Boolean = false,
     val anthropicApiKey: String? = null,
     /** Candles kept in memory: the longest offered interval (1 month) plus a day. */
     val memory: Duration = 31.days,
@@ -41,6 +45,7 @@ data class AppConfig(
                         ?: listOf("binance", "truncgil"),
                 fcmProjectId = env["FCM_PROJECT_ID"],
                 fcmCredentialsFile = env["GOOGLE_APPLICATION_CREDENTIALS"],
+                digestAi = env["DAMLA_DIGEST_AI"] == "on",
                 anthropicApiKey = env["ANTHROPIC_API_KEY"]?.takeIf { it.isNotBlank() },
             )
     }

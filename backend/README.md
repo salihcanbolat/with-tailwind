@@ -40,7 +40,8 @@ Betik sırayla şunları yapar:
 | `DATABASE_USER`, `DATABASE_PASSWORD` | yok | |
 | `FCM_PROJECT_ID` | yok | Firebase proje kimliği. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | yok | Servis hesabı JSON dosyasının yolu. Bu ve `FCM_PROJECT_ID` yoksa push gönderilmez, yalnızca günlüğe yazılır. |
-| `ANTHROPIC_API_KEY` | yok | Günün özeti cümlesini Claude yazar. Yoksa özet yine gider, cümleyi telefon kendi şablonundan kurar. |
+| `DAMLA_DIGEST_AI` | kapalı | `on` olursa ve `ANTHROPIC_API_KEY` verilmişse Günün özeti cümlesini Claude yazar. Şimdilik kapalı tutuluyor; özet yine gider, cümleyi telefon kendi şablonundan kurar. |
+| `ANTHROPIC_API_KEY` | yok | Yalnızca `DAMLA_DIGEST_AI=on` iken kullanılır. |
 
 ## API
 

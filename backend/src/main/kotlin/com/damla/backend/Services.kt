@@ -187,7 +187,10 @@ class Services(
                 sources = sources,
                 sender = sender,
                 digestStore = database?.let(::PostgresDigestStore) ?: InMemoryDigestStore(),
-                digestWriter = config.anthropicApiKey?.let { ClaudeDigestWriter(AnthropicOkHttpClient.builder().apiKey(it).build()) },
+                digestWriter =
+                    config.anthropicApiKey
+                        ?.takeIf { config.digestAi }
+                        ?.let { ClaudeDigestWriter(AnthropicOkHttpClient.builder().apiKey(it).build()) },
                 closeables = listOfNotNull(client, database),
             )
         }
