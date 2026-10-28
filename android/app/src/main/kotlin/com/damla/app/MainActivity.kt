@@ -23,6 +23,9 @@ class MainActivity : ComponentActivity() {
 
         /** The ongoing notification's "Düzenle": Ayarlar, where its assets are chosen (docs/08). */
         const val EXTRA_OPEN_STATUS_SETTINGS = "com.damla.app.OPEN_STATUS_SETTINGS"
+
+        /** The evening summary's notification: the day's replay. */
+        const val EXTRA_OPEN_DIGEST = "com.damla.app.OPEN_DIGEST"
     }
 
     private val app get() = application as DamlaApplication
@@ -84,6 +87,11 @@ class MainActivity : ComponentActivity() {
 
             intent.getBooleanExtra(EXTRA_OPEN_STATUS_SETTINGS, false) -> {
                 navigator.selectTab(Route.Settings)
+            }
+
+            intent.getBooleanExtra(EXTRA_OPEN_DIGEST, false) -> {
+                navigator.selectTab(Route.Panel)
+                navigator.push(Route.Digest)
             }
         }
     }

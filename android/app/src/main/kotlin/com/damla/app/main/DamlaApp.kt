@@ -64,12 +64,13 @@ fun DamlaApp(
                     when (val route = navigator.current) {
                         Route.Panel -> PanelScreen(model, navigator)
                         Route.Alarms -> AlarmsScreen(model, navigator)
-                        Route.Settings -> SettingsScreen(model)
+                        Route.Settings -> SettingsScreen(model, navigator)
                         is Route.Asset -> AssetScreen(model, navigator, route.id)
                         Route.Add -> AddScreen(model, navigator)
                         Route.Cross -> CrossScreen(model, navigator)
                         is Route.AlarmEdit -> AlarmEditScreen(model, navigator, route.alarmId, route.assetId)
                         Route.Widget -> WidgetScreen(model, navigator)
+                        Route.Digest -> DigestScreen(model, navigator)
                         Route.Onboarding -> OnboardingScreen(onDone = { navigator.pop() })
                     }
                 }

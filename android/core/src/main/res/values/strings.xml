@@ -12,6 +12,10 @@
     <string name="state_flat_lower">sabit</string>
     <string name="state_wave_lower">dalgalı</string>
     <string name="state_closed_lower">piyasa kapalı</string>
+    <!-- Günün özeti cümlesi, sunucu yazmadığında: "Gram altın düşüşte, USD/TRY yükselişte." -->
+    <string name="digest_item">%1$s %2$s</string>
+    <string name="digest_separator">, </string>
+    <string name="digest_sentence">%1$s.</string>
     <!-- Gösterge içerik açıklaması: "Altın, yükselişte" -->
     <string name="gauge_description">%1$s, %2$s</string>
     <!-- Parça adları (docs/01) -->

@@ -1,6 +1,7 @@
 package com.damla.app.push
 
 import com.damla.app.alarms.AlarmNotifications
+import com.damla.app.digest.DigestNotifications
 import com.damla.app.wear.WearSync
 import com.damla.core.Haptics
 import com.damla.core.WearEvent
@@ -11,7 +12,10 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.runBlocking
 
-/** Receives the backend's data messages (docs/03): state changes redraw the widgets, alarms notify. */
+/**
+ * Receives the backend's data messages (docs/03): state changes redraw the widgets, alarms and the evening
+ * summary notify.
+ */
 class DamlaMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) = Push.register(token)
 
@@ -40,6 +44,10 @@ class DamlaMessagingService : FirebaseMessagingService() {
             // Called on a background thread with a few seconds to finish; the store reads are local.
             "alarm" -> {
                 runBlocking { AlarmNotifications.receive(applicationContext, message.data) }
+            }
+
+            "digest" -> {
+                runBlocking { DigestNotifications.receive(applicationContext, message.data) }
             }
 
             else -> {

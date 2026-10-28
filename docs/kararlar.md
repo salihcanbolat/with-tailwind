@@ -333,6 +333,11 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Mesaj:** FCM veri mesajı, yüksek öncelik (görünür bildirim üretir), 2 saat ömürlü. En son 16 an taşınır (FCM'in 4 KB sınırı).
 - **Yapay zeka:** Özet cümlesini Claude yazar (`claude-opus-5-5`, düşük çaba, Anthropic'in reddedilen istekler için önerdiği yedek modelle). Yalnızca o günün anları verilir; fiyat, yüzde, tutar, gerekçe, öneri ve tahmin yasak. Cevapta para birimi işareti, yüzde ya da anlarda geçmeyen bir sayı varsa cümle atılır ve telefon kendi şablonunu kullanır ("Gram altın düşüşte, USD/TRY yükselişte."). `ANTHROPIC_API_KEY` yoksa da şablon kullanılır.
 - **Başlık ve şablon telefonda:** Bildirim başlığı ve yedek cümle `strings.xml`'den kurulur; sunucu yalnızca sayıyı, anları ve varsa Claude'un cümlesini gönderir.
+- **Telefonda (tasarımda yok, öneri):**
+  - Ayarlar'da "Günün özeti" bölümü: "Akşam özeti" anahtarı (varsayılan açık) ve saat seçimi 18:00 / 20:00 / 22:00. Üçü de sessiz saatlerin (23.00–08.00) dışında. Değişince sunucuya hemen bildirilir.
+  - Bildirim kendi kanalında ("Günün özeti", varsayılan önem), titreşim deseni yok. Sessiz saatlerde gelirse gösterilmez, yalnızca saklanır. Yeni özet dünkünün yerine geçer.
+  - Bildirime dokununca "Günün özeti" ekranı açılır: tarih, "Bugün N damlan şekil değiştirdi", cümle ve anların listesi (saat, damla, ad, "Sabit → Yükselişte").
+  - Tekrar: Ekran açılınca (600 ms, `dur.open`) anlar sırayla oynar. Her damla eski şeklinden yenisine göstergenin kendi durum değişimi geçişiyle döner (docs/04); iki an arası 1300 ms, yani geçişin en uzun parçası olan ışık yayılımı kadar. Yeni bir efekt eklenmedi. "Tekrar oynat" baştan oynatır. Animasyonları azalt açıksa yeni şekiller hemen gösterilir.
 
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**

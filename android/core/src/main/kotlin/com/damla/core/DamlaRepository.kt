@@ -3,9 +3,11 @@ package com.damla.core
 import com.damla.api.Alarm
 import com.damla.api.AssetSettings
 import com.damla.api.DeviceSettings
+import com.damla.api.DigestSettings
 import com.damla.api.PairingCode
 import com.damla.api.SnapshotResponse
 import kotlinx.coroutines.flow.first
+import java.time.ZoneId
 
 /** Keeps the local data in step with the backend and tells the backend who this device is. */
 class DamlaRepository(
@@ -26,9 +28,15 @@ class DamlaRepository(
         return snapshot
     }
 
-    /** Sends the push token, watch list and alarms (docs/03, `PUT /v1/devices/{id}`). */
+    /**
+     * Sends the push token, watch list, alarms and when the evening summary should come, in this phone's time
+     * zone (docs/03, `PUT /v1/devices/{id}`).
+     */
     suspend fun registerDevice() {
-        val settings = DeviceSettings(store.fcmToken(), store.watchlist.first(), store.alarms.first(), store.widgetConfig.first().order)
+        val app = store.settings.first()
+        val digest = DigestSettings(app.digest, app.digestAt, ZoneId.systemDefault().id)
+        val settings =
+            DeviceSettings(store.fcmToken(), store.watchlist.first(), store.alarms.first(), store.widgetConfig.first().order, digest)
         api.putDevice(store.deviceId(), settings)
     }
 

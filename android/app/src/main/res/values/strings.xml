@@ -417,6 +417,20 @@
     <string name="status_hidden">Varlık %1$d: %2$s</string>
 
     <!-- Ayarlar: kalıcı bildirim (tasarlanmamış, öneri) -->
+    <!-- Günün özeti (docs/09): tasarımda yok, öneri -->
+    <string name="settings_digest">Günün özeti</string>
+    <string name="settings_digest_show">Akşam özeti</string>
+    <string name="settings_digest_time">Saat</string>
+    <string name="settings_digest_open">Son özeti aç</string>
+    <string name="channel_digest">Günün özeti</string>
+    <string name="channel_digest_description">Akşam, gün içinde şekil değiştiren damlaların tek bir özeti.</string>
+    <string name="digest_title">Günün özeti</string>
+    <string name="digest_count">Bugün %1$d damlan şekil değiştirdi</string>
+    <string name="digest_none">Henüz bir özet yok. Özet her akşam seçtiğin saatte gelir; damlaların şekil değiştirmediği günlerde gelmez.</string>
+    <string name="digest_replay">Tekrar oynat</string>
+    <string name="digest_change">%1$s → %2$s</string>
+    <!-- "14:05, Gram altın: Sabit → Yükselişte" -->
+    <string name="digest_moment_description">%1$s, %2$s: %3$s</string>
     <string name="settings_status">Kalıcı bildirim</string>
     <string name="settings_status_show">Bildirim çubuğunda göster</string>
     <string name="settings_status_assets">Varlıklar</string>

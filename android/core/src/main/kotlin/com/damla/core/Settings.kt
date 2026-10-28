@@ -66,7 +66,15 @@ data class AppSettings(
     val theme: ThemeMode = ThemeMode.DARK,
     /** Intervals of drop, upper ring and lower ring for newly added assets (design: 1 sa, 1 gün, 1 hf). */
     val newAssetIntervals: List<String> = listOf("1h", "1d", "1w"),
-)
+    /** "Günün özeti" (docs/09): one evening notification of the day's drop changes, at [digestAt] ("HH:mm"). */
+    val digest: Boolean = true,
+    val digestAt: String = "20:00",
+) {
+    companion object {
+        /** The summary's times offered in Ayarlar; all outside the quiet hours (23.00–08.00). */
+        val DIGEST_TIMES = listOf("18:00", "20:00", "22:00")
+    }
+}
 
 /**
  * The ongoing notification (docs/08, design/Bildirim.dc.html): off until the user turns it on in Ayarlar.

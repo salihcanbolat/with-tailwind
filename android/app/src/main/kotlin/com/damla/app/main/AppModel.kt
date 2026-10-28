@@ -14,6 +14,7 @@ import com.damla.core.AppSettings
 import com.damla.core.DamlaRepository
 import com.damla.core.FiredAlarm
 import com.damla.core.StatusConfig
+import com.damla.core.StoredDigest
 import com.damla.core.WidgetConfig
 import com.damla.widget.WidgetUpdates
 import kotlinx.coroutines.CoroutineScope
@@ -154,11 +155,17 @@ class AppModel(
     }
 
     fun saveSettings(settings: AppSettings) {
+        val before = this.settings.value
         scope.launch {
             store.setSettings(settings)
             WidgetUpdates.redraw(context)
+            // The backend sends the evening summary, so it hears about its switch and time.
+            if (settings.digest != before.digest || settings.digestAt != before.digestAt) syncSoon()
         }
     }
+
+    /** The latest evening summary, for its replay screen. */
+    val digest: StateFlow<StoredDigest?> = store.digest.stateIn(scope, SharingStarted.Eagerly, null)
 
     fun saveWidget(config: WidgetConfig) {
         scope.launch {

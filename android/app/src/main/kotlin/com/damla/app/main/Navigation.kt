@@ -28,6 +28,9 @@ sealed interface Route {
 
     data object Widget : Route
 
+    /** "Günün özeti": the latest evening summary and its moments, replayed. */
+    data object Digest : Route
+
     data object Onboarding : Route
 }
 

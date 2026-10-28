@@ -97,6 +97,13 @@ class DamlaStore(
         data.edit { prefs -> prefs[STATUS] = json.encodeToString(change(decode(prefs[STATUS]) ?: StatusConfig())) }
     }
 
+    /** The latest evening summary, for its replay screen. */
+    val digest: Flow<StoredDigest?> = data.data.map { decode(it[DIGEST]) }
+
+    suspend fun setDigest(digest: StoredDigest) {
+        data.edit { it[DIGEST] = json.encodeToString(digest) }
+    }
+
     /** First launch shows the introduction (docs/07, "İlk açılış tanıtımı"). */
     val onboarded: Flow<Boolean> = data.data.map { it[ONBOARDED] ?: false }
 
@@ -117,6 +124,7 @@ class DamlaStore(
         private val WIDGET = stringPreferencesKey("widget")
         private val ONBOARDED = booleanPreferencesKey("onboarded")
         private val STATUS = stringPreferencesKey("status_notification")
+        private val DIGEST = stringPreferencesKey("digest")
         private const val HISTORY_SIZE = 50
 
         /** New installs start with the assets of the designs; intervals and thresholds use the defaults. */

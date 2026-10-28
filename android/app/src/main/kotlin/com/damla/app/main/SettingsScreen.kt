@@ -72,7 +72,10 @@ import kotlin.random.Random
 
 /** "Ayarlar" (design/Ayarlar.dc.html): pulse, vibration, grey when closed, theme, new asset intervals, source. */
 @Composable
-fun SettingsScreen(model: AppModel) {
+fun SettingsScreen(
+    model: AppModel,
+    navigator: Navigator,
+) {
     val settings by model.settings.collectAsState()
     val snapshot by model.snapshot.collectAsState()
     val status by model.status.collectAsState()
@@ -147,6 +150,44 @@ fun SettingsScreen(model: AppModel) {
                     ) {
                         Label(stringResource(R.string.settings_status_assets), text(15f), Modifier.weight(1f))
                         Label(names, text(15f, color = DamlaColors.secondaryText), maxLines = 1)
+                        Chevron()
+                    }
+                }
+            }
+            // docs/09 "Günün özeti": not in the designs, a proposal in the screen's own language.
+            Section(R.string.settings_digest) {
+                SwitchLine(stringResource(R.string.settings_digest_show), settings.digest) { on ->
+                    save(settings.copy(digest = on))
+                    if (on && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
+                if (settings.digest) {
+                    Separator()
+                    Row(
+                        Modifier.heightIn(min = 46.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Label(stringResource(R.string.settings_digest_time), text(15f), Modifier.width(84.dp))
+                        val times = AppSettings.DIGEST_TIMES
+                        Segmented(
+                            times,
+                            times.indexOf(settings.digestAt).coerceAtLeast(0),
+                            { save(settings.copy(digestAt = times[it])) },
+                            Modifier.weight(1f),
+                            height = 32.dp,
+                            fontSize = 12f,
+                        )
+                    }
+                    Separator()
+                    Row(
+                        Modifier
+                            .heightIn(min = 46.dp)
+                            .tap { navigator.push(Route.Digest) },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Label(stringResource(R.string.settings_digest_open), text(15f), Modifier.weight(1f))
                         Chevron()
                     }
                 }

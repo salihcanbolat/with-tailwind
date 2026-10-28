@@ -2,6 +2,7 @@ package com.damla.app
 
 import android.app.Application
 import com.damla.app.alarms.AlarmNotifications
+import com.damla.app.digest.DigestNotifications
 import com.damla.app.main.AppModel
 import com.damla.app.main.Navigator
 import com.damla.app.push.Push
@@ -30,6 +31,7 @@ class DamlaApplication : Application() {
         DamlaServices.init(this, BuildConfig.API_BASE_URL)
         AlarmNotifications.createChannels(this)
         StatusNotification.createChannel(this)
+        DigestNotifications.createChannel(this)
         Push.init(this)
         WidgetUpdates.schedulePeriodic(this)
         followStatus()
