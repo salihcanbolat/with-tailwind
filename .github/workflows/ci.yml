@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    # Screenshot branches only carry pictures from .github/workflows/phone-screenshots.yml.
+    branches-ignore: ['screenshots/**']
   workflow_dispatch:
 
 permissions:

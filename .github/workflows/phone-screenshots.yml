@@ -40,6 +40,8 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          ram-size: 4096M
+          cores: 4
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: bash scripts/phone-screenshots.sh android/app/build/outputs/apk/debug/app-debug.apk screenshots/phone
@@ -48,7 +50,7 @@ jobs:
         with:
           name: phone-screenshots
           path: |
-            screenshots/phone
+            screenshots
             backend.log
       - name: Commit the screenshots to this branch
         if: startsWith(github.ref, 'refs/heads/screenshots/')
