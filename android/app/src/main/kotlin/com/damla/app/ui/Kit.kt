@@ -35,9 +35,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -313,10 +318,48 @@ fun rememberToast(key: Int): Boolean {
 const val TOAST_MILLIS = 1_400L
 
 /**
+ * Where open sheets draw: above the whole app shell, the tab bar included, which a screen's own content
+ * stays under (DamlaApp). Without a layer a sheet draws in place.
+ */
+class SheetLayer {
+    internal val sheets = mutableStateListOf<@Composable () -> Unit>()
+
+    @Composable
+    fun Sheets() {
+        sheets.forEach { sheet -> key(sheet) { sheet() } }
+    }
+}
+
+val LocalSheetLayer = staticCompositionLocalOf<SheetLayer?> { null }
+
+/**
  * A sheet rising from the bottom over a dim (dim 300 ms; sheet 500 ms easeStandard), with the grab handle.
  */
 @Composable
 fun BottomSheet(
+    open: Boolean,
+    dismissLabel: String,
+    onDismiss: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val layer = LocalSheetLayer.current
+    if (layer == null) {
+        Sheet(open, dismissLabel, onDismiss, content)
+        return
+    }
+    val latestOpen by rememberUpdatedState(open)
+    val latestLabel by rememberUpdatedState(dismissLabel)
+    val latestDismiss by rememberUpdatedState(onDismiss)
+    val latestContent by rememberUpdatedState(content)
+    DisposableEffect(layer) {
+        val sheet: @Composable () -> Unit = { Sheet(latestOpen, latestLabel, latestDismiss, latestContent) }
+        layer.sheets += sheet
+        onDispose { layer.sheets -= sheet }
+    }
+}
+
+@Composable
+private fun Sheet(
     open: Boolean,
     dismissLabel: String,
     onDismiss: () -> Unit,

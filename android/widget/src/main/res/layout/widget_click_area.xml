@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The whole widget as one touch area. Its tap opens the overlay through a PendingIntent the widget sets
+     itself, so the launcher can add the widget's position to it (DamlaWidget.kt). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/click_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />

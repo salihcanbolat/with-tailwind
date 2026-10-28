@@ -1,7 +1,9 @@
 package com.damla.widget
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -14,12 +16,10 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -33,8 +33,6 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
-import androidx.glance.semantics.contentDescription
-import androidx.glance.semantics.semantics
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -61,7 +59,9 @@ import kotlin.math.roundToInt
 
 /**
  * The home-screen widget (docs/06): still drops drawn from the latest snapshot. All motion happens in the
- * overlay that opens on a tap, from the widget's position (`Intent.getSourceBounds`).
+ * overlay that opens on a tap, from the widget's position (`Intent.getSourceBounds`). Glance's own click
+ * actions make immutable PendingIntents, which the launcher cannot add that position to, so the widget
+ * sets its tap on a plain view ([clickArea]).
  */
 class DamlaWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Responsive(setOf(ONE_CELL, TWO_CELLS, THREE_CELLS))
@@ -99,10 +99,6 @@ private fun WidgetContent(
     val context = LocalContext.current
     val assets = snapshot.shownAssets(config.inWidget, settings)
     val bare = config.style == WidgetStyle.BARE
-    val open =
-        Intent()
-            .setClassName(context.packageName, DamlaWidget.OVERLAY_ACTIVITY)
-            .putExtra(DamlaWidget.EXTRA_WIDGET_ID, widgetId)
     val arrangement =
         WidgetArrangement.of(
             LocalSize.current.width.value
@@ -115,15 +111,40 @@ private fun WidgetContent(
     val root =
         GlanceModifier
             .fillMaxSize()
-            .clickable(actionStartActivity(open))
-            .semantics { contentDescription = description(context, shown, settings) }
             .let { if (bare) it else it.background(Color.White).cornerRadius(BOX_RADIUS.dp) }
-    Box(root, contentAlignment = Alignment.Center) {
-        if (shown.isEmpty()) {
-            Label(context.getString(R.string.widget_waiting), bare)
-        } else {
-            Block(arrangement, shown, settings)
+    val area = clickArea(context, widgetId, description(context, shown, settings))
+    Box(root) {
+        AndroidRemoteViews(area, R.id.click_area, GlanceModifier.fillMaxSize()) {
+            Box(GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (shown.isEmpty()) {
+                    Label(context.getString(R.string.widget_waiting), bare)
+                } else {
+                    Block(arrangement, shown, settings)
+                }
+            }
         }
+    }
+}
+
+/**
+ * A view over the whole widget that opens the overlay. Its PendingIntent is mutable so the launcher's
+ * fill-in reaches the overlay with the widget's bounds; it names the overlay, so nothing else can be started
+ * with it. One request code per widget keeps each widget's id in its own PendingIntent.
+ */
+private fun clickArea(
+    context: Context,
+    widgetId: Int,
+    description: String,
+): RemoteViews {
+    val open =
+        Intent()
+            .setClassName(context.packageName, DamlaWidget.OVERLAY_ACTIVITY)
+            .putExtra(DamlaWidget.EXTRA_WIDGET_ID, widgetId)
+    val mutable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
+    val intent = PendingIntent.getActivity(context, widgetId, open, mutable or PendingIntent.FLAG_UPDATE_CURRENT)
+    return RemoteViews(context.packageName, R.layout.widget_click_area).apply {
+        setOnClickPendingIntent(R.id.click_area, intent)
+        setContentDescription(R.id.click_area, description)
     }
 }
 
@@ -157,17 +178,17 @@ private fun Block(
             if (arrangement.kind == WidgetArrangement.Kind.MINI) {
                 Box(contentAlignment = Alignment.TopCenter) {
                     assets.forEachIndexed { index, asset ->
-                        // Glance cannot overlap rows, so each drop is offset inside a centred box by padding twice the shift.
+                        // Glance cannot overlap rows, so each drop is offset inside a centred box by padding twice
+                        // the shift. The padding goes on a box around the drop: on the image it would shrink it.
                         val shift = ((index - (assets.size - 1) / 2.0) * arrangement.miniStep).toFloat()
-                        val modifier =
-                            if (shift >=
-                                0
-                            ) {
+                        val offset =
+                            if (shift >= 0) {
                                 GlanceModifier.padding(start = (2 * shift).dp)
                             } else {
                                 GlanceModifier.padding(end = (-2 * shift).dp)
                             }
-                        Drop(asset, settings, size.toFloat(), bare, modifier)
+                        // The overlay draws the mini widget's drops with the simple badge too (OverlayScene).
+                        Box(offset) { Drop(asset, settings, size.toFloat(), bare, smallBadge = true) }
                     }
                 }
             } else if (k < assets.size) {
@@ -201,7 +222,7 @@ private fun Drop(
     settings: AppSettings,
     sizeDp: Float,
     bare: Boolean,
-    modifier: GlanceModifier = GlanceModifier,
+    smallBadge: Boolean = false,
 ) {
     val context = LocalContext.current
     val visual = asset.visual(settings) ?: return
@@ -209,18 +230,18 @@ private fun Drop(
     val sizePx = (sizeDp * density).roundToInt()
     val heightDp = sizeDp * 92f / 76f
     if (bare) {
-        val shadowed = GaugeBitmaps.renderWithShadow(visual, sizePx, asset.logo(), density)
+        val shadowed = GaugeBitmaps.renderWithShadow(visual, sizePx, asset.logo(), density, smallBadge)
         val margin = shadowed.marginPx / density
         Image(
             provider = ImageProvider(shadowed.bitmap),
             contentDescription = null,
-            modifier = modifier.size((sizeDp + 2 * margin).dp, (heightDp + 2 * margin).dp),
+            modifier = GlanceModifier.size((sizeDp + 2 * margin).dp, (heightDp + 2 * margin).dp),
         )
     } else {
         Image(
-            provider = ImageProvider(GaugeBitmaps.render(visual, sizePx, asset.logo())),
+            provider = ImageProvider(GaugeBitmaps.render(visual, sizePx, asset.logo(), smallBadge)),
             contentDescription = null,
-            modifier = modifier.size(sizeDp.dp, heightDp.dp),
+            modifier = GlanceModifier.size(sizeDp.dp, heightDp.dp),
         )
     }
 }

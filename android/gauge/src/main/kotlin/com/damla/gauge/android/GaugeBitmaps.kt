@@ -15,13 +15,17 @@ import kotlin.math.ceil
 
 /** Still images of a gauge at rest, for widgets, notifications and watches (docs/04, docs/06). */
 object GaugeBitmaps {
-    /** A [sizePx] wide gauge; the height follows the design (92 / 76 of the width). */
+    /**
+     * A [sizePx] wide gauge; the height follows the design (92 / 76 of the width). [smallBadge] forces the
+     * simple badge symbol, as the mini widget's overlapping drops have it.
+     */
     fun render(
         visual: GaugeVisual,
         sizePx: Int,
         logo: Logo?,
+        smallBadge: Boolean = false,
     ): Bitmap {
-        val layout = GaugeLayout(sizePx.toDouble())
+        val layout = GaugeLayout(sizePx.toDouble(), forceSmallBadge = smallBadge)
         val image = ImageBitmap(sizePx, layout.heightPx)
         GaugePainter.paint(GaugeMotion(visual).frame(0.0), layout, logo, ComposeGaugeCanvas(Canvas(image)))
         return image.asAndroidBitmap()
@@ -37,8 +41,9 @@ object GaugeBitmaps {
         sizePx: Int,
         logo: Logo?,
         density: Float,
+        smallBadge: Boolean = false,
     ): ShadowedBitmap {
-        val gauge = render(visual, sizePx, logo)
+        val gauge = render(visual, sizePx, logo, smallBadge)
         val blur = CssBlur.filterRadius(SHADOW_BLUR * density)
         val offset = SHADOW_OFFSET_Y * density
         val margin = shadowMarginPx(density)

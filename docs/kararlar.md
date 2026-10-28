@@ -189,6 +189,7 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Widget gölgesi (düzeltme):** `drop-shadow(0 2px 3px)` Chromium'da standart sapması 3 px olan bulanıklıkla çiziliyor (ölçüldü). `box-shadow` ve `text-shadow`'da bulanıklık değeri standart sapmanın iki katıdır. Önceki çizim daha keskindi.
 - **Kaplamanın konumu:**
   - Widget'ın ekrandaki yeri `Intent.getSourceBounds` ile alınır. Taraf, widget'ın ortasının ekranın hangi yarısında olduğuna göre seçilir.
+  - Glance'in dokunma eylemleri değiştirilemez (immutable) PendingIntent kurar. Android bunlara başlatıcının eklediği konumu koymaz (`PendingIntentRecord`, Android 14). Bu yüzden widget'ın dokunması, Glance içeriğini saran düz bir görünüme değiştirilebilir PendingIntent ile bağlanır. Intent yalnızca kaplama etkinliğini adlandırır.
   - Akış widget'ın en dış sütununa yaslanır.
   - Klasör, widget'ın o taraftaki kenarına hizalanır.
   - Detay sahnesi ekranın o tarafındaki kenarına yaslanır.
