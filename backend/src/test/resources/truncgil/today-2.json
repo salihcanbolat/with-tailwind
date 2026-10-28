@@ -1,0 +1,55 @@
+{
+ "Update_Date": "2026-10-28 19:36:02",
+ "USD": {
+  "Buying": 49.829,
+  "Type": "Currency",
+  "Selling": 49.846,
+  "Change": 0.08
+ },
+ "EUR": {
+  "Buying": 55.5483,
+  "Type": "Currency",
+  "Selling": 55.5518,
+  "Change": 0.1
+ },
+ "GBP": {
+  "Buying": 66.3448,
+  "Type": "Currency",
+  "Selling": 66.3485,
+  "Change": -0.02
+ },
+ "GRA": {
+  "Selling": 6474.05,
+  "Type": "Gold",
+  "Name": "GRAMALTIN",
+  "Change": -0.41,
+  "Buying": 6473.18
+ },
+ "CEYREKALTIN": {
+  "Buying": 10392.68,
+  "Type": "Gold",
+  "Name": "CEYREKALTIN",
+  "Selling": 10632.48,
+  "Change": 0.7
+ },
+ "GUMUS": {
+  "Selling": 86.03,
+  "Type": "Gold",
+  "Name": "GUMUS",
+  "Change": -1.32,
+  "Buying": 85.95
+ },
+ "ONS": {
+  "Buying": 0,
+  "Type": "Gold",
+  "Name": "ONS",
+  "Selling": 0,
+  "Change": -0.49
+ },
+ "XU100": {
+  "Selling": 11165.44,
+  "Type": "Gold",
+  "Name": "XU100",
+  "Change": 0.13
+ }
+}

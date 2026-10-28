@@ -13,7 +13,7 @@ curl "localhost:8080/v1/snapshot?assets=usdtry,btcusdt,xau_gram/xag_gram"
 
 `test` kaynağı **gerçek piyasa verisi değildir**. Bütün varlıklar 100 civarında başlar ve sabit dalgalarla oynar; amaç, damla ile iki halkanın her durumdan geçmesini sağlamaktır. Yanıtta `"source": "test"` görünür.
 
-Gerçek veriyle (Binance) ve PostgreSQL ile; Docker ve internet gerekir:
+Gerçek veriyle (Binance ve Trunçgil) ve PostgreSQL ile; Docker ve internet gerekir:
 
 ```bash
 scripts/backend-dogrula.sh
@@ -35,7 +35,7 @@ Betik sırayla şunları yapar:
 | Değişken | Varsayılan | Açıklama |
 |---|---|---|
 | `PORT` | 8080 | |
-| `DAMLA_SOURCES` | `binance` | Virgülle ayrılmış kaynaklar; ilk yazılan birincil kaynaktır. Seçenekler: `binance`, `test`. |
+| `DAMLA_SOURCES` | `binance,truncgil` | Virgülle ayrılmış kaynaklar; bir varlığı destekleyenlerden ilk yazılan birincil kaynaktır. Seçenekler: `binance` (kripto), `truncgil` (döviz, gram ve çeyrek altın, gümüş), `test`. |
 | `DATABASE_URL` | yok | Örnek: `jdbc:postgresql://localhost:5432/damla`. Verilmezse her şey bellekte tutulur. |
 | `DATABASE_USER`, `DATABASE_PASSWORD` | yok | |
 | `FCM_PROJECT_ID` | yok | Firebase proje kimliği. |
@@ -63,12 +63,10 @@ Veritabanı testleri `DAMLA_TEST_DATABASE_URL` tanımlıysa o veritabanına bağ
 
 ## Kaynak örnekleri
 
-Trunçgil adaptörünü yazmak için gerçek yanıt örnekleri gerekiyor. İnternet erişimi olan bir makinede şu komutları çalıştırın ve oluşan dosyaları paylaşın:
+Geliştirme ortamının erişemediği kaynakların gerçek yanıtları GitHub üzerinden alınır. `samples/` ile başlayan bir dal gönderildiğinde `.github/workflows/source-samples.yml` Trunçgil'in yanıtlarını bir dakika arayla dört kez indirir ve aynı dala `samples/` klasörüne yazar. Derleme yapılmaz.
 
 ```bash
-mkdir -p damla-ornekler && cd damla-ornekler
-curl -sS "https://data-api.binance.vision/api/v3/klines?symbol=BTCTRY&interval=1m&limit=3" -o binance-klines.json
-curl -sS -D truncgil-basliklar.txt "https://finans.truncgil.com/v4/today.json" -o truncgil-1.json
-sleep 120
-curl -sS "https://finans.truncgil.com/v4/today.json" -o truncgil-2.json
+git push origin HEAD:samples/truncgil-2
 ```
+
+`src/test/resources/truncgil/` altındaki dosyalar 2026-10-28 örneklerinden (`samples/truncgil-1` dalı) kısaltılmıştır.

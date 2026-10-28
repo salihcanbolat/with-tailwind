@@ -15,7 +15,7 @@ data class AppConfig(
     val databaseUrl: String? = null,
     val databaseUser: String? = null,
     val databasePassword: String? = null,
-    val sources: List<String> = listOf("binance"),
+    val sources: List<String> = listOf("binance", "truncgil"),
     val fcmProjectId: String? = null,
     val fcmCredentialsFile: String? = null,
     /** Candles kept in memory: the longest offered interval (1 month) plus a day. */
@@ -36,7 +36,7 @@ data class AppConfig(
                         ?.split(',')
                         ?.map { it.trim() }
                         ?.filter { it.isNotEmpty() }
-                        ?: listOf("binance"),
+                        ?: listOf("binance", "truncgil"),
                 fcmProjectId = env["FCM_PROJECT_ID"],
                 fcmCredentialsFile = env["GOOGLE_APPLICATION_CREDENTIALS"],
             )

@@ -20,6 +20,7 @@ import com.damla.backend.sources.BinanceSource
 import com.damla.backend.sources.Ingestion
 import com.damla.backend.sources.PriceSource
 import com.damla.backend.sources.TestSource
+import com.damla.backend.sources.TruncgilSource
 import com.damla.backend.state.GroupKey
 import com.damla.backend.state.StateRunner
 import com.damla.backend.store.CandleStore
@@ -138,6 +139,7 @@ class Services(
                 config.sources.map { name ->
                     when (name) {
                         BinanceSource.NAME -> BinanceSource(client)
+                        TruncgilSource.NAME -> TruncgilSource(client)
                         TestSource.NAME -> TestSource(clock)
                         else -> error("Unknown price source '$name' in DAMLA_SOURCES")
                     }

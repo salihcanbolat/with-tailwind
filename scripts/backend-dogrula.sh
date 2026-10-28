@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-export DAMLA_SOURCES="${DAMLA_SOURCES:-binance}"
+export DAMLA_SOURCES="${DAMLA_SOURCES:-binance,truncgil}"
 export PORT="${PORT:-8080}"
 export DATABASE_URL="jdbc:postgresql://localhost:5432/damla"
 export DATABASE_USER=damla

@@ -68,5 +68,6 @@ class CatalogTest {
             AssetCatalog.assets.map { it.name },
         )
         assertEquals("BTCUSDT", AssetCatalog["btcusdt"]?.symbols?.get("binance"))
+        assertEquals("GRA", AssetCatalog["xau_gram"]?.symbols?.get("truncgil"))
     }
 }

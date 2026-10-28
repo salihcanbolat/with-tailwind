@@ -118,9 +118,20 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
   - Bağlantı 23 saatte bir ve `serverShutdown` olayında yenilenir.
   - 429/418 yanıtında `Retry-After` kadar beklenir.
   - Biçimler resmi belgeden (GitHub: binance-spot-api-docs) doğrulandı.
+- **Trunçgil (2026-10-28):**
+  - `finans.truncgil.com/v4/today.json` kullanılır. Örnekler GitHub üzerinden alındı (`samples/truncgil-1` dalı).
+  - Dosya dakikada bir yeniden yazılıyor. `Update_Date` İstanbul saati, fiyatlar sayı.
+  - v3 (`today.json`) 5 dakikada bir güncelleniyor ve fiyatlar "49,8443" gibi metin; kullanılmadı.
+  - 20 sn'de bir ETag ile sorulur; dosya değişmediyse 304 döner, hiçbir şey indirilmez.
+  - Yalnızca `Update_Date` ilerleyen dosya fiyat üretir. Fiyatın zamanı `Update_Date`'tir. Böylece donmuş bir dosya kaynağı taze göstermez, 3 dk sonra yedeğe geçilir.
+  - Eşleme: USD, EUR, GBP, GRA (gram altın), CEYREKALTIN, GUMUS.
+  - **Fiyat:** Satış fiyatı kullanılır. Türkiye'deki uygulamaların öne çıkardığı fiyat bu. Durum hesabı da aynı fiyattan yapılır.
+  - **Ons altın:** Trunçgil'de `ONS` her örnekte 0. Ons altının şimdilik kaynağı yok.
+  - Çeyrek altın üç dakika boyunca değişmedi; gram altın ve gümüş her dakika değişti. Çeyreğin ne sıklıkla güncellendiği izlenecek.
+  - Geçmiş vermez. Grafik ve uzun aralıklar, sunucu çalıştıkça biriken mumlardan beslenir.
 - **Kaynak seçimi:**
-  - Kaynaklar `DAMLA_SOURCES` sırasıyla tercih edilir.
-  - Birincil kaynak sessiz kalırsa (Binance 30 sn, test 10 sn) yedeğe geçilir; birincil kaynak geri gelince ona dönülür.
+  - Kaynaklar `DAMLA_SOURCES` sırasıyla tercih edilir. Varsayılan `binance,truncgil`.
+  - Birincil kaynak sessiz kalırsa (Binance 30 sn, Trunçgil 3 dk, test 10 sn) yedeğe geçilir; birincil kaynak geri gelince ona dönülür.
   - Hiçbir kaynak veri vermiyorsa son seçim korunur, gecikmeyi istemci tazelikten görür.
 - **Kripto fiyat birimi:** USDT çiftleri tasarımdaki gibi "USD" olarak etiketlenir ("Kripto · USD").
 - **Çapraz kur para birimi:** Taraflar farklı birimdeyse ikisi de USD/TRY ile TRY'ye çevrilir. USD/TRY de bileşen sayılır; kapalıysa çapraz kur CLOSED olur (docs/02 kuralı). Türk lirası sabit 1 fiyatlı bir taraftır.
@@ -315,7 +326,8 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
-  - Trunçgil yanıt örnekleri. Komutlar `backend/README.md` içinde. Döviz ve maden kaynağı bu örneklere bağlı.
+  - Ons altın için kaynak (Trunçgil'de 0 geliyor).
+  - Sunucu yeni açıldığında döviz ve maden için geçmiş yok; uzun aralıkların ve grafiğin dolması günler sürer. Geçmiş kaynağı (EVDS anahtarı ya da başka bir kaynak) gerekiyor.
   - Yedek kaynaklar: kripto ve döviz/maden için hangi bağımsız kaynaklar kullanılacak?
   - Backend'in barındırılacağı yer ve Firebase projesi (gerçek cihaza push kriteri buna bağlı).
   - Kaynakların ticari kullanım koşulları.

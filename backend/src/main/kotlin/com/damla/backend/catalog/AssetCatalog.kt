@@ -32,13 +32,14 @@ object AssetCatalog {
 
     val assets: List<AssetInfo> =
         listOf(
-            fx("usdtry", "USD/TRY", "USD", "usd"),
-            fx("eurtry", "EUR/TRY", "EUR", "eur"),
-            fx("gbptry", "GBP/TRY", "GBP", "gbp"),
-            metal("xau_gram", "Gram altın", "Altın", Currency.TRY),
-            metal("xau_ceyrek", "Çeyrek altın", "Çeyrek", Currency.TRY),
-            metal("xau_ons", "Ons altın", "Ons", Currency.USD),
-            metal("xag_gram", "Gümüş", "Gümüş", Currency.TRY, badge = "ag"),
+            fx("usdtry", "USD/TRY", "USD", "usd", truncgil = "USD"),
+            fx("eurtry", "EUR/TRY", "EUR", "eur", truncgil = "EUR"),
+            fx("gbptry", "GBP/TRY", "GBP", "gbp", truncgil = "GBP"),
+            metal("xau_gram", "Gram altın", "Altın", Currency.TRY, truncgil = "GRA"),
+            metal("xau_ceyrek", "Çeyrek altın", "Çeyrek", Currency.TRY, truncgil = "CEYREKALTIN"),
+            // Trunçgil's ounce ("ONS") is 0 in every sample, so the ounce has no source yet.
+            metal("xau_ons", "Ons altın", "Ons", Currency.USD, truncgil = null),
+            metal("xag_gram", "Gümüş", "Gümüş", Currency.TRY, truncgil = "GUMUS", badge = "ag"),
             crypto("btcusdt", "Bitcoin", "BTC", "btc", binance = "BTCUSDT"),
             crypto("ethusdt", "Ethereum", "ETH", "eth", binance = "ETHUSDT"),
         )
@@ -56,15 +57,17 @@ object AssetCatalog {
         name: String,
         short: String,
         badge: String,
-    ) = AssetInfo(id, Category.FX, name, short, badge, Currency.TRY, symbols = emptyMap())
+        truncgil: String,
+    ) = AssetInfo(id, Category.FX, name, short, badge, Currency.TRY, symbols = mapOf("truncgil" to truncgil))
 
     private fun metal(
         id: String,
         name: String,
         short: String,
         currency: Currency,
+        truncgil: String?,
         badge: String = "au",
-    ) = AssetInfo(id, Category.METAL, name, short, badge, currency, symbols = emptyMap())
+    ) = AssetInfo(id, Category.METAL, name, short, badge, currency, symbols = listOfNotNull(truncgil?.let { "truncgil" to it }).toMap())
 
     private fun crypto(
         id: String,
