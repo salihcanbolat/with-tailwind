@@ -10,7 +10,7 @@ OUT=$2
 APP=com.damla.app
 mkdir -p "$OUT"
 
-# Points on the Pixel 6 screen (1080 x 2400) of controls that sit in fixed places.
+# Points on the Pixel 6 screen (1080 x 2400) of controls that sit in fixed places (Android 14).
 PIN_BUTTON="540 2103"
 SKIP_GUIDE="540 2240"
 ADD_TO_HOME="844 2254"
@@ -113,7 +113,7 @@ start
 sleep 6
 input tap $PIN_BUTTON
 shot 11-widget-ekle-onayi 4
-input tap $ADD_TO_HOME
+tap "^(Add to home screen|Add automatically|ADD AUTOMATICALLY)$" || input tap $ADD_TO_HOME
 sleep 8
 input keyevent KEYCODE_HOME
 shot 12-ana-ekran-widget 8

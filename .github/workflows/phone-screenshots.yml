@@ -45,12 +45,10 @@ jobs:
       - name: Screenshots on an emulator
         uses: reactivecircus/android-emulator-runner@v2.38.0
         with:
-          api-level: 35
+          api-level: 34
           target: google_apis
           arch: x86_64
           profile: pixel_6
-          ram-size: 3072M
-          cores: 2
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           # Whatever happens on the emulator, the screenshots taken so far are kept after 15 minutes.
