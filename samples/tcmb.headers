@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 17:45:51 GMT
+Last-Modified: Tue, 27 Oct 2026 12:30:02 GMT
+ETag: "2389-65ed19b101d8b"
+Accept-Ranges: bytes
+Content-Length: 9097
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Type: application/xml
+Age: 0
+Strict-Transport-Security: max-age=31536000
+Connection: keep-alive
+Set-Cookie: TS01ab7d04=015d31d691b4b93f2775ad4cca7c21513b46d74149dc2b1c917b39ef6ae49312399ebbf65e96e6d09041a63eacfba7ff2a975a0aa7; Path=/; Domain=.www.tcmb.gov.tr; Secure; HttpOnly
+Vary: Accept-Encoding
+
