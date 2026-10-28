@@ -4,6 +4,15 @@ Ktor sunucusu: fiyatları toplar, 1 dakikalık mumlara çevirir, `:engine` ile d
 
 ## Çalıştırma
 
+Veritabanıyla birlikte, sürekli açık (Docker yeterli; geçmiş fiyatlar bu şekilde birikir):
+
+```bash
+DAMLA_DB_PASSWORD=bir-parola docker compose up -d
+curl "localhost:8080/v1/snapshot?assets=usdtry,xau_gram,btcusdt"
+```
+
+Döviz ve maden kaynağı geçmiş vermediği için yeni bir sunucuda bu varlıklar en uzun aralık dolana kadar durumsuz kalır; snapshot'taki `readyAt` ne zaman hazır olacaklarını söyler.
+
 Sentetik test verisiyle (internet ve veritabanı gerekmez):
 
 ```bash

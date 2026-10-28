@@ -177,6 +177,8 @@
     <string name="state_empty_list">Takip listen boş</string>
     <string name="state_empty_list_hint">Döviz, maden ya da kripto ekle; yönleri burada ve widget\'ta görürsün.</string>
     <string name="state_no_data">Veri bekleniyor</string>
+    <!-- Sunucu geçmişi biriktirirken: "3 sa sonra hazır" -->
+    <string name="state_ready_in">%1$s sonra hazır</string>
     <string name="state_no_alarms">Henüz alarm yok</string>
     <string name="state_no_alarms_hint">Bir damla yön değiştirince ya da fiyat bir seviyeyi geçince haber verelim.</string>
     <string name="state_no_history">Henüz çalan alarm yok</string>

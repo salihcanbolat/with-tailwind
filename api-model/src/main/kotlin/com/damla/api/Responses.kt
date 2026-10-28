@@ -29,6 +29,11 @@ data class AssetSnapshot(
     val drop: PartSnapshot?,
     val upperRing: PartSnapshot?,
     val lowerRing: PartSnapshot?,
+    /**
+     * While the parts have no states yet because the server's own price history is still shorter than the
+     * longest interval: when it will be long enough (ISO-8601). Null otherwise, or when no price came yet.
+     */
+    val readyAt: String? = null,
 )
 
 @Serializable

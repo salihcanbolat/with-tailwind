@@ -60,6 +60,8 @@ class MarketData(
         from: Instant,
     ): List<Candle> = mutex.withLock { books[asset]?.candlesSince(from).orEmpty() }
 
+    suspend fun firstCandle(asset: String): Instant? = mutex.withLock { books[asset]?.firstStart }
+
     suspend fun quote(asset: String): Quote? =
         mutex.withLock {
             val book = books[asset] ?: return@withLock null

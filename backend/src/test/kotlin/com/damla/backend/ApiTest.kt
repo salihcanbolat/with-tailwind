@@ -106,6 +106,7 @@ class ApiTest {
             assertTrue(asset.marketOpen)
             assertEquals(listOf("15m", "4h", "1d"), listOfNotNull(asset.drop, asset.upperRing, asset.lowerRing).map { it.interval })
             assertEquals("FLAT", asset.drop?.state)
+            assertNull(asset.readyAt)
         }
 
     @Test
@@ -121,6 +122,24 @@ class ApiTest {
             assertNull(asset.price)
             assertNull(asset.updatedAt)
             assertNull(asset.drop)
+            assertNull(asset.readyAt)
+        }
+
+    @Test
+    fun `while the history is shorter than the longest interval, the snapshot says when it will do`() =
+        api { client ->
+            // Two hours of prices from a source without history: the lower ring (1 day) cannot be measured yet.
+            services.market.load("gbptry", flatCandles(WEDNESDAY_NOON, count = 120, price = 66.0))
+
+            val asset =
+                client
+                    .get("/v1/snapshot?assets=gbptry")
+                    .decode<SnapshotResponse>()
+                    .assets
+                    .single()
+
+            assertNull(asset.drop)
+            assertEquals("2026-10-29T10:01:00Z", asset.readyAt)
         }
 
     @Test

@@ -7,6 +7,7 @@ import java.time.Duration
 import java.time.Instant
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.ceil
 
 /** Turkish display formats. All words come from strings.xml. */
 object Formats {
@@ -49,6 +50,17 @@ object Formats {
             }
         return context.getString(res, match.groupValues[1].toInt())
     }
+
+    /** "45 dk", "3 sa", "2 gün": a time left, rounded up to the largest unit that fits. */
+    fun durationShort(
+        context: Context,
+        minutes: Long,
+    ): String =
+        when {
+            minutes < 60 -> context.getString(R.string.interval_short_minutes, minutes.coerceAtLeast(1).toInt())
+            minutes < 24 * 60 -> context.getString(R.string.interval_short_hours, ceil(minutes / 60.0).toInt())
+            else -> context.getString(R.string.interval_short_days, ceil(minutes / (24 * 60.0)).toInt())
+        }
 
     /** The signed change in Turkish style: "+%0,12", "−%1,30", "%0,00" (docs/kararlar.md: real sign, no "±"). */
     fun percent(net: Double): String {

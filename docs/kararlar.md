@@ -325,6 +325,17 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Derleme:** CI Windows'ta uygulamayı (`tauri build --no-bundle`) derler. macOS derlemesi bir Mac'te `npx tauri build` ile yapılır; CI'da macOS işi yok (maliyet).
 - **Gerçek cihazda denenmesi gerekenler:** Bildirim penceresinin odak çalmadığı, tepsi tıklamasında panelin konumu, şeridin kenara yaslanması.
 
+## Fiyat kaynakları politikası (2026-10-28, kullanıcı kararı)
+- **Hedef:** Dışa bağımlılık en azda; yalnızca ücretsiz, herkese açık ve doğrulanabilir kaynaklar.
+- **Geliştirme ve test:** Binance (kripto) ve Trunçgil (döviz, gram ve çeyrek altın, gümüş) anahtarsız kullanılır. Trunçgil ticari kullanım için ücretli pakete yönlendiriyor; ticari kullanım sayılmayan bu dönemde kullanılır.
+- **Yayından önce:** Döviz ve maden için tek bir lisanslı kaynağa geçilir (Trunçgil'in paketi ilk aday: tek kaynakla hepsini karşılıyor). Binance verisinin ticari kullanım koşulu da o sırada netleştirilir.
+- **Kullanılmayanlar:**
+  - EVDS: üçüncü bir bağımlılık ve anahtar; TCMB'nin günlük resmi kurları serbest piyasa fiyatlarıyla aynı seviyede değil, eklenince geçmişle canlı veri arasında yapay sıçrama olur.
+  - Kripto vekilleri (USDT/TRY, PAXG, XAUT): gerçek dolar ve altın değiller; Binance'te sterlin (GBPUSDT) güvenilmez, gümüş yok (2026-10-28 örnekleri, `samples/alternatives-2` dalı).
+  - TCMB günlük kurlar: günde bir kez; 15 dakikalık damla için yetmez.
+- **Geçmiş:** Sunucu kendi geçmişini biriktirir (Postgres'te 400 gün). Yeni bir sunucuda döviz ve maden, en uzun aralık dolana kadar durumsuz kalır (varsayılan ayarlarla 1 gün). Snapshot bu sürede `readyAt` ile ne zaman hazır olacağını söyler; Panel "3 sa sonra hazır" yazar. Sunucu yayından önce çalıştırılmaya başlanırsa kullanıcı bu süreyi görmez.
+- **Çalıştırma:** `docker compose up -d` veritabanını ve sunucuyu birlikte başlatır ve açık tutar; herhangi bir makinede çalışır, belirli bir barındırma hizmetine bağlı değildir.
+
 ## Günün özeti (2026-10-28)
 - **Ne sayılır:** "Bugün N damlan şekil değiştirdi" cümlesindeki N, son özetten bu yana damlası (kısa aralık) en az bir kez şekil değiştiren varlık sayısı. Halka değişimleri ve piyasa açılış/kapanışları sayılmaz.
 - **Ne zaman:** Telefonun saat diliminde seçilen saatte (varsayılan 20:00), günde bir kez. Kapsadığı süre bir önceki özetin saatinden bu yana 24 saat. Sunucu o saatte kapalıysa iki saat içinde gönderilir, sonra o günün özeti atlanır.

@@ -1,0 +1,12 @@
+# Only the server's Gradle build goes into the image (backend/Dockerfile).
+.git
+.gradle
+**/build
+android
+desktop
+design
+docs
+screenshots
+samples
+tools
+**/node_modules

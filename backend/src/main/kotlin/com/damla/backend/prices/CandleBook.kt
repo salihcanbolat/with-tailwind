@@ -57,6 +57,9 @@ class CandleBook(
         return listOf(appendClosed(open))
     }
 
+    /** Start of the oldest candle kept, or of the open one when none has closed yet. */
+    val firstStart: Instant? get() = closed.firstOrNull()?.start ?: current?.start
+
     /** Closed candles plus the current one, from the last candle that ends at or before [from]. */
     fun candlesSince(from: Instant): List<Candle> {
         val firstEndingAfter = closed.partitionPoint { it.start + Candle.LENGTH <= from }

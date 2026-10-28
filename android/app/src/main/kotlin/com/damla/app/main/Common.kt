@@ -65,6 +65,7 @@ import com.damla.gauge.GaugeVisual
 import com.damla.gauge.Geometry
 import com.damla.gauge.Shape
 import com.damla.gauge.android.Damla
+import java.time.Duration
 import java.time.Instant
 
 /** The system's "remove animations" setting (CLAUDE.md: then pulses and accents stay still). */
@@ -80,7 +81,19 @@ fun stateText(
     settings: AppSettings,
 ): Pair<String, Color> {
     val context = LocalContext.current
-    val drop = asset.drop ?: return stringResource(R.string.state_no_data) to DamlaColors.text55
+    val drop =
+        asset.drop ?: run {
+            // A new server collects its own history first (docs/kararlar.md): say when it will be enough.
+            val ready = asset.readyAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
+            val left = ready?.let { Duration.between(Instant.now(), it).toMinutes() }
+            val text =
+                if (left != null && left >= 0) {
+                    stringResource(R.string.state_ready_in, Formats.durationShort(context, left))
+                } else {
+                    stringResource(R.string.state_no_data)
+                }
+            return text to DamlaColors.text55
+        }
     if (Formats.freshness(context, asset, Instant.now()).stale && asset.marketOpen) {
         return stringResource(R.string.panel_late) to DamlaColors.text55
     }

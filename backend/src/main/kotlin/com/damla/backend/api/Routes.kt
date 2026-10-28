@@ -20,6 +20,7 @@ import com.damla.backend.catalog.Target
 import com.damla.backend.devices.SettingsResolver
 import com.damla.backend.state.GroupKey
 import com.damla.backend.state.StateRunner
+import com.damla.engine.Candle
 import com.damla.engine.PartState
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.plugins.BadRequestException
@@ -196,7 +197,24 @@ private suspend fun snapshot(
         drop = states?.drop?.let(::part),
         upperRing = states?.upperRing?.let(::part),
         lowerRing = states?.lowerRing?.let(::part),
+        readyAt = if (states == null) readyAt(services, key, components, now)?.toString() else null,
     )
+}
+
+/**
+ * When the history kept for [components] covers [key]'s longest interval: a window needs a closed candle
+ * before its start (engine `priceWindow`). Sources without history (Trunçgil) start from the first price the
+ * server saw, so a new server waits this long. Null when a component has no price yet or the time has passed.
+ */
+private suspend fun readyAt(
+    services: Services,
+    key: GroupKey,
+    components: List<AssetInfo>,
+    now: Instant,
+): Instant? {
+    val firsts = components.map { services.market.firstCandle(it.id) ?: return null }
+    val ready = (firsts.maxOrNull() ?: return null) + Candle.LENGTH + key.longest.duration
+    return ready.takeIf { it > now }
 }
 
 private data class Labels(

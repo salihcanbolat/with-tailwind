@@ -1,12 +1,15 @@
-# Local development database for the backend (docs/09, phase 2).
+# The database and the server (docs/09, phase 2). `docker compose up -d db` starts only the database for
+# local development; `docker compose up -d` runs both and keeps them running, so the server collects its own
+# price history (docs/kararlar.md). Set DAMLA_DB_PASSWORD on a shared machine.
 # Redis is not used in v1; see docs/kararlar.md.
 services:
   db:
     image: postgres:17-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: damla
       POSTGRES_USER: damla
-      POSTGRES_PASSWORD: damla
+      POSTGRES_PASSWORD: ${DAMLA_DB_PASSWORD:-damla}
     ports:
       - "5432:5432"
     volumes:
@@ -16,6 +19,23 @@ services:
       interval: 2s
       timeout: 2s
       retries: 30
+
+  server:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/damla
+      DATABASE_USER: damla
+      DATABASE_PASSWORD: ${DAMLA_DB_PASSWORD:-damla}
+      # Firebase, for pushes to phones: FCM_PROJECT_ID and GOOGLE_APPLICATION_CREDENTIALS (backend/README.md).
+      FCM_PROJECT_ID: ${FCM_PROJECT_ID:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   damla-db:

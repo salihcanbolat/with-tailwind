@@ -1,0 +1,35 @@
+name: Server image
+
+# Checks that the server's Docker image builds and starts (backend/Dockerfile), when the server changes.
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore: ['screenshots/**', 'samples/**']
+    paths:
+      - 'backend/**'
+      - 'engine/**'
+      - 'api-model/**'
+      - 'alarms/**'
+      - 'gradle/**'
+      - '*.gradle.kts'
+      - 'docker-compose.yml'
+      - '.dockerignore'
+      - '.github/workflows/server-image.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build the database and the server, and start both
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 60); do curl -sf http://localhost:8080/health && break; sleep 2; done
+          curl -sf "http://localhost:8080/v1/snapshot?assets=usdtry,btcusdt" | head -c 600
+      - name: Server log
+        if: always()
+        run: docker compose logs server | tail -50
