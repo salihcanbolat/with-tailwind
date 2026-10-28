@@ -8,6 +8,7 @@ postgresql = "42.7.14"
 hikari = "7.1.0"
 flyway = "13.11.1"
 googleAuth = "1.54.0"
+anthropic = "3.3.0"
 testcontainers = "2.0.5"
 logback = "1.6.6"
 junit = "6.1.3"
@@ -60,6 +61,7 @@ hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 google-auth = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuth" }
+anthropic-java = { module = "com.anthropic:anthropic-java", version.ref = "anthropic" }
 testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers" }
 testcontainers-junit = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

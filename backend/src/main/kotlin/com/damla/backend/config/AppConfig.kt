@@ -18,6 +18,8 @@ data class AppConfig(
     val sources: List<String> = listOf("binance", "truncgil"),
     val fcmProjectId: String? = null,
     val fcmCredentialsFile: String? = null,
+    /** Lets Claude write the evening summary's sentence; without it the phone writes its own. */
+    val anthropicApiKey: String? = null,
     /** Candles kept in memory: the longest offered interval (1 month) plus a day. */
     val memory: Duration = 31.days,
     /** Candles kept in the database, for history charts up to one year. */
@@ -39,6 +41,7 @@ data class AppConfig(
                         ?: listOf("binance", "truncgil"),
                 fcmProjectId = env["FCM_PROJECT_ID"],
                 fcmCredentialsFile = env["GOOGLE_APPLICATION_CREDENTIALS"],
+                anthropicApiKey = env["ANTHROPIC_API_KEY"]?.takeIf { it.isNotBlank() },
             )
     }
 }

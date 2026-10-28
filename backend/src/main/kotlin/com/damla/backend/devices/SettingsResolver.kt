@@ -7,12 +7,14 @@ import com.damla.backend.catalog.Target
 import com.damla.backend.state.GroupKey
 import com.damla.engine.Interval
 import com.damla.engine.Thresholds
+import java.time.ZoneId
 
 /** Turns settings into engine groups, or explains what is wrong with them. */
 object SettingsResolver {
     const val MAX_ASSETS = 50
     const val MAX_ALARMS = 50
     private val deviceIdPattern = Regex("^[A-Za-z0-9_-]{8,64}$")
+    private val digestTime = Regex("^([01][0-9]|2[0-3]):[0-5][0-9]$")
 
     fun isValidDeviceId(id: String): Boolean = deviceIdPattern.matches(id)
 
@@ -59,6 +61,7 @@ object SettingsResolver {
             }
         }
         alarms(settings, groups.keys, errors)
+        digest(settings, errors)
         return if (errors.isEmpty()) Result.Valid(groups) else Result.Invalid(errors)
     }
 
@@ -81,6 +84,16 @@ object SettingsResolver {
             val target = Target.parse(alarm.assetId)?.id
             if (target == null || target !in watched) errors += "${alarm.id}: asset ${alarm.assetId} is not in the watch list"
         }
+    }
+
+    /** The summary's time is "HH:mm" and its zone a known IANA id, so the runner can always place it. */
+    private fun digest(
+        settings: DeviceSettings,
+        errors: MutableList<String>,
+    ) {
+        val digest = settings.digest ?: return
+        if (!digestTime.matches(digest.at)) errors += "digest.at: invalid time '${digest.at}'"
+        if (runCatching { ZoneId.of(digest.zone) }.isFailure) errors += "digest.zone: unknown time zone '${digest.zone}'"
     }
 
     private fun interval(

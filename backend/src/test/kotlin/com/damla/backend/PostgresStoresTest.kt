@@ -3,14 +3,18 @@ package com.damla.backend
 import com.damla.api.AssetSettings
 import com.damla.api.DeviceSettings
 import com.damla.backend.devices.PostgresDeviceStore
+import com.damla.backend.digest.Moment
+import com.damla.backend.digest.PostgresDigestStore
 import com.damla.backend.state.MemoryCodec
 import com.damla.backend.store.Database
 import com.damla.backend.store.PostgresCandleStore
 import com.damla.backend.store.PostgresStateStore
 import com.damla.engine.AssetMemory
 import com.damla.engine.Candle
+import com.damla.engine.State
 import kotlinx.coroutines.test.runTest
 import org.testcontainers.postgresql.PostgreSQLContainer
+import java.time.LocalDate
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -30,7 +34,11 @@ class PostgresStoresTest {
     fun connect() {
         database = TestDatabase.open()
         runTest {
-            database.transaction { it.createStatement().use { s -> s.execute("TRUNCATE candles, group_states, devices") } }
+            database.transaction {
+                it.createStatement().use { s ->
+                    s.execute("TRUNCATE candles, group_states, devices, drop_moments, digests_sent")
+                }
+            }
         }
     }
 
@@ -84,6 +92,31 @@ class PostgresStoresTest {
 
             store.clearToken("device-0001")
             assertNull(store.loadAll().getValue("device-0001").fcmToken)
+        }
+
+    @Test
+    fun `summary moments are kept by group and time, and each day is sent once`() =
+        runTest {
+            val store = PostgresDigestStore(database)
+            val usd = Moment("usdtry|15m|4h|1d|0.1|0.3", WEDNESDAY_NOON, State.FLAT, State.UP, State.UP, State.FLAT)
+            val gold = usd.copy(group = "xau_gram|15m|4h|1d|0.15|0.4", at = WEDNESDAY_NOON + 1.hours, to = State.WAVE)
+            store.record(listOf(gold, usd, usd.copy(at = WEDNESDAY_NOON - 2.hours)))
+
+            assertEquals(
+                listOf(usd, gold),
+                store.moments(listOf(usd.group, gold.group), WEDNESDAY_NOON - 1.hours, WEDNESDAY_NOON + 2.hours),
+            )
+            assertEquals(listOf(gold), store.moments(listOf(gold.group), WEDNESDAY_NOON - 3.hours, WEDNESDAY_NOON + 2.hours))
+            assertEquals(emptyList(), store.moments(emptyList(), WEDNESDAY_NOON - 3.hours, WEDNESDAY_NOON + 2.hours))
+
+            val day = LocalDate.of(2026, 10, 28)
+            assertEquals(true, store.markSent("device-0001", day, WEDNESDAY_NOON))
+            assertEquals(false, store.markSent("device-0001", day, WEDNESDAY_NOON + 1.minutes))
+            assertEquals(true, store.markSent("device-0001", day.plusDays(1), WEDNESDAY_NOON + 24.hours))
+
+            store.deleteBefore(WEDNESDAY_NOON + 30.minutes)
+            assertEquals(listOf(gold), store.moments(listOf(usd.group, gold.group), WEDNESDAY_NOON - 3.hours, WEDNESDAY_NOON + 2.hours))
+            assertEquals(true, store.markSent("device-0001", day, WEDNESDAY_NOON + 2.hours))
         }
 }
 

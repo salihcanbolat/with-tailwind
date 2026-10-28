@@ -59,6 +59,15 @@ class DeviceRegistry(
     /** Devices that can be told about their alarms: a push token and at least one alarm. */
     suspend fun withAlarms(): List<Device> = mutex.withLock { devices.values.filter { it.token != null && it.alarms.isNotEmpty() } }
 
+    /** Devices that asked for the evening summary and can be sent it. */
+    suspend fun withDigest(): List<Device> =
+        mutex.withLock {
+            devices.values.filter {
+                it.token != null &&
+                    it.settings.digest?.enabled == true
+            }
+        }
+
     /** Devices with a push token that follow [key]. */
     suspend fun followers(key: GroupKey): List<Device> =
         mutex.withLock { devices.values.filter { it.token != null && key in it.groups.values } }

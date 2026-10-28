@@ -1,5 +1,6 @@
 package com.damla.backend
 
+import com.anthropic.client.okhttp.AnthropicOkHttpClient
 import com.damla.backend.alarms.AlarmRunner
 import com.damla.backend.catalog.AssetCatalog
 import com.damla.backend.catalog.Target
@@ -9,6 +10,12 @@ import com.damla.backend.devices.DeviceStore
 import com.damla.backend.devices.InMemoryDeviceStore
 import com.damla.backend.devices.Pairings
 import com.damla.backend.devices.PostgresDeviceStore
+import com.damla.backend.digest.ClaudeDigestWriter
+import com.damla.backend.digest.DigestRunner
+import com.damla.backend.digest.DigestStore
+import com.damla.backend.digest.DigestWriter
+import com.damla.backend.digest.InMemoryDigestStore
+import com.damla.backend.digest.PostgresDigestStore
 import com.damla.backend.market.MarketCalendar
 import com.damla.backend.prices.MarketData
 import com.damla.backend.prices.SourceSelector
@@ -57,6 +64,8 @@ class Services(
     sources: List<PriceSource>,
     sender: PushSender,
     val calendar: MarketCalendar = MarketCalendar.bundled(),
+    digestStore: DigestStore = InMemoryDigestStore(),
+    digestWriter: DigestWriter? = null,
     private val closeables: List<AutoCloseable> = emptyList(),
 ) : AutoCloseable {
     private val log = LoggerFactory.getLogger(Services::class.java)
@@ -72,6 +81,7 @@ class Services(
     val pairings = Pairings(clock)
     val dispatcher = PushDispatcher(sender, devices)
     val alarms = AlarmRunner(devices, runner, sender)
+    val digests = DigestRunner(devices, digestStore, sender, digestWriter)
     val ingestion = Ingestion(sources, market, candles, clock, config.memory)
 
     /** Restores engine memory, backfills prices and starts the default and device groups. */
@@ -85,7 +95,10 @@ class Services(
     /** One step of the loop: close finished minutes, evaluate every group, push the events, check alarms. */
     suspend fun tick(now: Instant) {
         ingestion.persist(market.closeDue(now))
-        for ((key, events) in runner.evaluateAll(now)) dispatcher.dispatch(key, events)
+        for ((key, events) in runner.evaluateAll(now)) {
+            dispatcher.dispatch(key, events)
+            digests.record(key, events, runner.states(key))
+        }
         alarms.evaluateAll(now)
     }
 
@@ -99,6 +112,19 @@ class Services(
                 log.error("Startup preparation failed; continuing with live data only", e)
             }
             ingestion.start(this)
+            // Summaries wait on the writer, so they have a loop of their own.
+            launch {
+                while (isActive) {
+                    try {
+                        digests.sendDue(clock.now())
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        log.error("Sending the evening summaries failed", e)
+                    }
+                    delay(DIGEST_EVERY)
+                }
+            }
             var lastSave = clock.now()
             var lastCleanup = Instant.DISTANT_PAST
             while (isActive) {
@@ -111,6 +137,7 @@ class Services(
                     }
                     if (now - lastCleanup >= 1.days) {
                         candles.deleteBefore(now - config.retention)
+                        digests.deleteBefore(now - 2.days)
                         lastCleanup = now
                     }
                 } catch (e: CancellationException) {
@@ -126,6 +153,7 @@ class Services(
 
     companion object {
         private val SAVE_EVERY = 30.seconds
+        private val DIGEST_EVERY = 30.seconds
 
         fun create(config: AppConfig): Services {
             val clock = Clock.System
@@ -158,6 +186,8 @@ class Services(
                 deviceStore = database?.let(::PostgresDeviceStore) ?: InMemoryDeviceStore(),
                 sources = sources,
                 sender = sender,
+                digestStore = database?.let(::PostgresDigestStore) ?: InMemoryDigestStore(),
+                digestWriter = config.anthropicApiKey?.let { ClaudeDigestWriter(AnthropicOkHttpClient.builder().apiKey(it).build()) },
                 closeables = listOfNotNull(client, database),
             )
         }

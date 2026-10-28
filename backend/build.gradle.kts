@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgresql)
     implementation(libs.google.auth)
+    implementation(libs.anthropic.java)
     implementation(libs.logback.classic)
 
     testImplementation(kotlin("test"))

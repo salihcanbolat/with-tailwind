@@ -325,6 +325,15 @@ Belge esastır. Aşağıdakiler soru listesindeki önerilerdir; "plana uygun ile
 - **Derleme:** CI Windows'ta uygulamayı (`tauri build --no-bundle`) derler. macOS derlemesi bir Mac'te `npx tauri build` ile yapılır; CI'da macOS işi yok (maliyet).
 - **Gerçek cihazda denenmesi gerekenler:** Bildirim penceresinin odak çalmadığı, tepsi tıklamasında panelin konumu, şeridin kenara yaslanması.
 
+## Günün özeti (2026-10-28)
+- **Ne sayılır:** "Bugün N damlan şekil değiştirdi" cümlesindeki N, son özetten bu yana damlası (kısa aralık) en az bir kez şekil değiştiren varlık sayısı. Halka değişimleri ve piyasa açılış/kapanışları sayılmaz.
+- **Ne zaman:** Telefonun saat diliminde seçilen saatte (varsayılan 20:00), günde bir kez. Kapsadığı süre bir önceki özetin saatinden bu yana 24 saat. Sunucu o saatte kapalıysa iki saat içinde gönderilir, sonra o günün özeti atlanır.
+- **Sessiz gün:** Hiç değişim yoksa bildirim gitmez.
+- **Kayıt:** Her damla değişimi o andaki halka durumlarıyla birlikte saklanır (Postgres'te `drop_moments`, 2 gün). Gönderilen günler `digests_sent` tablosunda tutulur; sunucu yeniden başlasa da aynı özet iki kez gitmez. Özet gönderilmeden önce işaretlenir: bir özet kaybolabilir ama iki kez gelmez.
+- **Mesaj:** FCM veri mesajı, yüksek öncelik (görünür bildirim üretir), 2 saat ömürlü. En son 16 an taşınır (FCM'in 4 KB sınırı).
+- **Yapay zeka:** Özet cümlesini Claude yazar (`claude-opus-5-5`, düşük çaba, Anthropic'in reddedilen istekler için önerdiği yedek modelle). Yalnızca o günün anları verilir; fiyat, yüzde, tutar, gerekçe, öneri ve tahmin yasak. Cevapta para birimi işareti, yüzde ya da anlarda geçmeyen bir sayı varsa cümle atılır ve telefon kendi şablonunu kullanır ("Gram altın düşüşte, USD/TRY yükselişte."). `ANTHROPIC_API_KEY` yoksa da şablon kullanılır.
+- **Başlık ve şablon telefonda:** Bildirim başlığı ve yedek cümle `strings.xml`'den kurulur; sunucu yalnızca sayıyı, anları ve varsa Claude'un cümlesini gönderir.
+
 ## Açık konular (ilgili fazdan önce sorulacak)
 - **Faz 2:**
   - Ons altın için kaynak (Trunçgil'de 0 geliyor).
