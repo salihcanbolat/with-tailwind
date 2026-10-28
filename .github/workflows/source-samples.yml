@@ -18,6 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Trunçgil, four times a minute apart
+        if: ${{ !startsWith(github.ref, 'refs/heads/samples/alternatives') }}
         run: |
           mkdir -p samples
           cd samples
@@ -27,6 +28,19 @@ jobs:
             [ "$i" = 4 ] || sleep 60
           done
           curl -sS -m 30 -D truncgil-v3.headers "https://finans.truncgil.com/today.json" -o truncgil-v3.json || true
+          ls -l
+      - name: Free alternatives for currencies and metals
+        run: |
+          cd samples
+          # Binance pairs that could stand in for currencies and gold (one request each, so a missing pair does not hide the others).
+          for symbol in USDTTRY EURUSDT GBPUSDT PAXGUSDT PAXGTRY XAUTUSDT EURTRY; do
+            curl -sS -m 30 "https://data-api.binance.vision/api/v3/ticker/price?symbol=$symbol" -o "binance-$symbol.json" || true
+          done
+          curl -sS -m 30 "https://data-api.binance.vision/api/v3/klines?symbol=PAXGUSDT&interval=1m&limit=3" -o binance-PAXGUSDT-klines.json || true
+          # BtcTurk's public tickers (every pair), the Turkish exchange.
+          curl -sS -m 30 -D btcturk.headers "https://api.btcturk.com/api/v2/ticker" -o btcturk-ticker.json || true
+          # The central bank's daily rates.
+          curl -sS -m 30 -D tcmb.headers "https://www.tcmb.gov.tr/kurlar/today.xml" -o tcmb-today.xml || true
           ls -l
       - name: Commit the samples to this branch
         if: always() && startsWith(github.ref, 'refs/heads/samples/')
