@@ -31,6 +31,7 @@ jobs:
           ls -l
       - name: Free alternatives for currencies and metals
         run: |
+          mkdir -p samples
           cd samples
           # Binance pairs that could stand in for currencies and gold (one request each, so a missing pair does not hide the others).
           for symbol in USDTTRY EURUSDT GBPUSDT PAXGUSDT PAXGTRY XAUTUSDT EURTRY; do
