@@ -3,9 +3,12 @@ package com.damla.widget
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -70,12 +73,21 @@ class DamlaWidget : GlanceAppWidget() {
         context: Context,
         id: GlanceId,
     ) {
-        val repository = DamlaServices.repository
+        val store = DamlaServices.repository.store
         val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        val config = repository.store.widget(widgetId)
-        val snapshot = repository.store.snapshot.first()
-        val settings = repository.store.settings.first()
-        provideContent { WidgetContent(widgetId, config, snapshot, settings) }
+        val config = store.widget(widgetId)
+        val snapshot = store.snapshot.first()
+        val settings = store.settings.first()
+        // Followed inside the composition as well: while a session runs, an update only recomposes it, so the
+        // values read once above would stay as they were (a saved style, a new snapshot).
+        provideContent {
+            WidgetContent(
+                widgetId,
+                store.widgetConfig.collectAsState(config).value,
+                store.snapshot.collectAsState(snapshot).value,
+                store.settings.collectAsState(settings).value,
+            )
+        }
     }
 
     companion object {
@@ -176,21 +188,7 @@ private fun Block(
         }
         Columns(arrangement, GlanceModifier.padding(top = dropTop.dp)) { k ->
             if (arrangement.kind == WidgetArrangement.Kind.MINI) {
-                Box(contentAlignment = Alignment.TopCenter) {
-                    assets.forEachIndexed { index, asset ->
-                        // Glance cannot overlap rows, so each drop is offset inside a centred box by padding twice
-                        // the shift. The padding goes on a box around the drop: on the image it would shrink it.
-                        val shift = ((index - (assets.size - 1) / 2.0) * arrangement.miniStep).toFloat()
-                        val offset =
-                            if (shift >= 0) {
-                                GlanceModifier.padding(start = (2 * shift).dp)
-                            } else {
-                                GlanceModifier.padding(end = (-2 * shift).dp)
-                            }
-                        // The overlay draws the mini widget's drops with the simple badge too (OverlayScene).
-                        Box(offset) { Drop(asset, settings, size.toFloat(), bare, smallBadge = true) }
-                    }
-                }
+                MiniDrops(assets, settings, size.toFloat(), arrangement.miniStep.toFloat(), bare)
             } else if (k < assets.size) {
                 Drop(assets[k], settings, size.toFloat(), bare)
             }
@@ -216,13 +214,52 @@ private fun Columns(
     }
 }
 
+/**
+ * The mini widget's overlapping drops, [stepDp] apart, as one image. Glance cannot overlap views, and boxes
+ * padded apart do not fit one cell: the launcher squeezes them off centre. Later drops lie on earlier ones and
+ * all have the simple badge, as in the overlay (OverlayScene).
+ */
+@Composable
+private fun MiniDrops(
+    assets: List<AssetSnapshot>,
+    settings: AppSettings,
+    sizeDp: Float,
+    stepDp: Float,
+    bare: Boolean,
+) {
+    val context = LocalContext.current
+    val density = context.resources.displayMetrics.density
+    val sizePx = (sizeDp * density).roundToInt()
+    val stepPx = (stepDp * density).roundToInt()
+    val drops =
+        assets.mapNotNull { asset ->
+            val visual = asset.visual(settings) ?: return@mapNotNull null
+            if (bare) {
+                GaugeBitmaps.renderWithShadow(visual, sizePx, asset.logo(), density, smallBadge = true).bitmap
+            } else {
+                GaugeBitmaps.render(visual, sizePx, asset.logo(), smallBadge = true)
+            }
+        }
+    if (drops.isEmpty()) return
+    val image = Bitmap.createBitmap(drops[0].width + (drops.size - 1) * stepPx, drops[0].height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(image)
+    drops.forEachIndexed { index, drop ->
+        canvas.drawBitmap(drop, (index * stepPx).toFloat(), 0f, null)
+        drop.recycle()
+    }
+    Image(
+        provider = ImageProvider(image),
+        contentDescription = null,
+        modifier = GlanceModifier.size((image.width / density).dp, (image.height / density).dp),
+    )
+}
+
 @Composable
 private fun Drop(
     asset: AssetSnapshot,
     settings: AppSettings,
     sizeDp: Float,
     bare: Boolean,
-    smallBadge: Boolean = false,
 ) {
     val context = LocalContext.current
     val visual = asset.visual(settings) ?: return
@@ -230,7 +267,7 @@ private fun Drop(
     val sizePx = (sizeDp * density).roundToInt()
     val heightDp = sizeDp * 92f / 76f
     if (bare) {
-        val shadowed = GaugeBitmaps.renderWithShadow(visual, sizePx, asset.logo(), density, smallBadge)
+        val shadowed = GaugeBitmaps.renderWithShadow(visual, sizePx, asset.logo(), density)
         val margin = shadowed.marginPx / density
         Image(
             provider = ImageProvider(shadowed.bitmap),
@@ -239,7 +276,7 @@ private fun Drop(
         )
     } else {
         Image(
-            provider = ImageProvider(GaugeBitmaps.render(visual, sizePx, asset.logo(), smallBadge)),
+            provider = ImageProvider(GaugeBitmaps.render(visual, sizePx, asset.logo())),
             contentDescription = null,
             modifier = GlanceModifier.size(sizeDp.dp, heightDp.dp),
         )
